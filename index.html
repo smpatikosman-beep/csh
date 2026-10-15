@@ -6,7 +6,7 @@
     <title>CASHCASH</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background-color: #0b0b1a; color: #fff; padding-bottom: 70px; }
+        body { background-color: #0b0b1a; color: #fff; padding-bottom: 80px; }
         .page { display: none; padding: 20px; }
         .page.active { display: block; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -15,13 +15,18 @@
         .card { background: #1a1a2e; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid #2a2a4a; }
         .card-title { font-size: 1rem; margin-bottom: 10px; color: #a0a0a0; }
         .card-value { font-size: 1.8rem; font-weight: bold; color: #8a2be2; }
-        .btn { display: block; width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 0.95rem; font-weight: bold; cursor: pointer; margin-bottom: 10px; text-align: center; text-decoration: none; }
+        .btn { display: block; width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 1rem; font-weight: bold; cursor: pointer; margin-bottom: 10px; text-align: center; text-decoration: none; }
         .btn-purple { background: #8a2be2; color: #fff; }
         .btn-green { background: #00ffcc; color: #0b0b1a; }
         .btn-yellow { background: #ffcc00; color: #0b0b1a; }
         .btn-red { background: #ff4444; color: #fff; }
         
-        /* Cam Fanus - Toplam Havuz */
+        /* Ana Sayfa Büyük Butonlar */
+        .main-action-buttons { margin-top: 20px; }
+        .btn-big { padding: 20px; font-size: 1.1rem; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4); }
+        .btn-big-green { background: linear-gradient(135deg, #00ffcc, #00b894); color: #0b0b1a; box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3); }
+        
+        /* Cam Fanus */
         .dome-container { position: relative; width: 220px; height: 260px; margin: 0 auto 20px; border: 3px solid #8a2be2; border-radius: 50% 50% 10px 10px; overflow: hidden; background: rgba(138, 43, 226, 0.1); box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); }
         .dome-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to top, #00ffcc, #8a2be2); transition: height 1s ease-in-out; }
         .dome-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: bold; z-index: 2; text-shadow: 0 0 10px #000; text-align: center; }
@@ -48,18 +53,18 @@
         .task-btn-done { background: #00ffcc; color: #0b0b1a; }
 
         /* 7 Günlük Giriş Ödülü */
-        .daily-rewards { display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .day-box { width: 13%; aspect-ratio: 1; background: #1a1a2e; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #2a2a4a; font-size: 0.7rem; }
+        .daily-rewards { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 15px; }
+        .day-box { aspect-ratio: 1; background: #1a1a2e; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #2a2a4a; font-size: 0.6rem; padding: 2px; }
         .day-box.active { border-color: #ffcc00; background: #2a2a1a; box-shadow: 0 0 10px rgba(255, 204, 0, 0.3); }
         .day-box.claimed { border-color: #00ffcc; background: #1a2a2a; opacity: 0.6; }
-        .day-box .day-num { font-weight: bold; font-size: 0.85rem; }
-        .day-box .day-reward { color: #ffcc00; font-size: 0.65rem; }
+        .day-box .day-num { font-weight: bold; font-size: 0.75rem; }
+        .day-box .day-reward { color: #ffcc00; font-size: 0.6rem; }
 
         /* Alt Menü */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #0b0b1a; border-top: 1px solid #2a2a4a; display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
-        .nav-item { text-align: center; color: #a0a0a0; font-size: 0.65rem; cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #0b0b1a; border-top: 1px solid #2a2a4a; display: flex; justify-content: space-around; padding: 8px 0; z-index: 100; }
+        .nav-item { text-align: center; color: #a0a0a0; font-size: 0.6rem; cursor: pointer; flex: 1; }
         .nav-item.active { color: #8a2be2; }
-        .nav-item i { display: block; font-size: 1.2rem; margin-bottom: 3px; font-style: normal; }
+        .nav-item i { display: block; font-size: 1.1rem; margin-bottom: 2px; font-style: normal; }
 
         /* Giriş Ekranı */
         .login-container { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
@@ -108,7 +113,10 @@
 
     <!-- ==================== ANA SAYFA ==================== -->
     <div id="page-home" class="page">
-        <div class="header"><h1>Merhaba, <span id="home-username">Kullanıcı</span></h1><button class="lang-btn">Dil Değiştir</button></div>
+        <div class="header">
+            <h1>Merhaba, <span id="home-username">Kullanıcı</span></h1>
+            <button class="lang-btn">Dil Değiştir</button>
+        </div>
         
         <!-- Toplam Havuz (Cam Fanus) -->
         <div class="dome-container">
@@ -123,12 +131,35 @@
             <h2 id="countdown">30 GÜN 00 SA 00 DK</h2>
         </div>
 
-        <!-- Günlük Görevler -->
-        <div class="card">
-            <p class="card-title">📋 GÜNLÜK GÖREVLER</p>
-            <div id="task-list"></div>
+        <!-- BÜYÜK AKSİYON BUTONLARI -->
+        <div class="main-action-buttons">
+            <button class="btn btn-purple btn-big" onclick="watchAd()">📺 REKLAM İZLE & PUAN KAZAN</button>
+            <button class="btn btn-big btn-big-green" onclick="playGame()">🎮 OYNA & PUAN TOPLA</button>
         </div>
 
+        <!-- Kullanıcı Bilgi Kartı -->
+        <div class="card" style="margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between;">
+                <div style="text-align: center; flex: 1;">
+                    <p style="font-size: 0.75rem; color: #a0a0a0;">PUAN</p>
+                    <p style="font-size: 1.3rem; font-weight: bold; color: #8a2be2;" id="home-points">0</p>
+                </div>
+                <div style="text-align: center; flex: 1;">
+                    <p style="font-size: 0.75rem; color: #a0a0a0;">TL BAKİYE</p>
+                    <p style="font-size: 1.3rem; font-weight: bold; color: #00ffcc;" id="home-tl">0</p>
+                </div>
+                <div style="text-align: center; flex: 1;">
+                    <p style="font-size: 0.75rem; color: #a0a0a0;">REKLAM</p>
+                    <p style="font-size: 1.3rem; font-weight: bold; color: #ffcc00;" id="home-ads">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== GÖREVLER SEKMESİ ==================== -->
+    <div id="page-tasks" class="page">
+        <div class="header"><h1>📋 Görevler</h1></div>
+        
         <!-- 7 Günlük Giriş Ödülü -->
         <div class="card">
             <p class="card-title">🎁 7 GÜNLÜK GİRİŞ ÖDÜLÜ</p>
@@ -136,9 +167,15 @@
             <button class="btn btn-yellow" id="daily-btn" onclick="claimDailyReward()">BUGÜNÜN ÖDÜLÜNÜ AL</button>
             <p style="text-align: center; color: #a0a0a0; font-size: 0.75rem; margin-top: 8px;" id="daily-timer">Ödülünüz hazır!</p>
         </div>
+
+        <!-- Günlük Görevler -->
+        <div class="card">
+            <p class="card-title">📋 GÜNLÜK GÖREVLER (5 Görev)</p>
+            <div id="task-list"></div>
+        </div>
     </div>
 
-    <!-- ==================== SIRALAMA (LİDERLİK TABLOSU) ==================== -->
+    <!-- ==================== SIRALAMA ==================== -->
     <div id="page-leaderboard" class="page">
         <div class="header"><h1>🏆 Sıralama</h1></div>
         <div class="card">
@@ -209,9 +246,9 @@
     <!-- ==================== ALT MENÜ ==================== -->
     <div class="bottom-nav" id="bottom-nav" style="display: none;">
         <div class="nav-item active" onclick="showPage('page-home')"><i>▶</i> Kazan</div>
+        <div class="nav-item" onclick="showPage('page-tasks')"><i>📋</i> Görevler</div>
         <div class="nav-item" onclick="showPage('page-leaderboard')"><i>🏆</i> Sıralama</div>
         <div class="nav-item" onclick="showPage('page-wallet')"><i>💼</i> Cüzdan</div>
-        <div class="nav-item" onclick="showPage('page-market')"><i>🛒</i> Market</div>
         <div class="nav-item" onclick="showPage('page-referral')"><i>👥</i> Davet</div>
     </div>
 
@@ -233,7 +270,7 @@
             { id: 5, title: "Para Yakala Oyunu (2/2)", desc: "Düşen paraları yakala", reward: 2, done: false, type: 'game' }
         ];
 
-        // Sıralama Tablosu (Demo Veriler - Firebase'den çekilecek)
+        // Sıralama Tablosu (Demo Veriler)
         let leaderboardData = [
             { name: "Ahmet", ads: 150, points: 1500 },
             { name: "Mehmet", ads: 120, points: 1200 },
@@ -261,9 +298,9 @@
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             const navItems = document.querySelectorAll('.nav-item');
             if (pageId === 'page-home') navItems[0].classList.add('active');
-            if (pageId === 'page-leaderboard') navItems[1].classList.add('active');
-            if (pageId === 'page-wallet') navItems[2].classList.add('active');
-            if (pageId === 'page-market') navItems[3].classList.add('active');
+            if (pageId === 'page-tasks') navItems[1].classList.add('active');
+            if (pageId === 'page-leaderboard') navItems[2].classList.add('active');
+            if (pageId === 'page-wallet') navItems[3].classList.add('active');
             if (pageId === 'page-referral') navItems[4].classList.add('active');
         }
 
@@ -308,6 +345,28 @@
             text.innerText = amount.toFixed(2) + ' TL';
         }
 
+        // --- ANA SAYFA REKLAM İZLE BUTONU ---
+        function watchAd() {
+            alert("📺 Reklam izleniyor... (AdMob)");
+            // Kodular köprüsü: window.AppInventor.setWebViewString("SHOW_AD");
+            adsWatched++;
+            userPoints += 10;
+            userTL += 0.5;
+            document.getElementById('home-points').innerText = userPoints;
+            document.getElementById('home-tl').innerText = userTL;
+            document.getElementById('home-ads').innerText = adsWatched;
+            updateLeaderboardUser();
+            alert("✅ Reklam izlendi! +10 Puan, +0.5 TL");
+        }
+
+        // --- ANA SAYFA OYUN BUTONU ---
+        function playGame() {
+            alert("📺 Geçiş reklamı izleniyor... (AdMob Interstitial)");
+            setTimeout(() => {
+                window.location.href = 'oyun.html';
+            }, 1000);
+        }
+
         // --- Günlük Görevleri Listele ---
         function renderTasks() {
             const list = document.getElementById('task-list');
@@ -341,13 +400,15 @@
                     updateLeaderboardUser();
                     
                     task.done = true;
+                    document.getElementById('home-points').innerText = userPoints;
+                    document.getElementById('home-tl').innerText = userTL;
+                    document.getElementById('home-ads').innerText = adsWatched;
                     document.getElementById('wallet-tl').innerText = userTL;
                     document.getElementById('wallet-points').innerText = userPoints;
                     renderTasks();
                     alert(`✅ Görev tamamlandı! +${task.reward} TL ve +10 Puan kazandınız.`);
                 } else if (task.type === 'game') {
-                    // Oyun için geçiş reklamı ve oyun sayfasına yönlendir
-                    alert("📺 Geçiş reklamı izleniyor... (AdMob Interstitial)");
+                    alert("📺 Geçiş reklamı izleniyor... (AdMob)");
                     setTimeout(() => {
                         window.location.href = 'oyun.html';
                     }, 1000);
@@ -388,7 +449,7 @@
                 if (i === dailyRewardDay) className += ' active';
                 if (i < dailyRewardDay) className += ' claimed';
                 box.className = className;
-                box.innerHTML = `<span class="day-num">${i}.Gün</span><span class="day-reward">${i} TL</span>`;
+                box.innerHTML = `<span class="day-num">${i}.G</span><span class="day-reward">${i}TL</span>`;
                 container.appendChild(box);
             }
             
@@ -425,6 +486,7 @@
             if (dailyRewardDay <= 7) {
                 const reward = dailyRewardDay;
                 userTL += reward;
+                document.getElementById('home-tl').innerText = userTL;
                 document.getElementById('wallet-tl').innerText = userTL;
                 alert(`🎁 ${dailyRewardDay}. Gün ödülü: ${reward} TL kazandınız!`);
                 dailyRewardDay++;
@@ -473,6 +535,7 @@
         function buyPackage(name, price) {
             if (userTL >= price) {
                 userTL -= price;
+                document.getElementById('home-tl').innerText = userTL;
                 document.getElementById('wallet-tl').innerText = userTL;
                 alert(`✅ ${name} paketi satın alındı! Çarpanınız arttı.`);
             } else {
@@ -480,12 +543,13 @@
             }
         }
 
-        // --- Oyun Sonrası Puan Aktarımı (LocalStorage) ---
+        // --- Oyun Sonrası Puan Aktarımı ---
         window.addEventListener('message', (event) => {
             if (event.data && event.data.type === 'gameOver') {
                 const earnedPoints = event.data.points;
                 userPoints += earnedPoints;
-                adsWatched += 1; // Oyunu da reklam sayısına ekle
+                adsWatched += 1;
+                document.getElementById('home-points').innerText = userPoints;
                 document.getElementById('wallet-points').innerText = userPoints;
                 updateLeaderboardUser();
                 alert(`🎮 Oyundan ${earnedPoints} puan kazandınız!`);
