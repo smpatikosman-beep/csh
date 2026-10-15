@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CASHCASH</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: #0b0b1a; color: #fff; padding-bottom: 70px; }
+        .page { display: none; padding: 20px; }
+        .page.active { display: block; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header h1 { font-size: 1.5rem; color: #8a2be2; }
+        .lang-btn { background: #1a1a2e; color: #00ffcc; border: 1px solid #00ffcc; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; }
+        .card { background: #1a1a2e; border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid #2a2a4a; }
+        .card-title { font-size: 1.1rem; margin-bottom: 10px; color: #a0a0a0; }
+        .card-value { font-size: 2rem; font-weight: bold; color: #8a2be2; }
+        .btn { display: block; width: 100%; padding: 15px; border-radius: 10px; border: none; font-size: 1rem; font-weight: bold; cursor: pointer; margin-bottom: 10px; text-align: center; text-decoration: none; }
+        .btn-purple { background: #8a2be2; color: #fff; }
+        .btn-green { background: #00ffcc; color: #0b0b1a; }
+        .btn-yellow { background: #ffcc00; color: #0b0b1a; }
+        .dome-container { position: relative; width: 200px; height: 250px; margin: 0 auto 20px; border: 3px solid #8a2be2; border-radius: 50% 50% 10px 10px; overflow: hidden; background: rgba(138, 43, 226, 0.1); box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); }
+        .dome-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to top, #00ffcc, #8a2be2); transition: height 1s ease-in-out; }
+        .dome-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; font-weight: bold; z-index: 2; text-shadow: 0 0 10px #000; }
+        .countdown-box { text-align: center; margin-bottom: 20px; }
+        .countdown-box h2 { color: #ffcc00; font-size: 1.8rem; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #0b0b1a; border-top: 1px solid #2a2a4a; display: flex; justify-content: space-around; padding: 10px 0; }
+        .nav-item { text-align: center; color: #a0a0a0; font-size: 0.7rem; cursor: pointer; }
+        .nav-item.active { color: #8a2be2; }
+        .nav-item i { display: block; font-size: 1.2rem; margin-bottom: 3px; font-style: normal; }
+        .login-container { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
+        .input-group { margin-bottom: 15px; }
+        .input-group input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #2a2a4a; background: #1a1a2e; color: #fff; font-size: 1rem; }
+        .input-group input:focus { outline: none; border-color: #8a2be2; }
+        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .market-card { background: #1a1a2e; border-radius: 10px; padding: 15px; text-align: center; border: 1px solid #2a2a4a; }
+        .market-card h3 { font-size: 1rem; margin-bottom: 5px; }
+        .market-card .price { font-size: 1.2rem; font-weight: bold; color: #ffcc00; margin: 10px 0; }
+        .market-card .multiplier { color: #00ffcc; font-size: 0.9rem; }
+        .invite-code { background: #1a1a2e; padding: 15px; border-radius: 10px; text-align: center; font-size: 1.5rem; font-weight: bold; color: #8a2be2; letter-spacing: 5px; margin: 10px 0; border: 1px dashed #8a2be2; }
+    </style>
+</head>
+<body>
+
+    <!-- GİRİŞ EKRANI -->
+    <div id="page-login" class="page active">
+        <div class="login-container">
+            <h1 style="color: #8a2be2; text-align: center; margin-bottom: 10px;">CASHCASH</h1>
+            <p style="text-align: center; color: #a0a0a0; margin-bottom: 30px;">30 Günlük Dev Cam Fanus Yarışması</p>
+            <div class="input-group"><input type="email" id="login-email" placeholder="E-posta Adresi"></div>
+            <div class="input-group"><input type="password" id="login-password" placeholder="Şifre"></div>
+            <button class="btn btn-purple" onclick="loginUser()">GİRİŞ YAP</button>
+            <button class="btn btn-green" onclick="googleLogin()">GOOGLE İLE DEVAM ET</button>
+            <p style="text-align: center; color: #a0a0a0; margin-top: 20px; font-size: 0.9rem;">Hesabınız yok mu? <span style="color: #8a2be2; cursor: pointer;" onclick="showPage('page-register')">Kayıt Olun</span></p>
+        </div>
+    </div>
+
+    <!-- KAYIT EKRANI -->
+    <div id="page-register" class="page">
+        <div class="login-container">
+            <h1 style="color: #8a2be2; text-align: center; margin-bottom: 20px;">Kayıt Ol</h1>
+            <div class="input-group"><input type="email" id="reg-email" placeholder="E-posta Adresi"></div>
+            <div class="input-group"><input type="text" id="reg-username" placeholder="Kullanıcı Adı"></div>
+            <div class="input-group"><input type="password" id="reg-password" placeholder="Şifre"></div>
+            <div class="input-group"><input type="text" id="reg-referral" placeholder="Davet Kodu (Opsiyonel)"></div>
+            <button class="btn btn-purple" onclick="registerUser()">KAYIT OL</button>
+            <p style="text-align: center; color: #a0a0a0; margin-top: 20px; font-size: 0.9rem;">Zaten hesabınız var mı? <span style="color: #8a2be2; cursor: pointer;" onclick="showPage('page-login')">Giriş Yapın</span></p>
+        </div>
+    </div>
+
+    <!-- ANA SAYFA -->
+    <div id="page-home" class="page">
+        <div class="header"><h1>Merhaba, <span id="home-username">Kullanıcı</span></h1><button class="lang-btn">Dil Değiştir</button></div>
+        <div class="card" style="text-align: center;"><p class="card-title">TOPLAM PUAN</p><p class="card-value" id="home-points">0</p></div>
+        <div class="dome-container"><div class="dome-fill" id="dome-fill"></div><div class="dome-text" id="dome-percentage">0%</div></div>
+        <div class="countdown-box"><p>Yarışma Bitişine Kalan Süre</p><h2 id="countdown">21 GÜN 17 SA 6 DK</h2></div>
+        <button class="btn btn-purple" onclick="watchAd()">▶ REKLAM İZLE & PUAN KAZAN</button>
+        <button class="btn btn-green" onclick="playGame()">▶ OYNA & PUAN TOPLA</button>
+    </div>
+
+    <!-- CÜZDAN -->
+    <div id="page-wallet" class="page">
+        <div class="header"><h1>Cüzdan</h1></div>
+        <div class="card" style="text-align: center;"><p class="card-title">TL BAKİYE</p><p class="card-value" id="wallet-tl">20</p></div>
+        <div class="card" style="text-align: center;"><p class="card-title">KLAD BAKİYE</p><p class="card-value" id="wallet-klad">0</p></div>
+        <button class="btn btn-purple">TL'DEN KLAD'A DÖNÜŞTÜR</button>
+        <button class="btn btn-green">KLAD'DAN TL'YE DÖNÜŞTÜR</button>
+        <div class="card" style="margin-top: 20px;">
+            <p class="card-title">ÇEKİM TALEBİ OLUŞTUR</p>
+            <div class="input-group"><input type="text" placeholder="Adınız"></div>
+            <div class="input-group"><input type="text" placeholder="IBAN"></div>
+            <div class="input-group"><input type="number" placeholder="Tutar (Minimum: 150 TL)"></div>
+            <button class="btn btn-purple">ÇEKİM TALEBİ OLUŞTUR</button>
+        </div>
+    </div>
+
+    <!-- MARKET -->
+    <div id="page-market" class="page">
+        <div class="header"><h1>Market</h1></div>
+        <div class="market-grid">
+            <div class="market-card"><h3 style="color: #cd7f32;">BRONZE</h3><p class="multiplier">1.5x</p><p class="price">85 TL</p><button class="btn btn-yellow" style="padding: 10px;">SATIN AL</button></div>
+            <div class="market-card"><h3 style="color: #c0c0c0;">SILVER</h3><p class="multiplier">2.0x</p><p class="price">179 TL</p><button class="btn btn-yellow" style="padding: 10px;">SATIN AL</button></div>
+            <div class="market-card"><h3 style="color: #ffd700;">GOLD</h3><p class="multiplier">3.0x</p><p class="price">399 TL</p><button class="btn btn-yellow" style="padding: 10px;">SATIN AL</button></div>
+            <div class="market-card"><h3 style="color: #b9f2ff;">DIAMOND</h3><p class="multiplier">5.0x</p><p class="price">899 TL</p><button class="btn btn-yellow" style="padding: 10px;">SATIN AL</button></div>
+        </div>
+    </div>
+
+    <!-- DAVET -->
+    <div id="page-referral" class="page">
+        <div class="header"><h1>Davet</h1></div>
+        <div class="card">
+            <p class="card-title">REFERANS AĞINI GENİŞLET</p>
+            <p style="font-size: 0.9rem; color: #a0a0a0;">Arkadaşlarını davet et, her referans çarpanına x0.1 ekler.</p>
+            <div class="invite-code" id="invite-code">N6SUCF</div>
+            <button class="btn btn-purple" onclick="copyCode()">KOPYALA</button>
+            <button class="btn btn-green">ARKADAŞLARINI DAVET ET</button>
+        </div>
+    </div>
+
+    <!-- ALT MENÜ -->
+    <div class="bottom-nav" id="bottom-nav" style="display: none;">
+        <div class="nav-item active" onclick="showPage('page-home')"><i>▶</i> Kazan</div>
+        <div class="nav-item" onclick="showPage('page-wallet')"><i>💼</i> Cüzdan</div>
+        <div class="nav-item" onclick="showPage('page-market')"><i>🛒</i> Market</div>
+        <div class="nav-item" onclick="showPage('page-referral')"><i>👥</i> Davet</div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.getElementById('bottom-nav').style.display = (pageId === 'page-login' || pageId === 'page-register') ? 'none' : 'flex';
+        }
+        function loginUser() {
+            const email = document.getElementById('login-email').value;
+            if (email) { document.getElementById('home-username').innerText = email.split('@')[0]; showPage('page-home'); updateDome(35); }
+            else { alert("Lütfen e-posta girin!"); }
+        }
+        function googleLogin() { alert("Google ile giriş yapılıyor..."); document.getElementById('home-username').innerText = "Google Kullanıcısı"; showPage('page-home'); updateDome(35); }
+        function registerUser() { alert("Kayıt başarılı!"); showPage('page-home'); updateDome(35); }
+        function updateDome(p) { document.getElementById('dome-fill').style.height = p + '%'; document.getElementById('dome-percentage').innerText = p + '%'; }
+        function watchAd() { alert("Reklam izleniyor..."); let pts = parseInt(document.getElementById('home-points').innerText) + 10; document.getElementById('home-points').innerText = pts; let cur = parseInt(document.getElementById('dome-percentage').innerText); if(cur < 100) updateDome(cur + 5); }
+        function playGame() { alert("Oyun başlatılıyor..."); }
+        function copyCode() { navigator.clipboard.writeText(document.getElementById('invite-code').innerText); alert("Kopyalandı!"); }
+        window.onload = function() { showPage('page-login'); };
+    </script>
+</body>
+</html>
