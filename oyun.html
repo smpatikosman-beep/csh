@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>CASHCASH - Para Yakala</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #0b0b1a; color: #fff; overflow: hidden; height: 100vh; }
+        #gameCanvas { display: block; background: linear-gradient(180deg, #0b0b1a 0%, #1a1a2e 100%); }
+        .hud { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; z-index: 10; }
+        .hud-item { background: rgba(26, 26, 46, 0.9); padding: 8px 15px; border-radius: 10px; border: 1px solid #8a2be2; }
+        .hud-item span { color: #00ffcc; }
+        .timer { color: #ffcc00 !important; }
+        .game-over { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(11, 11, 26, 0.95); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #8a2be2; display: none; z-index: 20; }
+        .game-over h2 { color: #ffcc00; margin-bottom: 15px; }
+        .game-over p { font-size: 1.2rem; margin-bottom: 10px; }
+        .game-over .final-score { font-size: 3rem; color: #00ffcc; font-weight: bold; margin: 15px 0; }
+        .btn { display: block; width: 100%; padding: 15px; border-radius: 10px; border: none; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-green { background: #00ffcc; color: #0b0b1a; }
+        .btn-purple { background: #8a2be2; color: #fff; }
+        .start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 11, 26, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 30; padding: 20px; text-align: center; }
+        .start-screen h1 { color: #8a2be2; font-size: 2rem; margin-bottom: 20px; }
+        .start-screen p { color: #a0a0a0; margin-bottom: 10px; }
+        .emoji-big { font-size: 4rem; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+    <!-- HUD (Skor ve Süre) -->
+    <div class="hud">
+        <div class="hud-item">🏆 Skor: <span id="score">0</span></div>
+        <div class="hud-item timer">⏱️ <span id="timer">30</span>s</div>
+    </div>
+
+    <!-- Oyun Alanı -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Başlangıç Ekranı -->
+    <div class="start-screen" id="startScreen">
+        <h1>💰 PARA YAKALA 💰</h1>
+        <div class="emoji-big">💵 💰 💎</div>
+        <p>📱 Parmağını sağa sola kaydırarak cam fanusu hareket ettir</p>
+        <p>💵 Dolar = +1 Puan | 💰 Altın = +5 Puan</p>
+        <p>💣 Bombadan Kaç! = -3 Puan</p>
+        <p style="color: #ffcc00; margin-top: 15px;"><strong>⏱️ 30 Saniye</strong></p>
+        <button class="btn btn-green" onclick="startGame()">OYUNA BAŞLA</button>
+    </div>
+
+    <!-- Oyun Sonu Ekranı -->
+    <div class="game-over" id="gameOverScreen">
+        <h2>🎉 OYUN BİTTİ!</h2>
+        <p>Toplam Skor</p>
+        <p class="final-score" id="finalScore">0</p>
+        <p style="color: #00ffcc;">+<span id="earnedPoints">0</span> Puan Kazandın!</p>
+        <button class="btn btn-green" onclick="playAgain()">TEKRAR OYNA</button>
+        <button class="btn btn-purple" onclick="backToHome()">ANA SAYFAYA DÖN</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Canvas boyutunu ekrana göre ayarla
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Oyun değişkenleri
+        let basket = { x: canvas.width / 2 - 40, y: canvas.height - 100, width: 80, height: 60, speed: 0, targetX: canvas.width / 2 };
+        let items = []; // Düşen nesneler
+        let score = 0;
+        let timeLeft = 30;
+        let gameRunning = false;
+        let gameLoopId = null;
+        let timerId = null;
+        let lastSpawn = 0;
+        let spawnInterval = 800; // ms
+
+        // Oyun nesnesi türleri
+        const itemTypes = [
+            { emoji: '💵', points: 1, weight: 60, color: '#00ffcc' },   // Dolar
+            { emoji: '💰', points: 5, weight: 25, color: '#ffcc00' },   // Altın
+            { emoji: '💎', points: 10, weight: 5, color: '#b9f2ff' },   // Elmas
+            { emoji: '💣', points: -3, weight: 10, color: '#ff4444' }   // Bomba
+        ];
+
+        // Ağırlıklı rastgele seçim
+        function pickItemType() {
+            const totalWeight = itemTypes.reduce((sum, t) => sum + t.weight, 0);
+            let random = Math.random() * totalWeight;
+            for (let type of itemTypes) {
+                if (random < type.weight) return type;
+                random -= type.weight;
+            }
+            return itemTypes[0];
+        }
+
+        // Cam fanus (sepet) çizimi
+        function drawBasket() {
+            // Fanus gövdesi
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(basket.x, basket.y + basket.height);
+            ctx.lineTo(basket.x, basket.y + 20);
+            ctx.quadraticCurveTo(basket.x, basket.y, basket.x + basket.width / 2, basket.y);
+            ctx.quadraticCurveTo(basket.x + basket.width, basket.y, basket.x + basket.width, basket.y + 20);
+            ctx.lineTo(basket.x + basket.width, basket.y + basket.height);
+            ctx.closePath();
+            
+            // Fanus gradient
+            const grad = ctx.createLinearGradient(basket.x, basket.y, basket.x, basket.y + basket.height);
+            grad.addColorStop(0, 'rgba(138, 43, 226, 0.4)');
+            grad.addColorStop(1, 'rgba(138, 43, 226, 0.8)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            
+            // Kenarlık
+            ctx.strokeStyle = '#8a2be2';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Parıltı
+            ctx.beginPath();
+            ctx.arc(basket.x + 15, basket.y + 20, 3, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 255, 204, 0.6)';
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Düşen nesneyi çiz
+        function drawItem(item) {
+            ctx.font = '35px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(item.emoji, item.x, item.y);
+        }
+
+        // Yeni nesne oluştur
+        function spawnItem() {
+            const type = pickItemType();
+            items.push({
+                x: Math.random() * (canvas.width - 60) + 30,
+                y: -30,
+                speed: 2 + Math.random() * 3,
+                emoji: type.emoji,
+                points: type.points,
+                color: type.color,
+                rotation: 0
+            });
+        }
+
+        // Çarpışma kontrolü
+        function checkCollision(item) {
+            return item.y + 20 > basket.y && 
+                   item.y - 20 < basket.y + basket.height &&
+                   item.x > basket.x && 
+                   item.x < basket.x + basket.width;
+        }
+
+        // Oyun döngüsü
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            // Arka planı temizle
+            ctx.fillStyle = 'rgba(11, 11, 26, 0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Yıldızlar (arka plan efekti)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            for (let i = 0; i < 3; i++) {
+                ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
+            }
+            
+            // Sepeti hareket ettir (yumuşak geçiş)
+            basket.x += (basket.targetX - basket.x) * 0.15;
+            
+            // Sepeti çiz
+            drawBasket();
+            
+            // Nesneleri güncelle
+            const now = Date.now();
+            if (now - lastSpawn > spawnInterval) {
+                spawnItem();
+                lastSpawn = now;
+                // Zorluk artışı (zamanla hızlanır)
+                spawnInterval = Math.max(300, spawnInterval - 10);
+            }
+            
+            for (let i = items.length - 1; i >= 0; i--) {
+                const item = items[i];
+                item.y += item.speed;
+                item.rotation += 0.05;
+                
+                // Çarpışma kontrolü
+                if (checkCollision(item)) {
+                    if (item.points > 0) {
+                        // Olumlu puan
+                        score += item.points;
+                        ctx.fillStyle = item.color;
+                        ctx.font = 'bold 24px Arial';
+                        ctx.fillText('+' + item.points, item.x, item.y - 40);
+                    } else {
+                        // Bomba
+                        score += item.points;
+                        if (score < 0) score = 0;
+                        ctx.fillStyle = '#ff4444';
+                        ctx.font = 'bold 24px Arial';
+                        ctx.fillText(item.points, item.x, item.y - 40);
+                    }
+                    items.splice(i, 1);
+                    document.getElementById('score').innerText = score;
+                    continue;
+                }
+                
+                // Ekrandan çıktıysa sil
+                if (item.y > canvas.height + 50) {
+                    items.splice(i, 1);
+                    continue;
+                }
+                
+                drawItem(item);
+            }
+            
+            gameLoopId = requestAnimationFrame(gameLoop);
+        }
+
+        // Oyunu başlat
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameOverScreen').style.display = 'none';
+            
+            // Reset
+            score = 0;
+            timeLeft = 30;
+            items = [];
+            basket.targetX = canvas.width / 2 - basket.width / 2;
+            basket.x = basket.targetX;
+            spawnInterval = 800;
+            lastSpawn = 0;
+            
+            document.getElementById('score').innerText = score;
+            document.getElementById('timer').innerText = timeLeft;
+            
+            gameRunning = true;
+            lastSpawn = Date.now();
+            gameLoop();
+            
+            // Zamanlayıcı
+            timerId = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        // Oyunu bitir
+        function endGame() {
+            gameRunning = false;
+            clearInterval(timerId);
+            cancelAnimationFrame(gameLoopId);
+            
+            // Kazanılan puan: skor * 2 (Yani her skor puanı 2 puan kazandırır)
+            const earnedPoints = score * 2;
+            
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('earnedPoints').innerText = earnedPoints;
+            document.getElementById('gameOverScreen').style.display = 'block';
+            
+            // WebView'e mesaj gönder (Kodular için)
+            if (window.AppInventor) {
+                window.AppInventor.setWebViewString("GAME_OVER:" + score + ":" + earnedPoints);
+            }
+            
+            // Ana sayfaya puanları gönder
+            window.parent.postMessage({
+                type: 'gameOver',
+                score: score,
+                points: earnedPoints
+            }, '*');
+            
+            // localStorage'a da kaydet
+            let currentPoints = parseInt(localStorage.getItem('userPoints') || '0');
+            localStorage.setItem('userPoints', currentPoints + earnedPoints);
+        }
+
+        // Tekrar oyna
+        function playAgain() {
+            startGame();
+        }
+
+        // Ana sayfaya dön
+        function backToHome() {
+            window.location.href = 'index.html';
+        }
+
+        // Parmağı/fareyi takip et
+        function handleMove(clientX) {
+            basket.targetX = clientX - basket.width / 2;
+            // Sınırları kontrol et
+            if (basket.targetX < 0) basket.targetX = 0;
+            if (basket.targetX + basket.width > canvas.width) basket.targetX = canvas.width - basket.width;
+        }
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            handleMove(e.touches[0].clientX);
+        }, { passive: false });
+
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleMove(e.touches[0].clientX);
+        }, { passive: false });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (gameRunning) handleMove(e.clientX);
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (gameRunning) handleMove(e.clientX);
+        });
+    </script>
+</body>
+</html>
