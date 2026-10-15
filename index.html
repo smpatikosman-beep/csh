@@ -29,6 +29,15 @@
         .countdown-box { text-align: center; margin-bottom: 20px; }
         .countdown-box h2 { color: #ffcc00; font-size: 1.5rem; }
         
+        /* Sıralama Tablosu */
+        .leaderboard { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .leaderboard th { text-align: left; padding: 8px 5px; color: #a0a0a0; border-bottom: 1px solid #2a2a4a; }
+        .leaderboard td { padding: 8px 5px; border-bottom: 1px solid #1a1a2e; }
+        .leaderboard tr:nth-child(1) td { color: #ffd700; font-weight: bold; }
+        .leaderboard tr:nth-child(2) td { color: #c0c0c0; }
+        .leaderboard tr:nth-child(3) td { color: #cd7f32; }
+        .rank-badge { display: inline-block; width: 20px; text-align: center; }
+        
         /* Günlük Görevler */
         .task-item { display: flex; justify-content: space-between; align-items: center; background: #1a1a2e; padding: 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #2a2a4a; }
         .task-item.done { opacity: 0.5; border-color: #00ffcc; }
@@ -41,8 +50,8 @@
         /* 7 Günlük Giriş Ödülü */
         .daily-rewards { display: flex; justify-content: space-between; margin-bottom: 15px; }
         .day-box { width: 13%; aspect-ratio: 1; background: #1a1a2e; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #2a2a4a; font-size: 0.7rem; }
-        .day-box.active { border-color: #ffcc00; background: #2a2a1a; }
-        .day-box.claimed { border-color: #00ffcc; background: #1a2a2a; }
+        .day-box.active { border-color: #ffcc00; background: #2a2a1a; box-shadow: 0 0 10px rgba(255, 204, 0, 0.3); }
+        .day-box.claimed { border-color: #00ffcc; background: #1a2a2a; opacity: 0.6; }
         .day-box .day-num { font-weight: bold; font-size: 0.85rem; }
         .day-box .day-reward { color: #ffcc00; font-size: 0.65rem; }
 
@@ -67,16 +76,15 @@
         
         /* Davet */
         .invite-code { background: #1a1a2e; padding: 15px; border-radius: 10px; text-align: center; font-size: 1.5rem; font-weight: bold; color: #8a2be2; letter-spacing: 5px; margin: 10px 0; border: 1px dashed #8a2be2; }
-        .invite-info { font-size: 0.85rem; color: #a0a0a0; margin-bottom: 10px; }
         
-        /* Oyun Alanı */
-        .game-area { display: none; text-align: center; padding: 20px; }
-        .game-area.active { display: block; }
+        /* Oyun */
+        .game-area { text-align: center; padding: 20px; }
+        .game-score { font-size: 4rem; font-weight: bold; color: #00ffcc; margin: 20px 0; }
     </style>
 </head>
 <body>
 
-    <!-- ==================== GİRİŞ EKRANI ==================== -->
+    <!-- GİRİŞ EKRANI -->
     <div id="page-login" class="page active">
         <div class="login-container">
             <h1 style="color: #8a2be2; text-align: center; margin-bottom: 10px;">CASHCASH</h1>
@@ -89,7 +97,7 @@
         </div>
     </div>
 
-    <!-- ==================== KAYIT EKRANI ==================== -->
+    <!-- KAYIT EKRANI -->
     <div id="page-register" class="page">
         <div class="login-container">
             <h1 style="color: #8a2be2; text-align: center; margin-bottom: 20px;">Kayıt Ol</h1>
@@ -102,7 +110,7 @@
         </div>
     </div>
 
-    <!-- ==================== ANA SAYFA ==================== -->
+    <!-- ANA SAYFA -->
     <div id="page-home" class="page">
         <div class="header"><h1>Merhaba, <span id="home-username">Kullanıcı</span></h1><button class="lang-btn">Dil Değiştir</button></div>
         
@@ -121,39 +129,50 @@
 
         <!-- Günlük Görevler -->
         <div class="card">
-            <p class="card-title">📋 GÜNLÜK GÖREVLER (5/5)</p>
-            <div id="task-list">
-                <!-- Görevler JavaScript ile doldurulacak -->
-            </div>
+            <p class="card-title">📋 GÜNLÜK GÖREVLER</p>
+            <div id="task-list"></div>
         </div>
 
         <!-- 7 Günlük Giriş Ödülü -->
         <div class="card">
             <p class="card-title">🎁 7 GÜNLÜK GİRİŞ ÖDÜLÜ</p>
-            <div class="daily-rewards" id="daily-rewards">
-                <!-- Günler JavaScript ile doldurulacak -->
-            </div>
-            <button class="btn btn-yellow" onclick="claimDailyReward()">BUGÜNÜN ÖDÜLÜNÜ AL</button>
+            <div class="daily-rewards" id="daily-rewards"></div>
+            <button class="btn btn-yellow" id="daily-btn" onclick="claimDailyReward()">BUGÜNÜN ÖDÜLÜNÜ AL</button>
+            <p style="text-align: center; color: #a0a0a0; font-size: 0.75rem;" id="daily-timer">Sonraki ödül için: 24:00:00</p>
         </div>
     </div>
 
-    <!-- ==================== CÜZDAN ==================== -->
+    <!-- SIRALAMA (LİDERLİK TABLOSU) -->
+    <div id="page-leaderboard" class="page">
+        <div class="header"><h1>🏆 Sıralama</h1></div>
+        <div class="card">
+            <p class="card-title">EN ÇOK REKLAM İZLEYENLER</p>
+            <p style="font-size: 0.8rem; color: #a0a0a0; margin-bottom: 10px;">İlk 10 kişi havuzdaki parayı paylaşacak!</p>
+            <table class="leaderboard">
+                <thead>
+                    <tr><th>#</th><th>Kullanıcı</th><th>Reklam</th><th>Puan</th></tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    <!-- JavaScript ile doldurulacak -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- CÜZDAN -->
     <div id="page-wallet" class="page">
         <div class="header"><h1>Cüzdan</h1></div>
         <div class="card" style="text-align: center;">
             <p class="card-title">TL BAKİYE</p>
             <p class="card-value" id="wallet-tl">0</p>
-            <p style="color: #a0a0a0; font-size: 0.8rem;">TÜRK LİRASI (TL)</p>
         </div>
         <div class="card" style="text-align: center;">
-            <p class="card-title">KLAD BAKİYE</p>
-            <p class="card-value" id="wallet-klad">0</p>
-            <p style="color: #a0a0a0; font-size: 0.8rem;">KLAD (KLAD)</p>
+            <p class="card-title">TOPLAM PUAN</p>
+            <p class="card-value" id="wallet-points">0</p>
         </div>
         <button class="btn btn-purple">TL'DEN KLAD'A DÖNÜŞTÜR</button>
         <button class="btn btn-green">KLAD'DAN TL'YE DÖNÜŞTÜR</button>
         
-        <!-- Çekim Talebi -->
         <div class="card" style="margin-top: 20px;">
             <p class="card-title">💸 ÇEKİM TALEBİ OLUŞTUR</p>
             <div class="input-group"><input type="text" id="withdraw-name" placeholder="Adınız (Zorunlu)"></div>
@@ -164,12 +183,10 @@
         </div>
     </div>
 
-    <!-- ==================== MARKET ==================== -->
+    <!-- MARKET -->
     <div id="page-market" class="page">
         <div class="header"><h1>Market</h1></div>
-        <div class="card">
-            <p style="font-size: 0.9rem;">MEVCUT ÜYELİK: <strong>FREE</strong> (Çarpan: 1.0x)</p>
-        </div>
+        <div class="card"><p style="font-size: 0.9rem;">MEVCUT ÜYELİK: <strong>FREE</strong> (Çarpan: 1.0x)</p></div>
         <div class="market-grid">
             <div class="market-card"><h3 style="color: #cd7f32;">BRONZE</h3><p class="multiplier">1.5x Çarpan</p><p class="price">85 TL</p><button class="btn btn-yellow" style="padding: 8px; font-size: 0.8rem;" onclick="buyPackage('Bronze', 85)">SATIN AL</button></div>
             <div class="market-card"><h3 style="color: #c0c0c0;">SILVER</h3><p class="multiplier">2.0x Çarpan</p><p class="price">179 TL</p><button class="btn btn-yellow" style="padding: 8px; font-size: 0.8rem;" onclick="buyPackage('Silver', 179)">SATIN AL</button></div>
@@ -178,12 +195,12 @@
         </div>
     </div>
 
-    <!-- ==================== DAVET ==================== -->
+    <!-- DAVET -->
     <div id="page-referral" class="page">
         <div class="header"><h1>Davet</h1></div>
         <div class="card">
             <p class="card-title">🤝 REFERANS AĞINI GENİŞLET</p>
-            <p class="invite-info">Arkadaşını davet et, sen <strong>5 TL</strong> kazan, arkadaşın <strong>1 TL</strong> kazansın!</p>
+            <p style="font-size: 0.85rem; color: #a0a0a0; margin-bottom: 10px;">Arkadaşını davet et, sen <strong>5 TL</strong> kazan, arkadaşın <strong>1 TL</strong> kazansın!</p>
             <div class="invite-code" id="invite-code">N6SUCF</div>
             <button class="btn btn-purple" onclick="copyCode()">KOPYALA</button>
             <button class="btn btn-green" onclick="shareInvite()">ARKADAŞLARINI DAVET ET</button>
@@ -195,21 +212,22 @@
         </div>
     </div>
 
-    <!-- ==================== OYUN EKRANI ==================== -->
+    <!-- OYUN EKRANI -->
     <div id="page-game" class="page">
         <div class="header"><h1>🎮 Basit Oyun</h1></div>
-        <div class="game-area active" style="display: block;">
+        <div class="game-area">
             <p>Reklam izlendi! Oyun başlıyor...</p>
-            <p style="font-size: 3rem; margin: 20px 0;" id="game-score">0</p>
+            <p class="game-score" id="game-score">0</p>
             <p>Skor</p>
             <button class="btn btn-green" onclick="gameTap()">TIKLA!</button>
             <button class="btn btn-red" onclick="endGame()">OYUNU BİTİR</button>
         </div>
     </div>
 
-    <!-- ==================== ALT MENÜ ==================== -->
+    <!-- ALT MENÜ -->
     <div class="bottom-nav" id="bottom-nav" style="display: none;">
         <div class="nav-item active" onclick="showPage('page-home')"><i>▶</i> Kazan</div>
+        <div class="nav-item" onclick="showPage('page-leaderboard')"><i>🏆</i> Sıralama</div>
         <div class="nav-item" onclick="showPage('page-wallet')"><i>💼</i> Cüzdan</div>
         <div class="nav-item" onclick="showPage('page-market')"><i>🛒</i> Market</div>
         <div class="nav-item" onclick="showPage('page-referral')"><i>👥</i> Davet</div>
@@ -220,16 +238,34 @@
         let userPoints = 0;
         let userTL = 0;
         let userKlad = 0;
-        let poolAmount = 0; // Havuzdaki toplam para
-        let currentDay = 1; // 7 günlük ödül için
-        let dailyTasks = [
-            { id: 1, title: "Reklam İzle (1/3)", desc: "3 reklam izle", reward: 1, done: false },
-            { id: 2, title: "Reklam İzle (2/3)", desc: "3 reklam izle", reward: 1, done: false },
-            { id: 3, title: "Reklam İzle (3/3)", desc: "3 reklam izle", reward: 1, done: false },
-            { id: 4, title: "Oyun Oyna (1/2)", desc: "2 oyun oyna", reward: 2, done: false },
-            { id: 5, title: "Oyun Oyna (2/2)", desc: "2 oyun oyna", reward: 2, done: false }
-        ];
+        let poolAmount = 0;
+        let adsWatched = 0;
+        let dailyRewardDay = 1;
+        let lastClaimTime = 0; // Son ödül alma zamanı (timestamp)
         let gameScore = 0;
+
+        // Günlük Görevler
+        let dailyTasks = [
+            { id: 1, title: "Reklam İzle (1/3)", desc: "3 reklam izle", reward: 1, done: false, type: 'ad' },
+            { id: 2, title: "Reklam İzle (2/3)", desc: "3 reklam izle", reward: 1, done: false, type: 'ad' },
+            { id: 3, title: "Reklam İzle (3/3)", desc: "3 reklam izle", reward: 1, done: false, type: 'ad' },
+            { id: 4, title: "Oyun Oyna (1/2)", desc: "2 oyun oyna", reward: 2, done: false, type: 'game' },
+            { id: 5, title: "Oyun Oyna (2/2)", desc: "2 oyun oyna", reward: 2, done: false, type: 'game' }
+        ];
+
+        // Sıralama Tablosu (Demo Verisi)
+        let leaderboardData = [
+            { name: "Ahmet", ads: 150, points: 1500 },
+            { name: "Mehmet", ads: 120, points: 1200 },
+            { name: "Ayşe", ads: 100, points: 1000 },
+            { name: "Fatma", ads: 80, points: 800 },
+            { name: "Ali", ads: 60, points: 600 },
+            { name: "Veli", ads: 40, points: 400 },
+            { name: "Can", ads: 20, points: 200 },
+            { name: "Cem", ads: 15, points: 150 },
+            { name: "Deniz", ads: 10, points: 100 },
+            { name: "Ece", ads: 5, points: 50 }
+        ];
 
         // --- Sayfa Geçiş Fonksiyonu ---
         function showPage(pageId) {
@@ -245,9 +281,10 @@
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             const navItems = document.querySelectorAll('.nav-item');
             if (pageId === 'page-home') navItems[0].classList.add('active');
-            if (pageId === 'page-wallet') navItems[1].classList.add('active');
-            if (pageId === 'page-market') navItems[2].classList.add('active');
-            if (pageId === 'page-referral') navItems[3].classList.add('active');
+            if (pageId === 'page-leaderboard') navItems[1].classList.add('active');
+            if (pageId === 'page-wallet') navItems[2].classList.add('active');
+            if (pageId === 'page-market') navItems[3].classList.add('active');
+            if (pageId === 'page-referral') navItems[4].classList.add('active');
         }
 
         // --- Giriş/Kayıt ---
@@ -256,9 +293,10 @@
             if (email) {
                 document.getElementById('home-username').innerText = email.split('@')[0];
                 showPage('page-home');
-                updateDome(0); // Başlangıçta havuz 0
+                updateDome(0);
                 renderTasks();
                 renderDailyRewards();
+                renderLeaderboard();
             } else { alert("Lütfen e-posta girin!"); }
         }
 
@@ -268,14 +306,16 @@
             updateDome(0);
             renderTasks();
             renderDailyRewards();
+            renderLeaderboard();
         }
 
         function registerUser() {
-            alert("Kayıt başarılı! Giriş yapılıyor...");
+            alert("Kayıt başarılı!");
             showPage('page-home');
             updateDome(0);
             renderTasks();
             renderDailyRewards();
+            renderLeaderboard();
         }
 
         // --- Cam Fanus (Havuz) Güncelleme ---
@@ -283,7 +323,6 @@
             poolAmount = amount;
             const fill = document.getElementById('dome-fill');
             const text = document.getElementById('dome-amount');
-            // Havuzun maksimum 10.000 TL olduğunu varsayalım, ona göre doluluk oranı
             let percentage = Math.min((amount / 10000) * 100, 100);
             fill.style.height = percentage + '%';
             text.innerText = amount.toFixed(2) + ' TL';
@@ -310,27 +349,68 @@
             });
         }
 
+        // --- Görev Tamamlama (Reklam İzleme = Puan Artışı) ---
         function completeTask(id) {
             const task = dailyTasks.find(t => t.id === id);
             if (task && !task.done) {
-                // Reklam izleme simülasyonu
-                if (id <= 3) {
-                    alert("📺 Reklam izleniyor... (AdMob reklamı)");
-                } else {
-                    alert("🎮 Oyun oynanıyor... (Oyun ekranına yönlendiriliyorsunuz)");
-                    // Oyun sayfasına yönlendir (Geçiş reklamı ile)
+                if (task.type === 'ad') {
+                    alert("📺 Reklam izleniyor... (AdMob)");
+                    // Reklam izlendi -> Puan ve reklam sayısı artar
+                    adsWatched++;
+                    userPoints += 10;
+                    userTL += task.reward;
+                    
+                    // Kullanıcıyı sıralamaya ekle (Demo)
+                    updateLeaderboardUser();
+                } else if (task.type === 'game') {
+                    // Oyun için geçiş reklamı
                     showInterstitialAdAndPlayGame();
-                    return; // Oyun bitince task tamamlanacak
+                    return;
                 }
                 
                 task.done = true;
-                userTL += task.reward;
-                userPoints += 10;
                 document.getElementById('wallet-tl').innerText = userTL;
-                document.getElementById('home-points').innerText = userPoints;
+                document.getElementById('wallet-points').innerText = userPoints;
                 renderTasks();
-                alert(`Görev tamamlandı! +${task.reward} TL kazandınız.`);
+                alert(`✅ Görev tamamlandı! +${task.reward} TL ve +10 Puan kazandınız.`);
             }
+        }
+
+        // --- Reklam İzleme (Ekstra Puan) ---
+        // Not: Bu fonksiyon görevlerden bağımsız, doğrudan reklam izleme butonu için
+        function watchExtraAd() {
+            alert("📺 Ekstra reklam izleniyor...");
+            adsWatched++;
+            userPoints += 10;
+            userTL += 0.5; // Her ekstra reklam 0.5 TL
+            document.getElementById('wallet-tl').innerText = userTL;
+            document.getElementById('wallet-points').innerText = userPoints;
+            updateLeaderboardUser();
+            alert("✅ Reklam izlendi! +10 Puan, +0.5 TL");
+        }
+
+        // --- Sıralama Tablosunu Güncelle ---
+        function renderLeaderboard() {
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+            // Kullanıcıyı da ekleyerek sırala
+            let allUsers = [...leaderboardData, { name: "SEN", ads: adsWatched, points: userPoints }];
+            allUsers.sort((a, b) => b.points - a.points);
+            
+            allUsers.slice(0, 10).forEach((user, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="rank-badge">${index + 1}</span></td>
+                    <td>${user.name}</td>
+                    <td>${user.ads}</td>
+                    <td>${user.points}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateLeaderboardUser() {
+            renderLeaderboard();
         }
 
         // --- Oyun Başlatma (Geçiş Reklamı ile) ---
@@ -349,7 +429,6 @@
         }
 
         function endGame() {
-            // Oyun bitti, görevi tamamla
             if (gameScore > 0) {
                 const gameTask = dailyTasks.find(t => t.id === 4 && !t.done) || dailyTasks.find(t => t.id === 5 && !t.done);
                 if (gameTask) {
@@ -357,7 +436,7 @@
                     userTL += gameTask.reward;
                     userPoints += 20;
                     document.getElementById('wallet-tl').innerText = userTL;
-                    document.getElementById('home-points').innerText = userPoints;
+                    document.getElementById('wallet-points').innerText = userPoints;
                     renderTasks();
                 }
                 alert(`Oyun bitti! Skor: ${gameScore}. Ödül kazandınız!`);
@@ -365,27 +444,61 @@
             showPage('page-home');
         }
 
-        // --- 7 Günlük Giriş Ödülü ---
+        // --- 7 Günlük Giriş Ödülü (24 Saatte Bir) ---
         function renderDailyRewards() {
             const container = document.getElementById('daily-rewards');
             container.innerHTML = '';
             for (let i = 1; i <= 7; i++) {
                 const box = document.createElement('div');
-                box.className = 'day-box' + (i === currentDay ? ' active' : '') + (i < currentDay ? ' claimed' : '');
+                let className = 'day-box';
+                if (i === dailyRewardDay) className += ' active';
+                if (i < dailyRewardDay) className += ' claimed';
+                box.className = className;
                 box.innerHTML = `<span class="day-num">${i}.Gün</span><span class="day-reward">${i} TL</span>`;
                 container.appendChild(box);
+            }
+            
+            // Buton durumunu güncelle
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000;
+            const btn = document.getElementById('daily-btn');
+            const timerText = document.getElementById('daily-timer');
+            
+            if (lastClaimTime === 0 || (now - lastClaimTime) >= oneDay) {
+                btn.disabled = false;
+                btn.innerText = "BUGÜNÜN ÖDÜLÜNÜ AL";
+                btn.style.opacity = "1";
+                timerText.innerText = "Ödülünüz hazır!";
+            } else {
+                btn.disabled = true;
+                btn.innerText = "ÖDÜL ALINDI";
+                btn.style.opacity = "0.5";
+                const remaining = oneDay - (now - lastClaimTime);
+                const hours = Math.floor(remaining / (1000 * 60 * 60));
+                const mins = Math.floor((remaining / (1000 * 60)) % 60);
+                timerText.innerText = `Sonraki ödül için: ${hours} sa ${mins} dk`;
             }
         }
 
         function claimDailyReward() {
-            if (currentDay <= 7) {
-                userTL += currentDay;
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000;
+            
+            if (lastClaimTime !== 0 && (now - lastClaimTime) < oneDay) {
+                alert("Bu ödülü zaten aldınız! 24 saat sonra tekrar deneyin.");
+                return;
+            }
+            
+            if (dailyRewardDay <= 7) {
+                const reward = dailyRewardDay;
+                userTL += reward;
                 document.getElementById('wallet-tl').innerText = userTL;
-                alert(`🎁 ${currentDay}. Gün ödülü: ${currentDay} TL kazandınız!`);
-                currentDay++;
+                alert(`🎁 ${dailyRewardDay}. Gün ödülü: ${reward} TL kazandınız!`);
+                dailyRewardDay++;
+                lastClaimTime = now;
                 renderDailyRewards();
             } else {
-                alert("7 günlük ödül serisini tamamladınız!");
+                alert("7 günlük ödül serisini tamamladınız! Tebrikler!");
             }
         }
 
