@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>CASHCASH - Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #0b0b1a; color: #fff; padding: 20px; }
+        h1 { color: #8a2be2; margin-bottom: 20px; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: #1a1a2e; padding: 20px; border-radius: 12px; border: 1px solid #2a2a4a; text-align: center; }
+        .stat-card .value { font-size: 2rem; font-weight: bold; color: #00ffcc; }
+        .stat-card .label { font-size: 0.85rem; color: #a0a0a0; margin-top: 5px; }
+        table { width: 100%; border-collapse: collapse; background: #1a1a2e; border-radius: 12px; overflow: hidden; }
+        th { background: #2a2a4a; padding: 12px; text-align: left; font-size: 0.85rem; color: #a0a0a0; }
+        td { padding: 12px; border-bottom: 1px solid #2a2a4a; font-size: 0.9rem; }
+        tr:hover { background: #252540; }
+        .status { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        .status-beklemede { background: #ffcc00; color: #0b0b1a; }
+        .status-onaylandi { background: #00ffcc; color: #0b0b1a; }
+        .status-reddedildi { background: #ff4444; color: #fff; }
+        .action-btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; margin-right: 5px; }
+        .approve { background: #00ffcc; color: #0b0b1a; }
+        .reject { background: #ff4444; color: #fff; }
+        .tab-buttons { margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; background: #1a1a2e; border: 1px solid #2a2a4a; color: #fff; cursor: pointer; border-radius: 8px; margin-right: 10px; }
+        .tab-btn.active { background: #8a2be2; border-color: #8a2be2; }
+    </style>
+</head>
+<body>
+    <h1>🛡️ CASHCASH Admin Panel</h1>
+    
+    <!-- İstatistikler -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="value" id="totalUsers">0</div>
+            <div class="label">Toplam Kullanıcı</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="totalPool">0 TL</div>
+            <div class="label">Havuzdaki Para</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="pendingWithdrawals">0</div>
+            <div class="label">Bekleyen Çekim</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="daysLeft">30</div>
+            <div class="label">Kalan Gün</div>
+        </div>
+    </div>
+
+    <!-- Sekmeler -->
+    <div class="tab-buttons">
+        <button class="tab-btn active" onclick="showTab('withdrawals')">💸 Çekim Talepleri</button>
+        <button class="tab-btn" onclick="showTab('users')">👥 Kullanıcılar</button>
+        <button class="tab-btn" onclick="showTab('winners')">🏆 Kazananlar</button>
+    </div>
+
+    <!-- Çekim Talepleri -->
+    <div id="tab-withdrawals">
+        <h2 style="margin-bottom: 15px; color: #a0a0a0;">Bekleyen Çekim Talepleri</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tarih</th>
+                    <th>Kullanıcı</th>
+                    <th>Ad Soyad</th>
+                    <th>IBAN</th>
+                    <th>Tutar</th>
+                    <th>Durum</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+            <tbody id="withdrawalsBody">
+                <!-- Firebase'den doldurulacak -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Kullanıcılar -->
+    <div id="tab-users" style="display: none;">
+        <h2 style="margin-bottom: 15px; color: #a0a0a0;">Tüm Kullanıcılar</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Kullanıcı Adı</th>
+                    <th>E-posta</th>
+                    <th>Puan</th>
+                    <th>TL Bakiye</th>
+                    <th>Reklam Sayısı</th>
+                </tr>
+            </thead>
+            <tbody id="usersBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Kazananlar -->
+    <div id="tab-winners" style="display: none;">
+        <h2 style="margin-bottom: 15px; color: #a0a0a0;">30 Gün Sonu Kazananlar (İlk 10)</h2>
+        <button class="action-btn approve" style="padding: 12px 20px; font-size: 1rem; margin-bottom: 15px;" onclick="calculateWinners()">
+            🎯 Kazananları Hesapla ve Dağıt
+        </button>
+        <table>
+            <thead>
+                <tr><th>Sıra</th><th>Kullanıcı</th><th>Puan</th><th>Kazanç</th></tr>
+            </thead>
+            <tbody id="winnersBody"></tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC22SGAPMvHMyIomWJL8s9ckzFCUGGxYFc",
+            authDomain: "cashcash-70c4f.firebaseapp.com",
+            projectId: "cashcash-70c4f",
+            storageBucket: "cashcash-70c4f.firebasestorage.app",
+            messagingSenderId: "558530465357",
+            appId: "1:558530465357:web:79addaada6e233ad689604"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- Çekim Taleplerini Yükle ---
+        async function loadWithdrawals() {
+            const q = query(collection(db, "withdrawals"), orderBy("requested_at", "desc"));
+            const snap = await getDocs(q);
+            const tbody = document.getElementById('withdrawalsBody');
+            tbody.innerHTML = '';
+            
+            snap.forEach(docSnap => {
+                const d = docSnap.data();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${d.requested_at ? new Date(d.requested_at.toDate()).toLocaleDateString('tr-TR') : '-'}</td>
+                    <td>${d.username || '-'}</td>
+                    <td>${d.name} ${d.surname}</td>
+                    <td style="font-size: 0.75rem;">${d.iban}</td>
+                    <td><strong>${d.amount} TL</strong></td>
+                    <td><span class="status status-${d.status}">${d.status}</span></td>
+                    <td>
+                        ${d.status === 'beklemede' ? `
+                            <button class="action-btn approve" onclick="approveWithdrawal('${docSnap.id}')">✅ Onayla</button>
+                            <button class="action-btn reject" onclick="rejectWithdrawal('${docSnap.id}')">❌ Reddet</button>
+                        ` : '-'}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- Çekim Onaylama ---
+        window.approveWithdrawal = async (id) => {
+            if (!confirm("Bu çekim talebini onaylıyor musunuz? Para transferi yapıldı mı?")) return;
+            await updateDoc(doc(db, "withdrawals", id), {
+                status: "onaylandi",
+                processed_at: new Date()
+            });
+            alert("✅ Çekim onaylandı!");
+            loadWithdrawals();
+        };
+
+        // --- Çekim Reddetme ---
+        window.rejectWithdrawal = async (id) => {
+            if (!confirm("Bu çekim talebini reddetmek istediğinize emin misiniz?")) return;
+            await updateDoc(doc(db, "withdrawals", id), {
+                status: "reddedildi",
+                processed_at: new Date()
+            });
+            alert("❌ Çekim reddedildi.");
+            loadWithdrawals();
+        };
+
+        // --- Kullanıcıları Yükle ---
+        async function loadUsers() {
+            const q = query(collection(db, "users"), orderBy("points", "desc"), limit(100));
+            const snap = await getDocs(q);
+            const tbody = document.getElementById('usersBody');
+            tbody.innerHTML = '';
+            
+            snap.forEach(docSnap => {
+                const u = docSnap.data();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${u.username || '-'}</td>
+                    <td>${u.email || '-'}</td>
+                    <td><strong>${u.points || 0}</strong></td>
+                    <td>${u.balance_tl || 0} TL</td>
+                    <td>${u.ads_watched || 0}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- Kazananları Hesapla ---
+        window.calculateWinners = async () => {
+            if (!confirm("30 günlük yarışma bitti mi? Kazananları hesaplamak istediğinize emin misiniz?")) return;
+            
+            // Havuzdaki toplam para
+            const configSnap = await getDocs(collection(db, "config"));
+            let pool = 0;
+            configSnap.forEach(d => {
+                if (d.id === "system") pool = d.data().pool_amount || 0;
+            });
+            
+            // En yüksek puanlı 10 kullanıcı
+            const q = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
+            const snap = await getDocs(q);
+            const tbody = document.getElementById('winnersBody');
+            tbody.innerHTML = '';
+            
+            let rank = 1;
+            // Dağıtım: 1. %30, 2. %20, 3. %10, 4-10 arası eşit paylaşım
+            const distribution = [0.30, 0.20, 0.10, 0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.058];
+            
+            snap.forEach(docSnap => {
+                const u = docSnap.data();
+                const prize = (pool * distribution[rank - 1]).toFixed(2);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${rank}</strong></td>
+                    <td>${u.username || u.email}</td>
+                    <td>${u.points || 0}</td>
+                    <td style="color: #00ffcc;"><strong>${prize} TL</strong></td>
+                `;
+                tbody.appendChild(tr);
+                rank++;
+            });
+        };
+
+        // --- Sekme Değiştir ---
+        window.showTab = (tab) => {
+            document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
+            document.getElementById('tab-' + tab).style.display = 'block';
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tab === 'withdrawals') loadWithdrawals();
+            if (tab === 'users') loadUsers();
+        };
+
+        // --- İstatistikleri Yükle ---
+        async function loadStats() {
+            const usersSnap = await getDocs(collection(db, "users"));
+            document.getElementById('totalUsers').innerText = usersSnap.size;
+            
+            const wSnap = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "beklemede")));
+            document.getElementById('pendingWithdrawals').innerText = wSnap.size;
+        }
+
+        // Sayfa yüklendiğinde
+        window.onload = () => {
+            loadWithdrawals();
+            loadStats();
+        };
+    </script>
+</body>
+</html>
