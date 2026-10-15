@@ -81,9 +81,180 @@
         
         /* Davet */
         .invite-code { background: #1a1a2e; padding: 15px; border-radius: 10px; text-align: center; font-size: 1.5rem; font-weight: bold; color: #8a2be2; letter-spacing: 5px; margin: 10px 0; border: 1px dashed #8a2be2; }
+
+        /* ==== HOŞ GELDİN BONUSU MODAL ==== */
+        .welcome-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000; padding: 20px;
+        }
+        .welcome-modal-overlay.show { display: flex; }
+        .welcome-modal {
+            background: linear-gradient(180deg, #1a1a2e 0%, #0b0b1a 100%);
+            border: 2px solid #8a2be2;
+            border-radius: 25px;
+            padding: 30px 20px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.6);
+            position: relative;
+            animation: modalIn 0.5s ease-out;
+        }
+        @keyframes modalIn {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .welcome-modal .top-line {
+            width: 60%; height: 3px;
+            background: linear-gradient(90deg, transparent, #ffcc00, transparent);
+            margin: 0 auto 20px;
+            border-radius: 3px;
+        }
+        .welcome-modal .money-bag {
+            font-size: 4rem;
+            margin: 10px 0 20px;
+            display: block;
+            animation: bounce 1.5s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .welcome-modal h2 {
+            color: #ffcc00;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .welcome-modal h3 {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        .welcome-modal p {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .welcome-modal .divider {
+            height: 1px;
+            background: #2a2a4a;
+            margin: 20px 0;
+        }
+        .welcome-modal .btn-continue {
+            background: linear-gradient(135deg, #8a2be2, #6a1b9a);
+            color: #fff;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(138, 43, 226, 0.5);
+        }
+
+        /* ==== PROFİL SAYFASI ==== */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8a2be2, #00ffcc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(138, 43, 226, 0.5);
+            border: 3px solid #2a2a4a;
+        }
+        .profile-username {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .profile-email {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .profile-stat {
+            background: #1a1a2e;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #2a2a4a;
+            text-align: center;
+        }
+        .profile-stat .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00ffcc;
+        }
+        .profile-stat .label {
+            font-size: 0.75rem;
+            color: #a0a0a0;
+            margin-top: 5px;
+        }
+        .profile-menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a1a2e;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid #2a2a4a;
+            cursor: pointer;
+        }
+        .profile-menu-item:hover {
+            border-color: #8a2be2;
+        }
+        .profile-menu-item .left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .profile-menu-item .icon {
+            font-size: 1.3rem;
+        }
+        .profile-menu-item .text {
+            font-size: 0.95rem;
+        }
+        .profile-menu-item .arrow {
+            color: #a0a0a0;
+        }
     </style>
 </head>
 <body>
+
+    <!-- ==================== HOŞ GELDİN BONUSU MODAL ==================== -->
+    <div class="welcome-modal-overlay" id="welcomeModal">
+        <div class="welcome-modal">
+            <div class="top-line"></div>
+            <span class="money-bag">💰</span>
+            <h2>Harika Bir Başlangıç!</h2>
+            <h3>20 TL Kazanarak Başladın!</h3>
+            <p>CASHCASH ailesine katıldığın için 20 TL değerindeki hoş geldin bonusu hesabında hazır.</p>
+            <p>Reklam izle, sıralamada yüksel ve kazancını anında katla!</p>
+            <div class="divider"></div>
+            <button class="btn-continue" onclick="closeWelcomeModal()">DEVAM ET</button>
+        </div>
+    </div>
 
     <!-- ==================== GİRİŞ EKRANI ==================== -->
     <div id="page-login" class="page active">
@@ -118,26 +289,22 @@
             <button class="lang-btn">Dil Değiştir</button>
         </div>
         
-        <!-- Toplam Havuz (Cam Fanus) -->
         <div class="dome-container">
             <div class="dome-fill" id="dome-fill"></div>
             <div class="dome-text" id="dome-text">HAVUZ<br><span id="dome-amount">0 TL</span></div>
         </div>
         <p style="text-align: center; color: #a0a0a0; font-size: 0.85rem; margin-bottom: 15px;">30 Gün boyunca havuzda biriken para, süre sonunda ilk 10 kişiye dağıtılacak!</p>
 
-        <!-- Geri Sayım -->
         <div class="countdown-box">
             <p style="font-size: 0.85rem; color: #a0a0a0;">Yarışma Bitişine Kalan Süre</p>
             <h2 id="countdown">30 GÜN 00 SA 00 DK</h2>
         </div>
 
-        <!-- BÜYÜK AKSİYON BUTONLARI -->
         <div class="main-action-buttons">
             <button class="btn btn-purple btn-big" onclick="watchAd()">📺 REKLAM İZLE & PUAN KAZAN</button>
             <button class="btn btn-big btn-big-green" onclick="playGame()">🎮 OYNA & PUAN TOPLA</button>
         </div>
 
-        <!-- Kullanıcı Bilgi Kartı -->
         <div class="card" style="margin-top: 20px;">
             <div style="display: flex; justify-content: space-between;">
                 <div style="text-align: center; flex: 1;">
@@ -160,7 +327,6 @@
     <div id="page-tasks" class="page">
         <div class="header"><h1>📋 Görevler</h1></div>
         
-        <!-- 7 Günlük Giriş Ödülü -->
         <div class="card">
             <p class="card-title">🎁 7 GÜNLÜK GİRİŞ ÖDÜLÜ</p>
             <div class="daily-rewards" id="daily-rewards"></div>
@@ -168,7 +334,6 @@
             <p style="text-align: center; color: #a0a0a0; font-size: 0.75rem; margin-top: 8px;" id="daily-timer">Ödülünüz hazır!</p>
         </div>
 
-        <!-- Günlük Görevler -->
         <div class="card">
             <p class="card-title">📋 GÜNLÜK GÖREVLER (5 Görev)</p>
             <div id="task-list"></div>
@@ -214,6 +379,66 @@
         </div>
     </div>
 
+    <!-- ==================== PROFİL ==================== -->
+    <div id="page-profile" class="page">
+        <div class="header"><h1>👤 Profil</h1></div>
+        
+        <div class="profile-header">
+            <div class="profile-avatar" id="profile-avatar">K</div>
+            <div class="profile-username" id="profile-username">Kullanıcı Adı</div>
+            <div class="profile-email" id="profile-email">kullanici@email.com</div>
+        </div>
+
+        <div class="profile-stats">
+            <div class="profile-stat">
+                <div class="value" id="profile-points">0</div>
+                <div class="label">Toplam Puan</div>
+            </div>
+            <div class="profile-stat">
+                <div class="value" id="profile-tl">0 TL</div>
+                <div class="label">TL Bakiye</div>
+            </div>
+            <div class="profile-stat">
+                <div class="value" id="profile-ads">0</div>
+                <div class="label">İzlenen Reklam</div>
+            </div>
+            <div class="profile-stat">
+                <div class="value" id="profile-rank">-</div>
+                <div class="label">Sıralama</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <p class="card-title">HESAP BİLGİLERİ</p>
+            <div class="profile-menu-item">
+                <div class="left"><span class="icon">🆔</span><span class="text">Referans Kodu: <strong id="profile-refcode" style="color: #8a2be2;">N6SUCF</strong></span></div>
+                <span class="arrow">›</span>
+            </div>
+            <div class="profile-menu-item" onclick="showPage('page-referral')">
+                <div class="left"><span class="icon">👥</span><span class="text">Arkadaşlarını Davet Et</span></div>
+                <span class="arrow">›</span>
+            </div>
+            <div class="profile-menu-item" onclick="showPage('page-tasks')">
+                <div class="left"><span class="icon">📋</span><span class="text">Günlük Görevler</span></div>
+                <span class="arrow">›</span>
+            </div>
+            <div class="profile-menu-item">
+                <div class="left"><span class="icon">🔔</span><span class="text">Bildirimler</span></div>
+                <span class="arrow">›</span>
+            </div>
+            <div class="profile-menu-item">
+                <div class="left"><span class="icon">⚙️</span><span class="text">Ayarlar</span></div>
+                <span class="arrow">›</span>
+            </div>
+            <div class="profile-menu-item">
+                <div class="left"><span class="icon">📜</span><span class="text">Kullanım Koşulları</span></div>
+                <span class="arrow">›</span>
+            </div>
+        </div>
+
+        <button class="btn btn-red" onclick="logout()">🚪 ÇIKIŞ YAP</button>
+    </div>
+
     <!-- ==================== MARKET ==================== -->
     <div id="page-market" class="page">
         <div class="header"><h1>Market</h1></div>
@@ -249,7 +474,7 @@
         <div class="nav-item" onclick="showPage('page-tasks')"><i>📋</i> Görevler</div>
         <div class="nav-item" onclick="showPage('page-leaderboard')"><i>🏆</i> Sıralama</div>
         <div class="nav-item" onclick="showPage('page-wallet')"><i>💼</i> Cüzdan</div>
-        <div class="nav-item" onclick="showPage('page-referral')"><i>👥</i> Davet</div>
+        <div class="nav-item" onclick="showPage('page-profile')"><i>👤</i> Profil</div>
     </div>
 
     <script>
@@ -260,6 +485,9 @@
         let adsWatched = 0;
         let dailyRewardDay = 1;
         let lastClaimTime = 0;
+        let currentUsername = "Kullanıcı";
+        let currentEmail = "kullanici@email.com";
+        let userRank = "-";
         
         // Günlük Görevler
         let dailyTasks = [
@@ -301,14 +529,30 @@
             if (pageId === 'page-tasks') navItems[1].classList.add('active');
             if (pageId === 'page-leaderboard') navItems[2].classList.add('active');
             if (pageId === 'page-wallet') navItems[3].classList.add('active');
-            if (pageId === 'page-referral') navItems[4].classList.add('active');
+            if (pageId === 'page-profile') navItems[4].classList.add('active');
+            
+            // Profil sayfasına girildiğinde bilgileri güncelle
+            if (pageId === 'page-profile') {
+                updateProfile();
+            }
+        }
+
+        // --- Hoş Geldin Bonusu Modal ---
+        function showWelcomeModal() {
+            document.getElementById('welcomeModal').classList.add('show');
+        }
+        
+        function closeWelcomeModal() {
+            document.getElementById('welcomeModal').classList.remove('show');
         }
 
         // --- Giriş/Kayıt ---
         function loginUser() {
             const email = document.getElementById('login-email').value;
             if (email) {
-                document.getElementById('home-username').innerText = email.split('@')[0];
+                currentEmail = email;
+                currentUsername = email.split('@')[0];
+                document.getElementById('home-username').innerText = currentUsername;
                 showPage('page-home');
                 updateDome(0);
                 renderTasks();
@@ -318,21 +562,76 @@
         }
 
         function googleLogin() {
-            document.getElementById('home-username').innerText = "Google Kullanıcısı";
+            currentUsername = "Google Kullanıcısı";
+            currentEmail = "google@gmail.com";
+            document.getElementById('home-username').innerText = currentUsername;
             showPage('page-home');
             updateDome(0);
             renderTasks();
             renderDailyRewards();
             renderLeaderboard();
+            // Google ile giriş yapan ilk kullanıcıya hoş geldin bonusu
+            showWelcomeModal();
         }
 
         function registerUser() {
-            alert("Kayıt başarılı! Giriş yapılıyor...");
+            const email = document.getElementById('reg-email').value;
+            const username = document.getElementById('reg-username').value;
+            
+            if (!email || !username) {
+                alert("Lütfen tüm alanları doldurun!");
+                return;
+            }
+            
+            currentEmail = email;
+            currentUsername = username;
+            document.getElementById('home-username').innerText = currentUsername;
+            
+            // YENİ KAYIT OLAN KULLANICIYA 20 TL BONUS
+            userTL = 20;
+            document.getElementById('home-tl').innerText = userTL;
+            document.getElementById('wallet-tl').innerText = userTL;
+            
             showPage('page-home');
             updateDome(0);
             renderTasks();
             renderDailyRewards();
             renderLeaderboard();
+            
+            // Hoş geldin bonusunu göster
+            showWelcomeModal();
+        }
+
+        // --- Profil Güncelleme ---
+        function updateProfile() {
+            document.getElementById('profile-avatar').innerText = currentUsername.charAt(0).toUpperCase();
+            document.getElementById('profile-username').innerText = currentUsername;
+            document.getElementById('profile-email').innerText = currentEmail;
+            document.getElementById('profile-points').innerText = userPoints;
+            document.getElementById('profile-tl').innerText = userTL + ' TL';
+            document.getElementById('profile-ads').innerText = adsWatched;
+            
+            // Sıralamayı hesapla
+            let allUsers = [...leaderboardData, { name: currentUsername, ads: adsWatched, points: userPoints }];
+            allUsers.sort((a, b) => b.points - a.points);
+            const myRank = allUsers.findIndex(u => u.name === currentUsername) + 1;
+            document.getElementById('profile-rank').innerText = '#' + myRank;
+        }
+
+        // --- Çıkış Yap ---
+        function logout() {
+            if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
+                currentUsername = "Kullanıcı";
+                currentEmail = "kullanici@email.com";
+                userPoints = 0;
+                userTL = 0;
+                adsWatched = 0;
+                document.getElementById('home-username').innerText = currentUsername;
+                document.getElementById('home-points').innerText = 0;
+                document.getElementById('home-tl').innerText = 0;
+                document.getElementById('home-ads').innerText = 0;
+                showPage('page-login');
+            }
         }
 
         // --- Cam Fanus (Havuz) Güncelleme ---
@@ -348,7 +647,6 @@
         // --- ANA SAYFA REKLAM İZLE BUTONU ---
         function watchAd() {
             alert("📺 Reklam izleniyor... (AdMob)");
-            // Kodular köprüsü: window.AppInventor.setWebViewString("SHOW_AD");
             adsWatched++;
             userPoints += 10;
             userTL += 0.5;
@@ -420,7 +718,7 @@
         function renderLeaderboard() {
             const tbody = document.getElementById('leaderboard-body');
             tbody.innerHTML = '';
-            let allUsers = [...leaderboardData, { name: "SEN", ads: adsWatched, points: userPoints }];
+            let allUsers = [...leaderboardData, { name: currentUsername, ads: adsWatched, points: userPoints }];
             allUsers.sort((a, b) => b.points - a.points);
             
             allUsers.slice(0, 10).forEach((user, index) => {
