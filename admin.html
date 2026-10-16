@@ -2,33 +2,57 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CASHCASH - Admin Panel</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background: #0b0b1a; color: #fff; padding: 20px; }
         h1 { color: #8a2be2; margin-bottom: 20px; }
+        h2 { color: #a0a0a0; margin-bottom: 15px; font-size: 1.1rem; }
+        
         .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
         .stat-card { background: #1a1a2e; padding: 20px; border-radius: 12px; border: 1px solid #2a2a4a; text-align: center; }
         .stat-card .value { font-size: 2rem; font-weight: bold; color: #00ffcc; }
         .stat-card .label { font-size: 0.85rem; color: #a0a0a0; margin-top: 5px; }
+        
+        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 12px 20px; background: #1a1a2e; border: 1px solid #2a2a4a; color: #fff; cursor: pointer; border-radius: 8px; font-size: 0.9rem; }
+        .tab-btn.active { background: #8a2be2; border-color: #8a2be2; }
+        .tab-btn:hover:not(.active) { background: #252540; }
+        
         table { width: 100%; border-collapse: collapse; background: #1a1a2e; border-radius: 12px; overflow: hidden; }
         th { background: #2a2a4a; padding: 12px; text-align: left; font-size: 0.85rem; color: #a0a0a0; }
         td { padding: 12px; border-bottom: 1px solid #2a2a4a; font-size: 0.9rem; }
         tr:hover { background: #252540; }
-        .status { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        
+        .status { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; display: inline-block; }
         .status-beklemede { background: #ffcc00; color: #0b0b1a; }
         .status-onaylandi { background: #00ffcc; color: #0b0b1a; }
         .status-reddedildi { background: #ff4444; color: #fff; }
+        
         .action-btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; margin-right: 5px; }
         .approve { background: #00ffcc; color: #0b0b1a; }
         .reject { background: #ff4444; color: #fff; }
-        .tab-buttons { margin-bottom: 20px; }
-        .tab-btn { padding: 10px 20px; background: #1a1a2e; border: 1px solid #2a2a4a; color: #fff; cursor: pointer; border-radius: 8px; margin-right: 10px; }
-        .tab-btn.active { background: #8a2be2; border-color: #8a2be2; }
+        .view { background: #8a2be2; color: #fff; }
+        
+        .empty { text-align: center; padding: 40px; color: #a0a0a0; }
+        .search-box { margin-bottom: 15px; }
+        .search-box input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #2a2a4a; background: #1a1a2e; color: #fff; }
+        
+        .refresh-btn { background: #8a2be2; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
+        
+        .user-detail { background: #1a1a2e; padding: 20px; border-radius: 12px; border: 1px solid #8a2be2; margin-bottom: 20px; display: none; }
+        .user-detail.show { display: block; }
+        .user-detail h3 { color: #8a2be2; margin-bottom: 15px; }
+        .user-detail p { margin-bottom: 8px; font-size: 0.9rem; }
+        .user-detail span { color: #00ffcc; font-weight: bold; }
+        
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; background: #2a2a4a; color: #a0a0a0; }
     </style>
 </head>
 <body>
     <h1>🛡️ CASHCASH Admin Panel</h1>
+    <p style="color: #a0a0a0; margin-bottom: 20px; font-size: 0.9rem;">Canlı Veritabanı Yönetim Sistemi</p>
     
     <!-- İstatistikler -->
     <div class="stats">
@@ -37,29 +61,32 @@
             <div class="label">Toplam Kullanıcı</div>
         </div>
         <div class="stat-card">
-            <div class="value" id="totalPool">0 TL</div>
-            <div class="label">Havuzdaki Para</div>
+            <div class="value" id="totalPool">0</div>
+            <div class="label">Toplam Puan Havuzu</div>
         </div>
         <div class="stat-card">
             <div class="value" id="pendingWithdrawals">0</div>
             <div class="label">Bekleyen Çekim</div>
         </div>
         <div class="stat-card">
-            <div class="value" id="daysLeft">30</div>
-            <div class="label">Kalan Gün</div>
+            <div class="value" id="totalWithdrawn">0 TL</div>
+            <div class="label">Onaylanan Çekim</div>
         </div>
     </div>
+
+    <button class="refresh-btn" onclick="loadAllData()">🔄 Tüm Verileri Yenile</button>
 
     <!-- Sekmeler -->
     <div class="tab-buttons">
         <button class="tab-btn active" onclick="showTab('withdrawals')">💸 Çekim Talepleri</button>
         <button class="tab-btn" onclick="showTab('users')">👥 Kullanıcılar</button>
         <button class="tab-btn" onclick="showTab('winners')">🏆 Kazananlar</button>
+        <button class="tab-btn" onclick="showTab('config')">⚙️ Ayarlar</button>
     </div>
 
-    <!-- Çekim Talepleri -->
+    <!-- Çekim Talepleri Sekmesi -->
     <div id="tab-withdrawals">
-        <h2 style="margin-bottom: 15px; color: #a0a0a0;">Bekleyen Çekim Talepleri</h2>
+        <h2>Bekleyen Çekim Talepleri</h2>
         <table>
             <thead>
                 <tr>
@@ -73,45 +100,76 @@
                 </tr>
             </thead>
             <tbody id="withdrawalsBody">
-                <!-- Firebase'den doldurulacak -->
+                <tr><td colspan="7" class="empty">Yükleniyor...</td></tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Kullanıcılar -->
+    <!-- Kullanıcılar Sekmesi -->
     <div id="tab-users" style="display: none;">
-        <h2 style="margin-bottom: 15px; color: #a0a0a0;">Tüm Kullanıcılar</h2>
+        <h2>Kayıtlı Kullanıcılar</h2>
+        <div class="search-box">
+            <input type="text" id="userSearch" placeholder="🔍 Kullanıcı adı veya e-posta ara..." oninput="filterUsers()">
+        </div>
         <table>
             <thead>
                 <tr>
+                    <th>Avatar</th>
                     <th>Kullanıcı Adı</th>
                     <th>E-posta</th>
                     <th>Puan</th>
-                    <th>TL Bakiye</th>
-                    <th>Reklam Sayısı</th>
+                    <th>Reklam</th>
+                    <th>Çarpan</th>
+                    <th>İşlem</th>
                 </tr>
             </thead>
-            <tbody id="usersBody"></tbody>
+            <tbody id="usersBody">
+                <tr><td colspan="7" class="empty">Yükleniyor...</td></tr>
+            </tbody>
         </table>
     </div>
 
-    <!-- Kazananlar -->
+    <!-- Kazananlar Sekmesi -->
     <div id="tab-winners" style="display: none;">
-        <h2 style="margin-bottom: 15px; color: #a0a0a0;">30 Gün Sonu Kazananlar (İlk 10)</h2>
-        <button class="action-btn approve" style="padding: 12px 20px; font-size: 1rem; margin-bottom: 15px;" onclick="calculateWinners()">
-            🎯 Kazananları Hesapla ve Dağıt
-        </button>
+        <h2>30 Gün Sonu Kazananlar (İlk 10)</h2>
+        <p style="color: #a0a0a0; font-size: 0.85rem; margin-bottom: 15px;">Bu liste, yarışma bittiğinde havuzu paylaşacak kişileri gösterir.</p>
+        <button class="refresh-btn" onclick="calculateWinners()">🎯 Kazananları Hesapla</button>
         <table>
             <thead>
                 <tr><th>Sıra</th><th>Kullanıcı</th><th>Puan</th><th>Kazanç</th></tr>
             </thead>
-            <tbody id="winnersBody"></tbody>
+            <tbody id="winnersBody">
+                <tr><td colspan="4" class="empty">Kazananları hesaplamak için butona basın.</td></tr>
+            </tbody>
         </table>
     </div>
 
+    <!-- Ayarlar Sekmesi -->
+    <div id="tab-config" style="display: none;">
+        <h2>Sistem Ayarları</h2>
+        <div style="background: #1a1a2e; padding: 20px; border-radius: 12px; border: 1px solid #2a2a4a; max-width: 500px;">
+            <p style="margin-bottom: 15px;">Firebase Yapılandırması:</p>
+            <p style="font-size: 0.85rem; color: #a0a0a0;">Proje: <span style="color: #00ffcc;">cashcash-70c4f</span></p>
+            <p style="font-size: 0.85rem; color: #a0a0a0;">Durum: <span style="color: #00ffcc;">✅ Bağlı</span></p>
+            <hr style="border-color: #2a2a4a; margin: 15px 0;">
+            <p style="margin-bottom: 10px;">Koleksiyonlar:</p>
+            <ul style="margin-left: 20px; font-size: 0.85rem; color: #a0a0a0;">
+                <li><strong style="color: #8a2be2;">users</strong> - Kullanıcı bilgileri</li>
+                <li><strong style="color: #8a2be2;">withdrawals</strong> - Çekim talepleri</li>
+                <li><strong style="color: #8a2be2;">config</strong> - Sistem ayarları</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Kullanıcı Detay Modal -->
+    <div class="user-detail" id="userDetail"></div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { 
+            getFirestore, collection, doc, getDoc, getDocs, updateDoc, 
+            query, where, orderBy, serverTimestamp, addDoc 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC22SGAPMvHMyIomWJL8s9ckzFCUGGxYFc",
@@ -125,115 +183,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- Çekim Taleplerini Yükle ---
-        async function loadWithdrawals() {
-            const q = query(collection(db, "withdrawals"), orderBy("requested_at", "desc"));
-            const snap = await getDocs(q);
-            const tbody = document.getElementById('withdrawalsBody');
-            tbody.innerHTML = '';
-            
-            snap.forEach(docSnap => {
-                const d = docSnap.data();
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${d.requested_at ? new Date(d.requested_at.toDate()).toLocaleDateString('tr-TR') : '-'}</td>
-                    <td>${d.username || '-'}</td>
-                    <td>${d.name} ${d.surname}</td>
-                    <td style="font-size: 0.75rem;">${d.iban}</td>
-                    <td><strong>${d.amount} TL</strong></td>
-                    <td><span class="status status-${d.status}">${d.status}</span></td>
-                    <td>
-                        ${d.status === 'beklemede' ? `
-                            <button class="action-btn approve" onclick="approveWithdrawal('${docSnap.id}')">✅ Onayla</button>
-                            <button class="action-btn reject" onclick="rejectWithdrawal('${docSnap.id}')">❌ Reddet</button>
-                        ` : '-'}
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+        let allUsers = [];
+        let allWithdrawals = [];
 
-        // --- Çekim Onaylama ---
-        window.approveWithdrawal = async (id) => {
-            if (!confirm("Bu çekim talebini onaylıyor musunuz? Para transferi yapıldı mı?")) return;
-            await updateDoc(doc(db, "withdrawals", id), {
-                status: "onaylandi",
-                processed_at: new Date()
-            });
-            alert("✅ Çekim onaylandı!");
-            loadWithdrawals();
-        };
-
-        // --- Çekim Reddetme ---
-        window.rejectWithdrawal = async (id) => {
-            if (!confirm("Bu çekim talebini reddetmek istediğinize emin misiniz?")) return;
-            await updateDoc(doc(db, "withdrawals", id), {
-                status: "reddedildi",
-                processed_at: new Date()
-            });
-            alert("❌ Çekim reddedildi.");
-            loadWithdrawals();
-        };
-
-        // --- Kullanıcıları Yükle ---
-        async function loadUsers() {
-            const q = query(collection(db, "users"), orderBy("points", "desc"), limit(100));
-            const snap = await getDocs(q);
-            const tbody = document.getElementById('usersBody');
-            tbody.innerHTML = '';
-            
-            snap.forEach(docSnap => {
-                const u = docSnap.data();
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${u.username || '-'}</td>
-                    <td>${u.email || '-'}</td>
-                    <td><strong>${u.points || 0}</strong></td>
-                    <td>${u.balance_tl || 0} TL</td>
-                    <td>${u.ads_watched || 0}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // --- Kazananları Hesapla ---
-        window.calculateWinners = async () => {
-            if (!confirm("30 günlük yarışma bitti mi? Kazananları hesaplamak istediğinize emin misiniz?")) return;
-            
-            // Havuzdaki toplam para
-            const configSnap = await getDocs(collection(db, "config"));
-            let pool = 0;
-            configSnap.forEach(d => {
-                if (d.id === "system") pool = d.data().pool_amount || 0;
-            });
-            
-            // En yüksek puanlı 10 kullanıcı
-            const q = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
-            const snap = await getDocs(q);
-            const tbody = document.getElementById('winnersBody');
-            tbody.innerHTML = '';
-            
-            let rank = 1;
-            // Dağıtım: 1. %30, 2. %20, 3. %10, 4-10 arası eşit paylaşım
-            const distribution = [0.30, 0.20, 0.10, 0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.058];
-            
-            snap.forEach(docSnap => {
-                const u = docSnap.data();
-                const prize = (pool * distribution[rank - 1]).toFixed(2);
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${rank}</strong></td>
-                    <td>${u.username || u.email}</td>
-                    <td>${u.points || 0}</td>
-                    <td style="color: #00ffcc;"><strong>${prize} TL</strong></td>
-                `;
-                tbody.appendChild(tr);
-                rank++;
-            });
-        };
-
-        // --- Sekme Değiştir ---
-        window.showTab = (tab) => {
+        // ==================== SEKMELER ====================
+        window.showTab = function(tab) {
             document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
             document.getElementById('tab-' + tab).style.display = 'block';
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -243,20 +197,260 @@
             if (tab === 'users') loadUsers();
         };
 
-        // --- İstatistikleri Yükle ---
+        // ==================== İSTATİSTİKLER ====================
         async function loadStats() {
             const usersSnap = await getDocs(collection(db, "users"));
-            document.getElementById('totalUsers').innerText = usersSnap.size;
+            let totalPool = 0;
+            usersSnap.forEach(d => totalPool += (d.data().points || 0));
             
-            const wSnap = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "beklemede")));
-            document.getElementById('pendingWithdrawals').innerText = wSnap.size;
+            document.getElementById('totalUsers').innerText = usersSnap.size;
+            document.getElementById('totalPool').innerText = totalPool;
+            
+            const wSnap = await getDocs(collection(db, "withdrawals"));
+            let pending = 0, totalWithdrawn = 0;
+            wSnap.forEach(d => {
+                const w = d.data();
+                if (w.status === 'beklemede') pending++;
+                if (w.status === 'onaylandi') totalWithdrawn += w.amount;
+            });
+            
+            document.getElementById('pendingWithdrawals').innerText = pending;
+            document.getElementById('totalWithdrawn').innerText = totalWithdrawn.toFixed(2) + ' TL';
         }
 
-        // Sayfa yüklendiğinde
-        window.onload = () => {
-            loadWithdrawals();
-            loadStats();
+        // ==================== ÇEKİM TALEPLERİ ====================
+        async function loadWithdrawals() {
+            const tbody = document.getElementById('withdrawalsBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="empty">Yükleniyor...</td></tr>';
+            
+            try {
+                const q = query(collection(db, "withdrawals"), orderBy("requestedAt", "desc"));
+                const snap = await getDocs(q);
+                
+                allWithdrawals = [];
+                snap.forEach(d => allWithdrawals.push({ id: d.id, ...d.data() }));
+                
+                if (allWithdrawals.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty">Henüz çekim talebi yok.</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                allWithdrawals.forEach(w => {
+                    const date = w.requestedAt ? new Date(w.requestedAt.toDate()).toLocaleString('tr-TR') : '-';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-size: 0.8rem;">${date}</td>
+                        <td><strong>${w.username || '-'}</strong></td>
+                        <td>${w.name} ${w.surname}</td>
+                        <td style="font-size: 0.75rem; font-family: monospace;">${w.iban}</td>
+                        <td><strong style="color: #00ffcc;">${w.amount} TL</strong></td>
+                        <td><span class="status status-${w.status}">${w.status}</span></td>
+                        <td>
+                            ${w.status === 'beklemede' ? `
+                                <button class="action-btn approve" onclick="approveWithdrawal('${w.id}')">✅ Onayla</button>
+                                <button class="action-btn reject" onclick="rejectWithdrawal('${w.id}')">❌ Reddet</button>
+                            ` : '-'}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error("Çekimler yüklenemedi:", error);
+                tbody.innerHTML = '<tr><td colspan="7" class="empty">Hata: ' + error.message + '</td></tr>';
+            }
+        }
+
+        // Çekim Onaylama
+        window.approveWithdrawal = async function(id) {
+            const w = allWithdrawals.find(x => x.id === id);
+            if (!w) return;
+            
+            if (!confirm(`Bu çekim talebini onaylıyor musunuz?\n\n👤 ${w.name} ${w.surname}\n💵 ${w.amount} TL\n🏦 ${w.iban}\n\n⚠️ Banka transferini yaptığınızdan emin olun!`)) return;
+            
+            try {
+                await updateDoc(doc(db, "withdrawals", id), {
+                    status: "onaylandi",
+                    processedAt: serverTimestamp()
+                });
+                alert("✅ Çekim onaylandı! Banka transferini yapmayı unutmayın.");
+                loadWithdrawals();
+                loadStats();
+            } catch (error) {
+                alert("Hata: " + error.message);
+            }
         };
-    </script>
-</body>
-</html>
+
+        // Çekim Reddetme
+        window.rejectWithdrawal = async function(id) {
+            const reason = prompt("Reddetme sebebi (opsiyonel):");
+            if (reason === null) return;
+            
+            try {
+                const w = allWithdrawals.find(x => x.id === id);
+                await updateDoc(doc(db, "withdrawals", id), {
+                    status: "reddedildi",
+                    processedAt: serverTimestamp(),
+                    adminNote: reason || "Belirtilmedi"
+                });
+                
+                // Bakiyeyi iade et
+                if (w && w.uid) {
+                    const userRef = doc(db, "users", w.uid);
+                    const userSnap = await getDoc(userRef);
+                    if (userSnap.exists()) {
+                        await updateDoc(userRef, {
+                            tl: (userSnap.data().tl || 0) + w.amount
+                        });
+                    }
+                }
+                
+                alert("❌ Çekim reddedildi. Bakiye iade edildi.");
+                loadWithdrawals();
+                loadStats();
+            } catch (error) {
+                alert("Hata: " + error.message);
+            }
+        };
+
+        // ==================== KULLANICILAR ====================
+        async function loadUsers() {
+            const tbody = document.getElementById('usersBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="empty">Yükleniyor...</td></tr>';
+            
+            try {
+                const q = query(collection(db, "users"), orderBy("points", "desc"));
+                const snap = await getDocs(q);
+                
+                allUsers = [];
+                snap.forEach(d => allUsers.push({ id: d.id, ...d.data() }));
+                
+                if (allUsers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty">Henüz kayıtlı kullanıcı yok.</td></tr>';
+                    return;
+                }
+                
+                renderUsersTable(allUsers);
+            } catch (error) {
+                console.error("Kullanıcılar yüklenemedi:", error);
+                tbody.innerHTML = '<tr><td colspan="7" class="empty">Hata: ' + error.message + '</td></tr>';
+            }
+        }
+
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersBody');
+            tbody.innerHTML = '';
+            
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-size: 1.5rem;">${u.avatar || '👤'}</td>
+                    <td><strong>${u.username || '-'}</strong></td>
+                    <td style="font-size: 0.85rem;">${u.email || '-'}</td>
+                    <td><strong style="color: #8a2be2;">${u.points || 0}</strong></td>
+                    <td>${u.ads || 0}</td>
+                    <td><span class="badge">${(u.multiplier || 1.0).toFixed(1)}x ${u.package || 'FREE'}</span></td>
+                    <td>
+                        <button class="action-btn view" onclick="viewUser('${u.id}')">👁️ Detay</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Kullanıcı Arama
+        window.filterUsers = function() {
+            const search = document.getElementById('userSearch').value.toLowerCase();
+            const filtered = allUsers.filter(u => 
+                (u.username || '').toLowerCase().includes(search) ||
+                (u.email || '').toLowerCase().includes(search)
+            );
+            renderUsersTable(filtered);
+        };
+
+        // Kullanıcı Detay
+        window.viewUser = async function(id) {
+            try {
+                const userSnap = await getDoc(doc(db, "users", id));
+                if (!userSnap.exists()) return;
+                const u = userSnap.data();
+                
+                // Kullanıcının çekimlerini getir
+                const wq = query(collection(db, "withdrawals"), where("uid", "==", u.email));
+                const wSnap = await getDocs(wq);
+                let withdrawalsHtml = '';
+                wSnap.forEach(d => {
+                    const w = d.data();
+                    withdrawalsHtml += `<p style="font-size: 0.8rem;">💸 ${w.amount} TL - <span class="status status-${w.status}">${w.status}</span></p>`;
+                });
+                
+                const detail = document.getElementById('userDetail');
+                detail.innerHTML = `
+                    <h3>👤 ${u.avatar || ''} ${u.username}</h3>
+                    <p><strong>E-posta:</strong> <span>${u.email}</span></p>
+                    <p><strong>Puan:</strong> <span>${u.points || 0}</span></p>
+                    <p><strong>TL Bakiye:</strong> <span>${(u.tl || 0).toFixed(2)} TL</span></p>
+                    <p><strong>İzlenen Reklam:</strong> <span>${u.ads || 0}</span></p>
+                    <p><strong>Çarpan:</strong> <span>${(u.multiplier || 1.0).toFixed(1)}x (${u.package || 'FREE'})</span></p>
+                    <p><strong>Referans Kodu:</strong> <span>${u.referralCode || '-'}</span></p>
+                    <p><strong>Kayıt Tarihi:</strong> <span>${u.createdAt ? new Date(u.createdAt.toDate()).toLocaleString('tr-TR') : '-'}</span></p>
+                    <hr style="border-color: #2a2a4a; margin: 15px 0;">
+                    <p><strong>Çekim Geçmişi:</strong></p>
+                    ${withdrawalsHtml || '<p style="font-size: 0.8rem; color: #a0a0a0;">Henüz çekim yok</p>'}
+                    <div style="margin-top: 15px;">
+                        <button class="action-btn" style="background: #ff4444; color: white;" onclick="deleteUser('${id}')">🗑️ Kullanıcıyı Sil</button>
+                        <button class="action-btn" style="background: #2a2a4a; color: white;" onclick="document.getElementById('userDetail').classList.remove('show')">Kapat</button>
+                    </div>
+                `;
+                detail.classList.add('show');
+                detail.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                alert("Hata: " + error.message);
+            }
+        };
+
+        window.deleteUser = async function(id) {
+            if (!confirm("Bu kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz!")) return;
+            alert("Silme işlemi manuel olarak Firebase Console'dan yapılmalıdır (güvenlik).");
+        };
+
+        // ==================== KAZANANLAR ====================
+        window.calculateWinners = async function() {
+            if (!confirm("Kazananları hesaplamak istediğinize emin misiniz?\n\nBu işlem 30 günlük yarışma bittikten sonra yapılmalıdır.")) return;
+            
+            try {
+                const q = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
+                const snap = await getDocs(q);
+                const tbody = document.getElementById('winnersBody');
+                tbody.innerHTML = '';
+                
+                if (snap.empty) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty">Kullanıcı bulunamadı.</td></tr>';
+                    return;
+                }
+                
+                // Toplam havuzu al
+                let pool = 0;
+                const allUsersSnap = await getDocs(collection(db, "users"));
+                allUsersSnap.forEach(d => pool += (d.data().points || 0));
+                
+                // Dağıtım oranları (yüzde)
+                const distribution = [30, 20, 10, 5.7, 5.7, 5.7, 5.7, 5.7, 5.7, 5.8];
+                
+                let rank = 0;
+                snap.forEach(d => {
+                    const u = d.data();
+                    const prize = (pool * distribution[rank] / 100).toFixed(2);
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${rank + 1}</strong></td>
+                        <td>${u.avatar || ''} ${u.username}</td>
+                        <td>${u.points || 0}</td>
+                        <td><strong style="color: #00ffcc;">${prize} Puan</strong></td>
+                    `;
+                    tbody.appendChild(tr);
+                    rank++;
+                });
+                
+                alert(`✅ Kazananlar hesaplandı!\n\nToplam Havuz: ${pool} Puan`);
+            } catch (error
