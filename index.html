@@ -48,16 +48,7 @@
         @keyframes glow { 0%, 100% { box-shadow: 0 0 5px rgba(255, 204, 0, 0.4); } 50% { box-shadow: 0 0 20px rgba(255, 204, 0, 0.8); } }
         .multiplier-card.active-glow { animation: glow 2s infinite; }
         
-        /* REKLAM BEKLEME SÜRESİ */
-        .ad-cooldown-box {
-            background: linear-gradient(135deg, #2a1a1a 0%, #1a1a2e 100%);
-            border: 1px solid #ff4444;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-            display: none;
-        }
+        .ad-cooldown-box { background: linear-gradient(135deg, #2a1a1a 0%, #1a1a2e 100%); border: 1px solid #ff4444; border-radius: 15px; padding: 15px; margin-bottom: 15px; text-align: center; display: none; }
         .ad-cooldown-box.active { display: block; }
         .ad-cooldown-box h4 { color: #ff4444; font-size: 0.9rem; margin-bottom: 8px; }
         .ad-cooldown-timer { font-size: 2rem; font-weight: bold; color: #ffcc00; }
@@ -121,7 +112,6 @@
         .welcome-modal .divider { height: 1px; background: #2a2a4a; margin: 20px 0; }
         .welcome-modal .btn-continue { background: linear-gradient(135deg, #8a2be2, #6a1b9a); color: #fff; padding: 15px; border: none; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 20px rgba(138, 43, 226, 0.5); }
 
-        /* PROFİL */
         .profile-header { text-align: center; margin-bottom: 25px; }
         .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #8a2be2, #00ffcc); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 3rem; font-weight: bold; color: #fff; box-shadow: 0 0 25px rgba(138, 43, 226, 0.5); border: 3px solid #2a2a4a; cursor: pointer; position: relative; }
         .profile-avatar .edit-icon { position: absolute; bottom: 0; right: 0; background: #8a2be2; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 2px solid #0b0b1a; }
@@ -138,14 +128,12 @@
         .profile-menu-item .text { font-size: 0.95rem; }
         .profile-menu-item .arrow { color: #a0a0a0; }
 
-        /* MODAL (Genel) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
         .modal-overlay.show { display: flex; }
         .modal-box { background: linear-gradient(180deg, #1a1a2e 0%, #0b0b1a 100%); border: 2px solid #8a2be2; border-radius: 20px; padding: 25px 20px; max-width: 400px; width: 100%; }
         .modal-box h2 { color: #8a2be2; margin-bottom: 15px; text-align: center; font-size: 1.3rem; }
         .modal-box .close-btn { background: #ff4444; color: #fff; padding: 10px; border-radius: 10px; border: none; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        /* İKON SEÇİMİ */
         .icon-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 15px; }
         .icon-option { aspect-ratio: 1; background: #1a1a2e; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; border: 2px solid #2a2a4a; }
         .icon-option:hover, .icon-option.selected { border-color: #8a2be2; background: #2a2a4a; }
@@ -160,11 +148,11 @@
     <div class="welcome-modal-overlay" id="welcomeModal">
         <div class="welcome-modal">
             <div class="top-line"></div>
-            <span class="money-bag">💰</span>
+            <span class="money-bag">🎁</span>
             <h2>Harika Bir Başlangıç!</h2>
-            <h3>20 TL Kazanarak Başladın!</h3>
-            <p>CASHCASH ailesine katıldığın için 20 TL değerindeki hoş geldin bonusu hesabında hazır.</p>
-            <p>Reklam izle, sıralamada yüksel ve kazancını anında katla!</p>
+            <h3>Hoş Geldin Bonusu: 100 PUAN!</h3>
+            <p>CASHCASH ailesine katıldığın için 100 puan değerindeki hoş geldin bonusu hesabında hazır.</p>
+            <p>Reklam izle, oyun oyna ve sıralamada yüksel!</p>
             <div class="divider"></div>
             <button class="btn-continue" onclick="closeWelcomeModal()">DEVAM ET</button>
         </div>
@@ -174,9 +162,7 @@
     <div class="modal-overlay" id="avatarModal">
         <div class="modal-box">
             <h2>Profil Resmini Seç</h2>
-            <div class="icon-grid" id="iconGrid">
-                <!-- JavaScript ile doldurulacak -->
-            </div>
+            <div class="icon-grid" id="iconGrid"></div>
             <button class="close-btn" onclick="closeModal('avatarModal')">KAPAT</button>
         </div>
     </div>
@@ -185,9 +171,7 @@
     <div class="modal-overlay" id="usernameModal">
         <div class="modal-box">
             <h2>İsmini Değiştir</h2>
-            <div class="input-group">
-                <input type="text" id="new-username" placeholder="Yeni Kullanıcı Adınız">
-            </div>
+            <div class="input-group"><input type="text" id="new-username" placeholder="Yeni Kullanıcı Adınız"></div>
             <button class="btn btn-purple" onclick="saveNewUsername()">KAYDET</button>
             <button class="close-btn" onclick="closeModal('usernameModal')">İPTAL</button>
         </div>
@@ -197,28 +181,21 @@
     <div class="modal-overlay" id="passwordModal">
         <div class="modal-box">
             <h2>Şifreni Değiştir</h2>
-            <div class="input-group">
-                <input type="password" id="old-password" placeholder="Mevcut Şifre">
-            </div>
-            <div class="input-group">
-                <input type="password" id="new-password" placeholder="Yeni Şifre">
-            </div>
-            <div class="input-group">
-                <input type="password" id="new-password2" placeholder="Yeni Şifre Tekrar">
-            </div>
+            <div class="input-group"><input type="password" id="old-password" placeholder="Mevcut Şifre"></div>
+            <div class="input-group"><input type="password" id="new-password" placeholder="Yeni Şifre"></div>
+            <div class="input-group"><input type="password" id="new-password2" placeholder="Yeni Şifre Tekrar"></div>
             <button class="btn btn-purple" onclick="saveNewPassword()">KAYDET</button>
             <button class="close-btn" onclick="closeModal('passwordModal')">İPTAL</button>
         </div>
     </div>
 
-    <!-- Toast Bildirim -->
     <div class="toast" id="toast">Mesaj</div>
 
     <!-- GİRİŞ EKRANI -->
     <div id="page-login" class="page active">
         <div class="login-container">
             <h1 style="color: #8a2be2; text-align: center; margin-bottom: 10px;">CASHCASH</h1>
-            <p style="text-align: center; color: #a0a0a0; margin-bottom: 30px;">30 Günlük Dev Cam Fanus Yarışması</p>
+            <p style="text-align: center; color: #a0a0a0; margin-bottom: 30px;">30 Günlük Puan Yarışması</p>
             <div class="input-group"><input type="email" id="login-email" placeholder="E-posta Adresi"></div>
             <div class="input-group"><input type="password" id="login-password" placeholder="Şifre"></div>
             <button class="btn btn-purple" onclick="loginUser()">GİRİŞ YAP</button>
@@ -249,13 +226,13 @@
         
         <div class="dome-container">
             <div class="dome-fill" id="dome-fill"></div>
-            <div class="dome-text" id="dome-text">HAVUZ<br><span id="dome-amount">0 TL</span></div>
+            <div class="dome-text" id="dome-text">HAVUZ<br><span id="dome-amount">0 Puan</span></div>
         </div>
-        <p style="text-align: center; color: #a0a0a0; font-size: 0.85rem; margin-bottom: 15px;">30 Gün boyunca havuzda biriken para, süre sonunda ilk 10 kişiye dağıtılacak!</p>
+        <p style="text-align: center; color: #a0a0a0; font-size: 0.85rem; margin-bottom: 15px;">30 Gün boyunca toplanan puanlar, süre sonunda ilk 10 kişiye dağıtılacak!</p>
 
         <div class="countdown-box">
             <p style="font-size: 0.85rem; color: #a0a0a0;">Yarışma Bitişine Kalan Süre</p>
-            <h2 id="countdown">30 GÜN 00 SA 00 DK</h2>
+            <h2 id="countdown">30 GÜN 00 SA 00 DK 00 SN</h2>
         </div>
 
         <div class="stats-grid">
@@ -271,24 +248,17 @@
                 <div class="multiplier-badge" id="multiplier-badge">FREE</div>
             </div>
             <div class="stat-card tl-card">
-                <div class="stat-icon">💵</div>
-                <div class="stat-label">TL Bakiye</div>
-                <div class="stat-value" id="home-tl">0</div>
-            </div>
-        </div>
-
-        <div class="card" style="margin-top: 15px; padding: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.85rem; color: #a0a0a0;">📺 İzlenen Reklam</span>
-                <span style="font-size: 1.1rem; font-weight: bold; color: #ffcc00;" id="home-ads">0</span>
+                <div class="stat-icon">📺</div>
+                <div class="stat-label">Reklam</div>
+                <div class="stat-value" id="home-ads">0</div>
             </div>
         </div>
 
         <!-- REKLAM BEKLEME SÜRESİ -->
         <div class="ad-cooldown-box" id="adCooldownBox">
-            <h4>⏱️ Sonraki Reklam İçin Bekle</h4>
-            <div class="ad-cooldown-timer" id="adCooldownTimer">05:00</div>
-            <div class="ad-cooldown-text">AdMob bot koruması aktif. Kısa sürede çok reklam izlemek hesabınızı riske atar.</div>
+            <h4>⏱️ 3 Reklam İzledin - Kısa Mola!</h4>
+            <div class="ad-cooldown-timer" id="adCooldownTimer">03:00</div>
+            <div class="ad-cooldown-text">AdMob bot koruması: 3 dakika sonra tekrar izleyebilirsin.</div>
         </div>
 
         <div class="main-action-buttons">
@@ -301,13 +271,13 @@
     <div id="page-tasks" class="page">
         <div class="header"><h1>📋 Görevler</h1></div>
         <div class="card">
-            <p class="card-title">🎁 7 GÜNLÜK GİRİŞ ÖDÜLÜ</p>
+            <p class="card-title">🎁 7 GÜNLÜK GİRİŞ ÖDÜLÜ (PUAN)</p>
             <div class="daily-rewards" id="daily-rewards"></div>
             <button class="btn btn-yellow" id="daily-btn" onclick="claimDailyReward()">BUGÜNÜN ÖDÜLÜNÜ AL</button>
             <p style="text-align: center; color: #a0a0a0; font-size: 0.75rem; margin-top: 8px;" id="daily-timer">Ödülünüz hazır!</p>
         </div>
         <div class="card">
-            <p class="card-title">📋 GÜNLÜK GÖREVLER</p>
+            <p class="card-title">📋 GÜNLÜK GÖREVLER (Puan Ödüllü)</p>
             <div id="task-list"></div>
         </div>
     </div>
@@ -320,7 +290,7 @@
         </div>
         <div class="card">
             <p class="card-title">EN ÇOK PUAN TOPLAYANLAR</p>
-            <p style="font-size: 0.8rem; color: #a0a0a0; margin-bottom: 10px;">İlk 10 kişi havuzdaki parayı paylaşacak!</p>
+            <p style="font-size: 0.8rem; color: #a0a0a0; margin-bottom: 10px;">İlk 10 kişi ödül havuzunu paylaşacak!</p>
             <table class="leaderboard">
                 <thead>
                     <tr><th>#</th><th>Kullanıcı</th><th>Reklam</th><th>Puan</th></tr>
@@ -337,18 +307,19 @@
     <div id="page-wallet" class="page">
         <div class="header"><h1>Cüzdan</h1></div>
         <div class="card" style="text-align: center;">
-            <p class="card-title">TL BAKİYE</p>
-            <p class="card-value" id="wallet-tl">0</p>
-        </div>
-        <div class="card" style="text-align: center;">
             <p class="card-title">TOPLAM PUAN</p>
             <p class="card-value" id="wallet-points">0</p>
+        </div>
+        <div class="card" style="text-align: center;">
+            <p class="card-title">TL BAKİYE (Kazandığın Puanlar)</p>
+            <p class="card-value" id="wallet-tl">0</p>
         </div>
         <button class="btn btn-purple" onclick="convertPointsToTL()">💱 PUAN'DAN TL'YE DÖNÜŞTÜR</button>
         <button class="btn btn-green" onclick="convertTLToPoints()">💱 TL'DEN PUAN'A DÖNÜŞTÜR</button>
         
         <div class="card" style="margin-top: 20px;">
             <p class="card-title">💸 ÇEKİM TALEBİ OLUŞTUR</p>
+            <p style="font-size: 0.75rem; color: #a0a0a0; margin-bottom: 10px;">100 Puan = 1 TL</p>
             <div class="input-group"><input type="text" id="withdraw-name" placeholder="Adınız (Zorunlu)"></div>
             <div class="input-group"><input type="text" id="withdraw-surname" placeholder="Soyadınız (Zorunlu)"></div>
             <div class="input-group"><input type="text" id="withdraw-iban" placeholder="IBAN (TRxx xxxx ...)"></div>
@@ -376,16 +347,16 @@
                 <div class="label">Toplam Puan</div>
             </div>
             <div class="profile-stat">
-                <div class="value" id="profile-tl">0 TL</div>
-                <div class="label">TL Bakiye</div>
-            </div>
-            <div class="profile-stat">
                 <div class="value" id="profile-ads">0</div>
                 <div class="label">İzlenen Reklam</div>
             </div>
             <div class="profile-stat">
                 <div class="value" id="profile-multiplier">1.0x</div>
                 <div class="label">Çarpan</div>
+            </div>
+            <div class="profile-stat">
+                <div class="value" id="profile-rank">-</div>
+                <div class="label">Sıralama</div>
             </div>
         </div>
 
@@ -434,25 +405,25 @@
             <div class="market-card" id="pkg-bronze">
                 <h3 style="color: #cd7f32;">BRONZE</h3>
                 <p class="multiplier">1.5x Çarpan</p>
-                <p class="price">85 TL</p>
+                <p class="price">85 Puan</p>
                 <button class="btn btn-yellow" style="padding: 8px; font-size: 0.8rem;" onclick="buyPackage('Bronze', 85, 1.5)">SATIN AL</button>
             </div>
             <div class="market-card" id="pkg-silver">
                 <h3 style="color: #c0c0c0;">SILVER</h3>
                 <p class="multiplier">2.0x Çarpan</p>
-                <p class="price">179 TL</p>
+                <p class="price">179 Puan</p>
                 <button class="btn btn-yellow" style="padding: 8px; font-size: 0.8rem;" onclick="buyPackage('Silver', 179, 2.0)">SATIN AL</button>
             </div>
             <div class="market-card" id="pkg-gold">
                 <h3 style="color: #ffd700;">GOLD</h3>
                 <p class="multiplier">3.0x Çarpan</p>
-                <p class="price">399 TL</p>
+                <p class="price">399 Puan</p>
                 <button class="btn btn-yellow" style="padding: 8px; font-size: 0.8rem;" onclick="buyPackage('Gold', 399, 3.0)">SATIN AL</button>
             </div>
             <div class="market-card" id="pkg-diamond">
                 <h3 style="color: #b9f2ff;">DIAMOND</h3>
                 <p class="multiplier">5.0x Çarpan</p>
-                <p class="price">899 TL</p>
+                <p class="price">899 Puan</p>
                 <button class="btn btn-yellow" style="padding: 8px; font-size: 0.8rem;" onclick="buyPackage('Diamond', 899, 5.0)">SATIN AL</button>
             </div>
         </div>
@@ -463,7 +434,7 @@
         <div class="header"><h1>Davet</h1></div>
         <div class="card">
             <p class="card-title">🤝 REFERANS AĞINI GENİŞLET</p>
-            <p style="font-size: 0.85rem; color: #a0a0a0; margin-bottom: 10px;">Arkadaşını davet et, sen <strong>5 TL</strong> kazan, arkadaşın <strong>1 TL</strong> kazansın!</p>
+            <p style="font-size: 0.85rem; color: #a0a0a0; margin-bottom: 10px;">Arkadaşını davet et, sen <strong style="color: #ffcc00;">+50 PUAN</strong> kazan, arkadaşın <strong style="color: #00ffcc;">+10 PUAN</strong> kazansın!</p>
             <div class="invite-code" id="invite-code">N6SUCF</div>
             <button class="btn btn-purple" onclick="copyCode()">KOPYALA</button>
             <button class="btn btn-green" onclick="shareInvite()">ARKADAŞLARINI DAVET ET</button>
@@ -494,28 +465,44 @@
         let currentAvatar = "K";
         let userPassword = "";
         
-        // ADMOB BEKLEME SÜRESİ (5 DAKİKA)
-        const AD_COOLDOWN = 5 * 60 * 1000; // 5 dakika
+        // ADMOB KORUMASI: Her 3 reklamda bir 3 dakika bekleme
+        const ADS_BEFORE_COOLDOWN = 3; // 3 reklam sonra
+        const AD_COOLDOWN = 3 * 60 * 1000; // 3 dakika bekleme
         let lastAdTime = 0;
         let adCooldownInterval = null;
+        
+        // YARIŞMA BİTİŞ TARİHİ (30 GÜN) - İlk açılışta ayarlanır
+        let competitionEndTime = localStorage.getItem('competitionEndTime');
+        if (!competitionEndTime) {
+            competitionEndTime = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 gün
+            localStorage.setItem('competitionEndTime', competitionEndTime);
+        } else {
+            competitionEndTime = parseInt(competitionEndTime);
+        }
         
         const BASE_AD_POINTS = 10;
         const POINT_TO_TL_RATE = 100; // 100 Puan = 1 TL
         const TL_TO_POINT_RATE = 100; // 1 TL = 100 Puan
+        const WELCOME_BONUS = 100; // Hoş geldin bonusu puan
+        const DAILY_REWARDS = [10, 20, 30, 50, 75, 100, 150]; // 7 günlük puan ödülleri
+        
+        // GÜNLÜK GÖREV PUANLARI
+        const TASK_AD_POINTS = 20; // Her reklam görevi 20 puan
+        const TASK_GAME_POINTS = 50; // Her oyun görevi 50 puan
         
         // İKON LİSTESİ
         const avatarIcons = ["😎", "🦁", "🚀", "⭐", "🔥", "💎", "🎯", "👑", "🐉", "🦊", "🐺", "🎮", "⚡", "🌟", "💪", "🧠", "🎨", "🏆"];
 
-        // ============ KAYITLI KULLANICILAR (Sadece gerçek kullanıcılar) ============
+        // KAYITLI KULLANICILAR
         let registeredUsers = [];
 
-        // ============ GÖREVLER ============
+        // GÖREVLER (Her biri 3 reklam veya 3 oyun)
         let dailyTasks = [
-            { id: 1, title: "Reklam İzle (1/3)", desc: "3 reklam izle", reward: 1, done: false, type: 'ad' },
-            { id: 2, title: "Reklam İzle (2/3)", desc: "3 reklam izle", reward: 1, done: false, type: 'ad' },
-            { id: 3, title: "Reklam İzle (3/3)", desc: "3 reklam izle", reward: 1, done: false, type: 'ad' },
-            { id: 4, title: "Para Yakala Oyunu (1/2)", desc: "Düşen paraları yakala", reward: 2, done: false, type: 'game' },
-            { id: 5, title: "Para Yakala Oyunu (2/2)", desc: "Düşen paraları yakala", reward: 2, done: false, type: 'game' }
+            { id: 1, title: "Reklam İzle (1/3)", desc: "3 reklam izle", reward: TASK_AD_POINTS, done: false, type: 'ad', progress: 0, target: 3 },
+            { id: 2, title: "Reklam İzle (2/3)", desc: "3 reklam izle", reward: TASK_AD_POINTS, done: false, type: 'ad', progress: 0, target: 3 },
+            { id: 3, title: "Reklam İzle (3/3)", desc: "3 reklam izle", reward: TASK_AD_POINTS, done: false, type: 'ad', progress: 0, target: 3 },
+            { id: 4, title: "Oyun Oyna (1/2)", desc: "2 oyun oyna", reward: TASK_GAME_POINTS, done: false, type: 'game', progress: 0, target: 2 },
+            { id: 5, title: "Oyun Oyna (2/2)", desc: "2 oyun oyna", reward: TASK_GAME_POINTS, done: false, type: 'game', progress: 0, target: 2 }
         ];
 
         // ============ SAYFA GEÇİŞ ============
@@ -541,6 +528,28 @@
             if (pageId === 'page-market') updateMarketView();
             if (pageId === 'page-leaderboard') renderLeaderboard();
         }
+
+        // ============ 30 GÜNLÜK GERİ SAYIM ============
+        function updateCountdown() {
+            const now = Date.now();
+            const diff = competitionEndTime - now;
+            
+            if (diff <= 0) {
+                document.getElementById('countdown').innerText = "YARIŞMA BİTTİ!";
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            
+            document.getElementById('countdown').innerText = 
+                `${days} GÜN ${String(hours).padStart(2, '0')} SA ${String(minutes).padStart(2, '0')} DK ${String(seconds).padStart(2, '0')} SN`;
+        }
+        
+        // Her saniye geri sayımı güncelle
+        setInterval(updateCountdown, 1000);
 
         // ============ MODAL İŞLEMLERİ ============
         function openAvatarModal() {
@@ -610,7 +619,6 @@
             setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
-        // ============ HOŞ GELDİN ============
         function showWelcomeModal() { document.getElementById('welcomeModal').classList.add('show'); }
         function closeWelcomeModal() { document.getElementById('welcomeModal').classList.remove('show'); }
 
@@ -619,17 +627,18 @@
             const email = document.getElementById('login-email').value;
             if (!email) { alert("Lütfen e-posta girin!"); return; }
             
-            // Kayıtlı kullanıcı kontrolü
             const existingUser = registeredUsers.find(u => u.email === email);
             if (existingUser) {
                 currentEmail = existingUser.email;
                 currentUsername = existingUser.username;
                 currentAvatar = existingUser.avatar || "K";
                 userPoints = existingUser.points;
-                userTL = existingUser.tl;
+                userTL = existingUser.tl || 0;
                 adsWatched = existingUser.ads;
                 userMultiplier = existingUser.multiplier || 1.0;
                 ownedPackage = existingUser.package || "FREE";
+                dailyRewardDay = existingUser.dailyRewardDay || 1;
+                lastClaimTime = existingUser.lastClaimTime || 0;
             } else {
                 currentEmail = email;
                 currentUsername = email.split('@')[0];
@@ -637,32 +646,34 @@
             
             document.getElementById('home-username').innerText = currentUsername;
             showPage('page-home');
-            updateDome(0);
+            updateStatsView();
             renderTasks();
             renderDailyRewards();
             renderLeaderboard();
-            updateStatsView();
             checkAdCooldown();
+            updateCountdown();
         }
 
         function googleLogin() {
             currentUsername = "Google Kullanıcısı";
             currentEmail = "google@gmail.com";
+            userPoints = WELCOME_BONUS;
             document.getElementById('home-username').innerText = currentUsername;
             showPage('page-home');
-            updateDome(0);
+            updateStatsView();
             renderTasks();
             renderDailyRewards();
             renderLeaderboard();
-            updateStatsView();
             showWelcomeModal();
             checkAdCooldown();
+            updateCountdown();
         }
 
         function registerUser() {
             const email = document.getElementById('reg-email').value;
             const username = document.getElementById('reg-username').value;
             const password = document.getElementById('reg-password').value;
+            const referralCode = document.getElementById('reg-referral').value;
             
             if (!email || !username || !password) {
                 alert("Lütfen tüm alanları doldurun!");
@@ -678,7 +689,18 @@
             currentUsername = username;
             userPassword = password;
             currentAvatar = username.charAt(0).toUpperCase();
-            userTL = 20; // HOŞ GELDİN BONUSU
+            userPoints = WELCOME_BONUS; // 100 PUAN HOŞ GELDİN BONUSU
+            userTL = 0;
+            
+            // Davet kodu kontrolü
+            if (referralCode && referralCode.length > 0) {
+                const referrer = registeredUsers.find(u => u.referralCode === referralCode);
+                if (referrer) {
+                    referrer.points += 50; // Davet edene +50 puan
+                    userPoints += 10; // Davet edilene +10 puan
+                    showToast(`🎉 Davet kodu kullanıldı! +10 Puan kazandın!`);
+                }
+            }
             
             // Kullanıcıyı kayıtlı listeye ekle
             registeredUsers.push({
@@ -689,24 +711,26 @@
                 tl: userTL,
                 ads: adsWatched,
                 multiplier: userMultiplier,
-                package: ownedPackage
+                package: ownedPackage,
+                referralCode: 'REF' + Math.floor(Math.random() * 100000),
+                dailyRewardDay: 1,
+                lastClaimTime: 0
             });
             
             document.getElementById('home-username').innerText = currentUsername;
             showPage('page-home');
-            updateDome(0);
+            updateStatsView();
             renderTasks();
             renderDailyRewards();
             renderLeaderboard();
-            updateStatsView();
             showWelcomeModal();
             checkAdCooldown();
+            updateCountdown();
         }
 
         // ============ İSTATİSTİK GÜNCELLE ============
         function updateStatsView() {
             document.getElementById('home-points').innerText = userPoints;
-            document.getElementById('home-tl').innerText = userTL.toFixed(2);
             document.getElementById('home-ads').innerText = adsWatched;
             document.getElementById('home-multiplier').innerText = userMultiplier.toFixed(1) + 'x';
             document.getElementById('multiplier-badge').innerText = ownedPackage;
@@ -715,8 +739,15 @@
             if (userMultiplier > 1.0) multCard.classList.add('active-glow');
             else multCard.classList.remove('active-glow');
             
-            document.getElementById('wallet-tl').innerText = userTL.toFixed(2);
             document.getElementById('wallet-points').innerText = userPoints;
+            document.getElementById('wallet-tl').innerText = userTL.toFixed(2);
+            
+            // Havuzu güncelle (tüm kullanıcıların toplam puanı)
+            let totalPool = userPoints;
+            registeredUsers.forEach(u => {
+                if (u.email !== currentEmail) totalPool += (u.points || 0);
+            });
+            updateDome(totalPool);
             
             // Kayıtlı kullanıcıyı güncelle
             const user = registeredUsers.find(u => u.email === currentEmail);
@@ -728,6 +759,8 @@
                 user.avatar = currentAvatar;
                 user.multiplier = userMultiplier;
                 user.package = ownedPackage;
+                user.dailyRewardDay = dailyRewardDay;
+                user.lastClaimTime = lastClaimTime;
             }
         }
 
@@ -737,9 +770,17 @@
             document.getElementById('profile-username').innerText = currentUsername;
             document.getElementById('profile-email').innerText = currentEmail;
             document.getElementById('profile-points').innerText = userPoints;
-            document.getElementById('profile-tl').innerText = userTL.toFixed(2) + ' TL';
             document.getElementById('profile-ads').innerText = adsWatched;
             document.getElementById('profile-multiplier').innerText = userMultiplier.toFixed(1) + 'x';
+            
+            // Sıralamayı hesapla
+            let allUsers = [...registeredUsers];
+            if (!allUsers.find(u => u.email === currentEmail)) {
+                allUsers.push({ email: currentEmail, username: currentUsername, points: userPoints });
+            }
+            allUsers.sort((a, b) => (b.points || 0) - (a.points || 0));
+            const myRank = allUsers.findIndex(u => u.email === currentEmail) + 1;
+            document.getElementById('profile-rank').innerText = '#' + myRank;
         }
 
         // ============ ÇIKIŞ ============
@@ -766,40 +807,39 @@
             const text = document.getElementById('dome-amount');
             let percentage = Math.min((amount / 10000) * 100, 100);
             fill.style.height = percentage + '%';
-            text.innerText = amount.toFixed(2) + ' TL';
+            text.innerText = amount.toFixed(0) + ' Puan';
         }
 
-        // ============ ADMOB REKLAM (COOLDOWN'LI) ============
+        // ============ ADMOB REKLAM (3 REKLAM = 3 DK BEKLEME) ============
         function watchAd() {
             const now = Date.now();
             
-            // Bekleme süresi kontrolü
+            // Bekleme süresi kontrolü (her 3 reklamda bir)
             if (lastAdTime !== 0 && (now - lastAdTime) < AD_COOLDOWN) {
                 const remaining = AD_COOLDOWN - (now - lastAdTime);
                 const mins = Math.floor(remaining / 60000);
                 const secs = Math.floor((remaining % 60000) / 1000);
-                alert(`⏱️ Çok hızlı reklam izliyorsunuz!\n\nAdMob bot koruması aktif.\nKalan süre: ${mins} dk ${secs} sn`);
+                alert(`⏱️ Kısa Mola!\n\n3 reklam izledin. AdMob bot koruması için ${mins} dk ${secs} sn beklemelisin.`);
                 return;
             }
             
-            // Reklam göster (Kodular köprüsü)
-            // window.AppInventor.setWebViewString("SHOW_AD");
-            
             // Simülasyon: Reklam izlendi
             const earnedPoints = Math.floor(BASE_AD_POINTS * userMultiplier);
-            const earnedTL = 0.5 * userMultiplier;
             
             adsWatched++;
             userPoints += earnedPoints;
-            userTL += earnedTL;
-            lastAdTime = now;
-            
             updateStatsView();
             renderLeaderboard();
             
-            alert(`✅ Reklam izlendi!\n\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n💵 +${earnedTL.toFixed(2)} TL\n\n⏱️ 5 dakika sonra tekrar izleyebilirsiniz.`);
-            
-            checkAdCooldown();
+            // Her 3 reklamda cooldown başlat
+            if (adsWatched % ADS_BEFORE_COOLDOWN === 0) {
+                lastAdTime = now;
+                checkAdCooldown();
+                alert(`✅ Reklam izlendi!\n\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n\n⏱️ 3 reklam tamamlandı! 3 dakika mola.`);
+            } else {
+                const remainingAds = ADS_BEFORE_COOLDOWN - (adsWatched % ADS_BEFORE_COOLDOWN);
+                alert(`✅ Reklam izlendi!\n\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n\n📺 ${remainingAds} reklam sonra 3 dk mola başlayacak.`);
+            }
         }
 
         // ============ ADMOB COOLDOWN GÖSTERİMİ ============
@@ -856,7 +896,7 @@
                 div.innerHTML = `
                     <div class="task-info">
                         <h4>${task.title}</h4>
-                        <p>${task.desc} - Ödül: ${task.reward} TL</p>
+                        <p>${task.desc} - Ödül: <span style="color: #8a2be2; font-weight: bold;">+${task.reward} Puan</span></p>
                     </div>
                     <button class="task-btn ${task.done ? 'task-btn-done' : 'task-btn-yellow'}" 
                             onclick="completeTask(${task.id})" ${task.done ? 'disabled' : ''}>
@@ -873,7 +913,10 @@
                 if (task.type === 'ad') {
                     const now = Date.now();
                     if (lastAdTime !== 0 && (now - lastAdTime) < AD_COOLDOWN) {
-                        alert("⏱️ AdMob bot koruması: Lütfen 5 dakika bekleyin!");
+                        const remaining = AD_COOLDOWN - (now - lastAdTime);
+                        const mins = Math.floor(remaining / 60000);
+                        const secs = Math.floor((remaining % 60000) / 1000);
+                        alert(`⏱️ Kısa Mola! ${mins} dk ${secs} sn beklemelisin.`);
                         return;
                     }
                     
@@ -881,16 +924,23 @@
                     const earnedPoints = Math.floor(BASE_AD_POINTS * userMultiplier);
                     
                     adsWatched++;
-                    userPoints += earnedPoints;
-                    userTL += task.reward;
-                    lastAdTime = now;
+                    userPoints += earnedPoints + task.reward;
                     
-                    task.done = true;
+                    // Cooldown kontrolü
+                    if (adsWatched % ADS_BEFORE_COOLDOWN === 0) {
+                        lastAdTime = now;
+                        checkAdCooldown();
+                    }
+                    
+                    task.progress++;
+                    if (task.progress >= task.target) {
+                        task.done = true;
+                    }
+                    
                     updateStatsView();
                     renderTasks();
                     renderLeaderboard();
-                    checkAdCooldown();
-                    alert(`✅ Görev tamamlandı!\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n💵 +${task.reward} TL`);
+                    alert(`✅ Görev tamamlandı!\n🏆 +${earnedPoints + task.reward} Puan`);
                 } else if (task.type === 'game') {
                     alert("📺 Geçiş reklamı izleniyor... (AdMob)");
                     setTimeout(() => { window.location.href = 'oyun.html'; }, 1000);
@@ -898,30 +948,27 @@
             }
         }
 
-        // ============ SIRALAMA (Sadece gerçek kullanıcılar) ============
+        // ============ SIRALAMA ============
         function renderLeaderboard() {
             const tbody = document.getElementById('leaderboard-body');
             const emptyMsg = document.getElementById('leaderboard-empty');
             tbody.innerHTML = '';
             
-            // Kayıtlı kullanıcıları kopyala ve puanı büyükten küçüğe sırala
             let allUsers = [...registeredUsers];
             
-            // Aktif kullanıcıyı da ekle (henüz eklenmediyse)
             if (!allUsers.find(u => u.email === currentEmail) && currentEmail !== "kullanici@email.com") {
                 allUsers.push({
                     email: currentEmail,
                     username: currentUsername,
                     avatar: currentAvatar,
                     points: userPoints,
-                    ads: adsWatched,
-                    tl: userTL
+                    ads: adsWatched
                 });
             }
             
-            // Sadece 0'dan büyük puanı olanları göster
-            allUsers = allUsers.filter(u => u.points > 0 || u.ads > 0);
-            allUsers.sort((a, b) => b.points - a.points);
+            // Puanı 0'dan büyük olanları göster
+            allUsers = allUsers.filter(u => (u.points || 0) > 0 || (u.ads || 0) > 0);
+            allUsers.sort((a, b) => (b.points || 0) - (a.points || 0));
             
             if (allUsers.length === 0) {
                 emptyMsg.style.display = 'block';
@@ -943,7 +990,7 @@
             });
         }
 
-        // ============ 7 GÜNLÜK ÖDÜL ============
+        // ============ 7 GÜNLÜK ÖDÜL (PUAN) ============
         function renderDailyRewards() {
             const container = document.getElementById('daily-rewards');
             container.innerHTML = '';
@@ -953,7 +1000,8 @@
                 if (i === dailyRewardDay) className += ' active';
                 if (i < dailyRewardDay) className += ' claimed';
                 box.className = className;
-                box.innerHTML = `<span class="day-num">${i}.G</span><span class="day-reward">${i}TL</span>`;
+                const reward = DAILY_REWARDS[i - 1];
+                box.innerHTML = `<span class="day-num">${i}.G</span><span class="day-reward">${reward}P</span>`;
                 container.appendChild(box);
             }
             
@@ -988,10 +1036,11 @@
             }
             
             if (dailyRewardDay <= 7) {
-                const reward = dailyRewardDay;
-                userTL += reward;
+                const reward = DAILY_REWARDS[dailyRewardDay - 1];
+                userPoints += reward;
                 updateStatsView();
-                alert(`🎁 ${dailyRewardDay}. Gün ödülü: ${reward} TL kazandınız!`);
+                renderLeaderboard();
+                alert(`🎁 ${dailyRewardDay}. Gün ödülü: +${reward} Puan kazandınız!`);
                 dailyRewardDay++;
                 lastClaimTime = now;
                 renderDailyRewards();
@@ -1063,7 +1112,7 @@
 
         function shareInvite() {
             const code = document.getElementById('invite-code').innerText;
-            alert(`Davet linkiniz:\nhttps://cashcash2.vercel.app?ref=${code}\n\nSen 5 TL, arkadaşın 1 TL kazanacak!`);
+            alert(`Davet linkiniz:\nhttps://cashcash2.vercel.app?ref=${code}\n\nSen +50 Puan, arkadaşın +10 Puan kazanacak!`);
         }
 
         // ============ MARKET ============
@@ -1088,9 +1137,9 @@
                 return;
             }
             
-            if (userTL >= price) {
-                if (confirm(`${name} paketi: ${price} TL\n\nYeni Çarpan: ${multiplier}x\nReklam başına: ${Math.floor(BASE_AD_POINTS * multiplier)} Puan\n\nOnaylıyor musunuz?`)) {
-                    userTL -= price;
+            if (userPoints >= price) {
+                if (confirm(`${name} paketi: ${price} Puan\n\nYeni Çarpan: ${multiplier}x\nReklam başına: ${Math.floor(BASE_AD_POINTS * multiplier)} Puan\n\nOnaylıyor musunuz?`)) {
+                    userPoints -= price;
                     userMultiplier = multiplier;
                     ownedPackage = name.toUpperCase();
                     updateStatsView();
@@ -1098,7 +1147,7 @@
                     alert(`✅ ${name} paketi alındı!\n⚡ Yeni Çarpan: ${multiplier}x`);
                 }
             } else {
-                alert(`❌ Yetersiz bakiye!\nGerekli: ${price} TL\nMevcut: ${userTL.toFixed(2)} TL`);
+                alert(`❌ Yetersiz puan!\nGerekli: ${price} Puan\nMevcut: ${userPoints} Puan`);
             }
         }
 
@@ -1118,6 +1167,7 @@
         window.onload = function() {
             showPage('page-login');
             checkAdCooldown();
+            updateCountdown();
         };
     </script>
 </body>
