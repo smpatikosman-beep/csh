@@ -11,7 +11,6 @@
         h1 { color: #8a2be2; margin-bottom: 10px; font-size: 1.5rem; }
         h2 { color: #a0a0a0; margin-bottom: 15px; font-size: 1.1rem; }
         
-        /* GİRİŞ EKRANI */
         .login-gate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b0b1a; display: flex; justify-content: center; align-items: center; z-index: 9999; }
         .login-box { background: #1a1a2e; padding: 30px; border-radius: 20px; border: 2px solid #8a2be2; width: 90%; max-width: 400px; text-align: center; }
         .login-box h1 { color: #8a2be2; margin-bottom: 20px; }
@@ -357,7 +356,7 @@
     import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, addDoc, query, where, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyC22SGApMVhMyIomWJL8s9ckzFCUGGxYfc",
+        apiKey: "AIzaSyC22SGAPMvHMyIomWJL8s9ckzFCUGGxYFc",
         authDomain: "cashcash-70c4f.firebaseapp.com",
         projectId: "cashcash-70c4f",
         storageBucket: "cashcash-70c4f.firebasestorage.app",
@@ -397,6 +396,7 @@
             if (error.code === 'auth/user-not-found') msg = "Bu e-posta kayıtlı değil!";
             else if (error.code === 'auth/wrong-password') msg = "Şifre yanlış!";
             else if (error.code === 'auth/invalid-credential') msg = "E-posta veya şifre hatalı!";
+            else if (error.code === 'auth/api-key-not-valid') msg = "API anahtarı geçersiz!";
             errEl.innerText = "❌ " + msg;
         }
     };
@@ -515,10 +515,12 @@
             
             usersSnap.forEach(d => {
                 const u = d.data();
-                totalPool += (u.points || 0);
+                totalPool += Number(u.points || 0);
                 if (u.lastLogin) {
-                    const loginDate = new Date(u.lastLogin.toDate());
-                    if (loginDate >= today) todayActive++;
+                    try {
+                        const loginDate = new Date(u.lastLogin.toDate());
+                        if (loginDate >= today) todayActive++;
+                    } catch (e) {}
                 }
             });
             
@@ -532,7 +534,7 @@
             wSnap.forEach(d => {
                 const w = d.data();
                 if (w.status === 'beklemede') pending++;
-                if (w.status === 'onaylandi') totalWithdrawn += w.amount;
+                if (w.status === 'onaylandi') totalWithdrawn += Number(w.amount || 0);
             });
             document.getElementById('pendingWithdrawals').innerText = pending;
             document.getElementById('totalWithdrawn').innerText = totalWithdrawn.toFixed(2) + ' TL';
@@ -544,7 +546,7 @@
         try {
             const usersSnap = await getDocs(collection(db, "users"));
             let totalPool = 0;
-            usersSnap.forEach(d => totalPool += (d.data().points || 0));
+            usersSnap.forEach(d => totalPool += Number(d.data().points || 0));
             
             const ctx1 = document.getElementById('poolChart');
             if (poolChart) poolChart.destroy();
@@ -589,17 +591,18 @@
         const tbody = document.getElementById('withdrawalsBody');
         tbody.innerHTML = '';
         list.forEach(w => {
-            const date = w.requestedAt ? new Date(w.requestedAt.toDate()).toLocaleString('tr-TR') : '-';
+            let date = '-';
+            try { date = w.requestedAt ? new Date(w.requestedAt.toDate()).toLocaleString('tr-TR') : '-'; } catch (e) {}
             const userWithdrawals = allWithdrawals.filter(x => x.uid === w.uid && x.status === 'beklemede');
-            const isSuspicious = w.amount >= 1000 || userWithdrawals.length >= 3;
+            const isSuspicious = Number(w.amount || 0) >= 1000 || userWithdrawals.length >= 3;
             const tr = document.createElement('tr');
             if (isSuspicious) tr.style.background = 'rgba(255,68,68,0.1)';
             tr.innerHTML = `
                 <td>${w.status === 'beklemede' ? `<input type="checkbox" class="withdraw-check" value="${w.id}">` : ''}</td>
                 <td style="font-size: 0.75rem;">${date}</td>
                 <td><strong>${w.username || '-'}</strong>${isSuspicious ? ' 🚨' : ''}</td>
-                <td>${w.name} ${w.surname}</td>
-                <td style="font-size: 0.7rem; font-family: monospace;">${w.iban}</td>
+                <td>${w.name || ''} ${w.surname || ''}</td>
+                <td style="font-size: 0.7rem; font-family: monospace;">${w.iban || '-'}</td>
                 <td><strong style="color:#00ffcc;">${w.amount} TL</strong></td>
                 <td><span class="status status-${w.status}">${w.status}</span></td>
                 <td>
@@ -642,11 +645,10 @@
         if (reason === null) return;
         const w = allWithdrawals.find(x => x.id === id);
         await updateDoc(doc(db, "withdrawals", id), { status: "reddedildi", processedAt: serverTimestamp(), adminNote: reason || "Belirtilmedi", processedBy: currentAdminEmail });
-        // Bakiyeyi iade et
         if (w && w.uid) {
             const userRef = doc(db, "users", w.uid);
             const userSnap = await getDoc(userRef);
-            if (userSnap.exists()) await updateDoc(userRef, { tl: (userSnap.data().tl || 0) + w.amount });
+            if (userSnap.exists()) await updateDoc(userRef, { tl: Number(userSnap.data().tl || 0) + Number(w.amount || 0) });
         }
         await logAction("Çekim Reddi", `${w.username} - ${w.amount} TL`);
         showToast("❌ Reddedildi");
@@ -668,7 +670,8 @@
     window.downloadWithdrawalsCSV = function() {
         let csv = "Tarih,Kullanıcı,Ad Soyad,IBAN,Tutar,Durum\n";
         allWithdrawals.forEach(w => {
-            const d = w.requestedAt ? new Date(w.requestedAt.toDate()).toLocaleDateString('tr-TR') : '-';
+            let d = '-';
+            try { d = w.requestedAt ? new Date(w.requestedAt.toDate()).toLocaleDateString('tr-TR') : '-'; } catch (e) {}
             csv += `"${d}","${w.username}","${w.name} ${w.surname}","${w.iban}",${w.amount},"${w.status}"\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -703,9 +706,9 @@
                 <td style="font-size: 1.5rem;">${u.avatar || '👤'}</td>
                 <td><strong>${u.username || '-'}</strong></td>
                 <td style="font-size: 0.75rem;">${u.email}</td>
-                <td><strong style="color:#8a2be2;">${u.points || 0}</strong></td>
-                <td>${u.ads || 0}</td>
-                <td>${(u.multiplier || 1.0).toFixed(1)}x</td>
+                <td><strong style="color:#8a2be2;">${Number(u.points || 0)}</strong></td>
+                <td>${Number(u.ads || 0)}</td>
+                <td>${Number(u.multiplier || 1.0).toFixed(1)}x</td>
                 <td>${statusHtml}</td>
                 <td>
                     <button class="action-btn view" onclick="viewUser('${u.id}')">👁️</button>
@@ -727,7 +730,7 @@
             let mf = true;
             if (filter === 'flagged') mf = u.isFlagged;
             if (filter === 'banned') mf = u.banned;
-            if (filter === 'top') mf = (u.points || 0) > 1000;
+            if (filter === 'top') mf = Number(u.points || 0) > 1000;
             return ms && mf;
         });
         renderUsersTable(filtered);
@@ -742,16 +745,19 @@
         let wh = '';
         wSnap.forEach(d => { const w = d.data(); wh += `<p style="font-size: 0.8rem;">💸 ${w.amount} TL - <span class="status status-${w.status}">${w.status}</span></p>`; });
         
+        let createdDate = '-';
+        try { createdDate = u.createdAt ? new Date(u.createdAt.toDate()).toLocaleString('tr-TR') : '-'; } catch (e) {}
+        
         document.getElementById('userDetailContent').innerHTML = `
             <h2>👤 ${u.avatar || ''} ${u.username}</h2>
             <p style="margin: 8px 0;"><strong>UID:</strong> ${id}</p>
             <p style="margin: 8px 0;"><strong>E-posta:</strong> ${u.email}</p>
-            <p style="margin: 8px 0;"><strong>Puan:</strong> <span style="color:#8a2be2;">${u.points || 0}</span></p>
-            <p style="margin: 8px 0;"><strong>TL:</strong> ${(u.tl || 0).toFixed(2)} TL</p>
-            <p style="margin: 8px 0;"><strong>Reklam:</strong> ${u.ads || 0}</p>
-            <p style="margin: 8px 0;"><strong>Çarpan:</strong> ${(u.multiplier || 1.0).toFixed(1)}x (${u.package || 'FREE'})</p>
+            <p style="margin: 8px 0;"><strong>Puan:</strong> <span style="color:#8a2be2;">${Number(u.points || 0)}</span></p>
+            <p style="margin: 8px 0;"><strong>TL:</strong> ${Number(u.tl || 0).toFixed(2)} TL</p>
+            <p style="margin: 8px 0;"><strong>Reklam:</strong> ${Number(u.ads || 0)}</p>
+            <p style="margin: 8px 0;"><strong>Çarpan:</strong> ${Number(u.multiplier || 1.0).toFixed(1)}x (${u.package || 'FREE'})</p>
             <p style="margin: 8px 0;"><strong>Referans:</strong> ${u.referralCode || '-'}</p>
-            <p style="margin: 8px 0;"><strong>Kayıt:</strong> ${u.createdAt ? new Date(u.createdAt.toDate()).toLocaleString('tr-TR') : '-'}</p>
+            <p style="margin: 8px 0;"><strong>Kayıt:</strong> ${createdDate}</p>
             <hr style="border-color:#2a2a4a; margin: 15px 0;">
             <p><strong>Çekimler:</strong></p>
             ${wh || '<p style="color:#a0a0a0; font-size:0.8rem;">Yok</p>'}
@@ -767,9 +773,9 @@
         const u = userSnap.data();
         document.getElementById('editUserId').value = id;
         document.getElementById('editUsername').value = u.username || '';
-        document.getElementById('editPoints').value = u.points || 0;
-        document.getElementById('editTL').value = u.tl || 0;
-        document.getElementById('editMultiplier').value = u.multiplier || 1.0;
+        document.getElementById('editPoints').value = Number(u.points || 0);
+        document.getElementById('editTL').value = Number(u.tl || 0);
+        document.getElementById('editMultiplier').value = Number(u.multiplier || 1.0);
         document.getElementById('editPackage').value = u.package || 'FREE';
         document.getElementById('editAdminNote').value = u.adminNote || '';
         document.getElementById('userEditModal').classList.add('show');
@@ -779,9 +785,9 @@
         const id = document.getElementById('editUserId').value;
         await updateDoc(doc(db, "users", id), {
             username: document.getElementById('editUsername').value,
-            points: parseInt(document.getElementById('editPoints').value) || 0,
-            tl: parseFloat(document.getElementById('editTL').value) || 0,
-            multiplier: parseFloat(document.getElementById('editMultiplier').value) || 1.0,
+            points: Number(document.getElementById('editPoints').value) || 0,
+            tl: Number(document.getElementById('editTL').value) || 0,
+            multiplier: Number(document.getElementById('editMultiplier').value) || 1.0,
             package: document.getElementById('editPackage').value,
             adminNote: document.getElementById('editAdminNote').value
         });
@@ -811,11 +817,11 @@
 
     window.applyPointsChange = async function() {
         const id = document.getElementById('pointsUserId').value;
-        const amount = parseInt(document.getElementById('pointsAmount').value) || 0;
+        const amount = Number(document.getElementById('pointsAmount').value) || 0;
         const reason = document.getElementById('pointsReason').value || "Manuel";
         const userSnap = await getDoc(doc(db, "users", id));
         if (!userSnap.exists()) return;
-        const current = userSnap.data().points || 0;
+        const current = Number(userSnap.data().points || 0);
         const newP = Math.max(0, current + amount);
         await updateDoc(doc(db, "users", id), { points: newP });
         await logAction("Puan Değişikliği", `${userSnap.data().username}: ${current} → ${newP} (${reason})`);
@@ -835,13 +841,13 @@
             snap.forEach(d => {
                 const u = d.data();
                 if (!u.banned) {
-                    winnersData.push({ id: d.id, rank, username: u.username, points: u.points || 0 });
+                    winnersData.push({ id: d.id, rank, username: u.username, points: Number(u.points || 0) });
                     rank++;
                 }
             });
             let pool = 0;
             const allSnap = await getDocs(collection(db, "users"));
-            allSnap.forEach(d => pool += (d.data().points || 0));
+            allSnap.forEach(d => pool += Number(d.data().points || 0));
             const dist = [30, 20, 10, 5.7, 5.7, 5.7, 5.7, 5.7, 5.7, 5.8];
             
             const tbody = document.getElementById('winnersBody');
@@ -904,9 +910,9 @@
     // ============ AYARLAR ============
     window.saveSettings = async function() {
         await setDoc(doc(db, "config", "settings"), {
-            adsBeforeCooldown: parseInt(document.getElementById('settingAdsBeforeCooldown').value) || 3,
-            cooldown: parseInt(document.getElementById('settingCooldown').value) || 3,
-            welcomeBonus: parseInt(document.getElementById('settingWelcomeBonus').value) || 100,
+            adsBeforeCooldown: Number(document.getElementById('settingAdsBeforeCooldown').value) || 3,
+            cooldown: Number(document.getElementById('settingCooldown').value) || 3,
+            welcomeBonus: Number(document.getElementById('settingWelcomeBonus').value) || 100,
             updatedAt: serverTimestamp()
         }, { merge: true });
         await logAction("Ayarlar", "Güncellendi");
