@@ -34,7 +34,7 @@
         .countdown-box h2 { color: #ffcc00; font-size: 1.5rem; }
         
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .stat-card { background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4a 100%); border-radius: 15px; padding: 15px 10px; text-align: center; border: 1px solid #2a2a4a; position: relative; overflow: hidden; }
+        .stat-card { background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4a 100%); border-radius: 15px; padding: 15px 10px; text-align: center; border: 1px solid #2a2a4a; }
         .stat-card.points-card { border-color: #8a2be2; }
         .stat-card.multiplier-card { border-color: #ffcc00; background: linear-gradient(135deg, #2a2a1a 0%, #1a1a2e 100%); }
         .stat-card.tl-card { border-color: #00ffcc; }
@@ -85,7 +85,6 @@
 
         .login-container { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
         .input-group { margin-bottom: 12px; }
-        .input-group label { display: block; font-size: 0.8rem; color: #a0a0a0; margin-bottom: 5px; }
         .input-group input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #2a2a4a; background: #1a1a2e; color: #fff; font-size: 0.95rem; }
         .input-group input:focus { outline: none; border-color: #8a2be2; }
 
@@ -101,16 +100,14 @@
 
         .welcome-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
         .welcome-modal-overlay.show { display: flex; }
-        .welcome-modal { background: linear-gradient(180deg, #1a1a2e 0%, #0b0b1a 100%); border: 2px solid #8a2be2; border-radius: 25px; padding: 30px 20px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 0 40px rgba(138, 43, 226, 0.6); animation: modalIn 0.5s ease-out; }
+        .welcome-modal { background: linear-gradient(180deg, #1a1a2e 0%, #0b0b1a 100%); border: 2px solid #8a2be2; border-radius: 25px; padding: 30px 20px; max-width: 380px; width: 100%; text-align: center; animation: modalIn 0.5s ease-out; }
         @keyframes modalIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .welcome-modal .top-line { width: 60%; height: 3px; background: linear-gradient(90deg, transparent, #ffcc00, transparent); margin: 0 auto 20px; border-radius: 3px; }
         .welcome-modal .money-bag { font-size: 4rem; margin: 10px 0 20px; display: block; animation: bounce 1.5s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .welcome-modal h2 { color: #ffcc00; font-size: 1.5rem; margin-bottom: 10px; font-weight: bold; }
+        .welcome-modal h2 { color: #ffcc00; font-size: 1.5rem; margin-bottom: 10px; }
         .welcome-modal h3 { color: #fff; font-size: 1.2rem; margin-bottom: 20px; }
         .welcome-modal p { color: #a0a0a0; font-size: 0.9rem; line-height: 1.6; margin-bottom: 15px; }
-        .welcome-modal .divider { height: 1px; background: #2a2a4a; margin: 20px 0; }
-        .welcome-modal .btn-continue { background: linear-gradient(135deg, #8a2be2, #6a1b9a); color: #fff; padding: 15px; border: none; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 20px rgba(138, 43, 226, 0.5); }
+        .welcome-modal .btn-continue { background: linear-gradient(135deg, #8a2be2, #6a1b9a); color: #fff; padding: 15px; border: none; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 15px; }
 
         .profile-header { text-align: center; margin-bottom: 25px; }
         .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #8a2be2, #00ffcc); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 3rem; font-weight: bold; color: #fff; box-shadow: 0 0 25px rgba(138, 43, 226, 0.5); border: 3px solid #2a2a4a; cursor: pointer; position: relative; }
@@ -126,7 +123,6 @@
         .profile-menu-item .left { display: flex; align-items: center; gap: 12px; }
         .profile-menu-item .icon { font-size: 1.3rem; }
         .profile-menu-item .text { font-size: 0.95rem; }
-        .profile-menu-item .arrow { color: #a0a0a0; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
         .modal-overlay.show { display: flex; }
@@ -141,26 +137,34 @@
         .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1a1a2e; color: #fff; padding: 12px 20px; border-radius: 10px; border: 1px solid #8a2be2; z-index: 999; opacity: 0; transition: opacity 0.3s; }
         .toast.show { opacity: 1; }
 
-        .loading { text-align: center; padding: 20px; color: #a0a0a0; font-size: 0.9rem; }
+        .loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b0b1a; display: flex; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; }
+        .loading-screen.hide { display: none; }
+        .spinner { width: 50px; height: 50px; border: 4px solid #2a2a4a; border-top-color: #8a2be2; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { color: #8a2be2; margin-top: 15px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
+    <!-- LOADING SCREEN -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="spinner"></div>
+        <div class="loading-text">Yükleniyor...</div>
+    </div>
+
     <!-- HOŞ GELDİN MODAL -->
     <div class="welcome-modal-overlay" id="welcomeModal">
         <div class="welcome-modal">
-            <div class="top-line"></div>
             <span class="money-bag">🎁</span>
             <h2>Harika Bir Başlangıç!</h2>
             <h3>Hoş Geldin Bonusu: 100 PUAN!</h3>
             <p>CASHCASH ailesine katıldığın için 100 puan değerindeki hoş geldin bonusu hesabında hazır.</p>
             <p>Reklam izle, oyun oyna ve sıralamada yüksel!</p>
-            <div class="divider"></div>
             <button class="btn-continue" onclick="closeWelcomeModal()">DEVAM ET</button>
         </div>
     </div>
 
-    <!-- PROFİL RESMİ SEÇME MODAL -->
+    <!-- PROFİL RESMİ MODAL -->
     <div class="modal-overlay" id="avatarModal">
         <div class="modal-box">
             <h2>Profil Resmini Seç</h2>
@@ -199,7 +203,7 @@
             <h1 style="color: #8a2be2; text-align: center; margin-bottom: 10px;">CASHCASH</h1>
             <p style="text-align: center; color: #a0a0a0; margin-bottom: 30px;">30 Günlük Puan Yarışması</p>
             <div class="input-group"><input type="email" id="login-email" placeholder="E-posta Adresi"></div>
-            <div class="input-group"><input type="password" id="login-password" placeholder="Şifre"></div>
+            <div class="input-group"><input type="password" id="login-password" placeholder="Şifre" onkeypress="if(event.key==='Enter') loginUser()"></div>
             <button class="btn btn-purple" onclick="loginUser()">GİRİŞ YAP</button>
             <button class="btn btn-green" onclick="googleLogin()">GOOGLE İLE DEVAM ET</button>
             <p style="text-align: center; color: #a0a0a0; margin-top: 20px; font-size: 0.9rem;">Hesabınız yok mu? <span style="color: #8a2be2; cursor: pointer;" onclick="showPage('page-register')">Kayıt Olun</span></p>
@@ -212,7 +216,7 @@
             <h1 style="color: #8a2be2; text-align: center; margin-bottom: 20px;">Kayıt Ol</h1>
             <div class="input-group"><input type="email" id="reg-email" placeholder="E-posta Adresi"></div>
             <div class="input-group"><input type="text" id="reg-username" placeholder="Kullanıcı Adı"></div>
-            <div class="input-group"><input type="password" id="reg-password" placeholder="Şifre"></div>
+            <div class="input-group"><input type="password" id="reg-password" placeholder="Şifre (En az 6 karakter)"></div>
             <div class="input-group"><input type="text" id="reg-referral" placeholder="Davet Kodu (Varsa girin)"></div>
             <button class="btn btn-purple" onclick="registerUser()">KAYIT OL</button>
             <p style="text-align: center; color: #a0a0a0; margin-top: 20px; font-size: 0.9rem;">Zaten hesabınız var mı? <span style="color: #8a2be2; cursor: pointer;" onclick="showPage('page-login')">Giriş Yapın</span></p>
@@ -272,13 +276,13 @@
     <div id="page-tasks" class="page">
         <div class="header"><h1>📋 Görevler</h1></div>
         <div class="card">
-            <p class="card-title">🎁 7 GÜNLÜK GİRİŞ ÖDÜLÜ (PUAN)</p>
+            <p class="card-title">🎁 7 GÜNLÜK GİRİŞ ÖDÜLÜ</p>
             <div class="daily-rewards" id="daily-rewards"></div>
             <button class="btn btn-yellow" id="daily-btn" onclick="claimDailyReward()">BUGÜNÜN ÖDÜLÜNÜ AL</button>
             <p style="text-align: center; color: #a0a0a0; font-size: 0.75rem; margin-top: 8px;" id="daily-timer">Ödülünüz hazır!</p>
         </div>
         <div class="card">
-            <p class="card-title">📋 GÜNLÜK GÖREVLER (Puan Ödüllü)</p>
+            <p class="card-title">📋 GÜNLÜK GÖREVLER</p>
             <div id="task-list"></div>
         </div>
     </div>
@@ -400,7 +404,6 @@
         <div class="header"><h1>Market</h1></div>
         <div class="card">
             <p style="font-size: 0.9rem;">MEVCUT ÇARPAN: <strong style="color: #ffcc00;" id="market-current-multiplier">1.0x</strong></p>
-            <p style="font-size: 0.8rem; color: #a0a0a0; margin-top: 5px;">Çarpanını yükselt, her reklamda daha fazla puan kazan!</p>
         </div>
         <div class="market-grid">
             <div class="market-card" id="pkg-bronze">
@@ -452,8 +455,13 @@
     </div>
 
     <script type="module">
-        // ============ FIREBASE ============
+        // ============ FIREBASE IMPORTS ============
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+            signOut, onAuthStateChanged, updatePassword, GoogleAuthProvider, 
+            signInWithPopup, EmailAuthProvider, reauthenticateWithCredential
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
             getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, addDoc, 
             query, where, orderBy, limit, serverTimestamp 
@@ -469,30 +477,32 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
-        console.log("✅ Firebase bağlantısı kuruldu!");
+        const googleProvider = new GoogleAuthProvider();
+        console.log("✅ Firebase Auth + Firestore bağlandı!");
 
         // ============ DEĞİŞKENLER ============
+        let currentUser = null;
+        let currentUid = null;
         let userPoints = 0;
         let userTL = 0;
-        let poolAmount = 0;
         let adsWatched = 0;
         let userMultiplier = 1.0;
         let ownedPackage = "FREE";
         let dailyRewardDay = 1;
         let lastClaimTime = 0;
         let currentUsername = "Kullanıcı";
-        let currentEmail = "kullanici@email.com";
+        let currentEmail = "";
         let currentAvatar = "K";
         let userReferralCode = "-";
+        let isNewUser = false;
         
-        // ADMOB KORUMASI
         const ADS_BEFORE_COOLDOWN = 3;
         const AD_COOLDOWN = 3 * 60 * 1000;
         let lastAdTime = 0;
         let adCooldownInterval = null;
         
-        // YARIŞMA BİTİŞ (30 GÜN)
         let competitionEndTime = localStorage.getItem('competitionEndTime');
         if (!competitionEndTime) {
             competitionEndTime = Date.now() + (30 * 24 * 60 * 60 * 1000);
@@ -519,12 +529,219 @@
             { id: 5, title: "Oyun Oyna (2/2)", desc: "2 oyun oyna", reward: TASK_GAME_POINTS, done: false, type: 'game', progress: 0, target: 2 }
         ];
 
-        // ============ FIREBASE: KULLANICI YÜKLE ============
-        async function loadUserFromFirebase() {
+        // ============ KAYIT ============
+        window.registerUser = async function() {
+            const email = document.getElementById('reg-email').value.trim();
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const referralCode = document.getElementById('reg-referral').value.trim();
+            
+            if (!email || !username || !password) {
+                alert("Lütfen tüm alanları doldurun!");
+                return;
+            }
+            if (username.length < 3) {
+                alert("Kullanıcı adı en az 3 karakter olmalı!");
+                return;
+            }
+            if (password.length < 6) {
+                alert("Şifre en az 6 karakter olmalı!");
+                return;
+            }
+            
             try {
-                const userSnap = await getDoc(doc(db, "users", currentEmail));
+                // 1. Firebase Authentication ile kullanıcı oluştur
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                currentUid = userCredential.user.uid;
+                console.log("✅ Auth kullanıcısı oluşturuldu:", currentUid);
+                
+                // 2. Firestore'a kullanıcı verisini kaydet (UID ile)
+                const userData = {
+                    uid: currentUid,
+                    email: email,
+                    username: username,
+                    avatar: username.charAt(0).toUpperCase(),
+                    points: WELCOME_BONUS,
+                    tl: 0,
+                    ads: 0,
+                    multiplier: 1.0,
+                    package: "FREE",
+                    referralCode: 'REF' + Math.floor(Math.random() * 100000),
+                    referredBy: referralCode || null,
+                    dailyRewardDay: 1,
+                    lastClaimTime: 0,
+                    dailyTasks: dailyTasks,
+                    banned: false,
+                    isFlagged: false,
+                    createdAt: serverTimestamp(),
+                    lastLogin: serverTimestamp()
+                };
+                
+                await setDoc(doc(db, "users", currentUid), userData);
+                
+                // 3. Davet kodu işlemi
+                if (referralCode) {
+                    const q = query(collection(db, "users"), where("referralCode", "==", referralCode));
+                    const snap = await getDocs(q);
+                    if (!snap.empty) {
+                        const referrerDoc = snap.docs[0];
+                        await updateDoc(doc(db, "users", referrerDoc.id), {
+                            points: (referrerDoc.data().points || 0) + 50
+                        });
+                        await updateDoc(doc(db, "users", currentUid), { points: 110 });
+                        showToast("🎉 Davet kodu kullanıldı! +10 Puan");
+                    }
+                }
+                
+                isNewUser = true;
+                // onAuthStateChanged otomatik tetiklenecek
+                
+            } catch (error) {
+                console.error("Kayıt hatası:", error);
+                let msg = "Kayıt başarısız!";
+                if (error.code === 'auth/email-already-in-use') msg = "Bu e-posta zaten kullanılıyor!";
+                else if (error.code === 'auth/invalid-email') msg = "Geçersiz e-posta adresi!";
+                else if (error.code === 'auth/weak-password') msg = "Şifre çok zayıf!";
+                else msg += "\n" + error.message;
+                alert("❌ " + msg);
+            }
+        };
+
+        // ============ GİRİŞ ============
+        window.loginUser = async function() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                alert("Lütfen e-posta ve şifre girin!");
+                return;
+            }
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // onAuthStateChanged tetiklenecek
+            } catch (error) {
+                console.error("Giriş hatası:", error);
+                let msg = "Giriş başarısız!";
+                if (error.code === 'auth/user-not-found') msg = "Bu e-posta ile kayıtlı kullanıcı yok!";
+                else if (error.code === 'auth/wrong-password') msg = "Şifre yanlış!";
+                else if (error.code === 'auth/invalid-credential') msg = "E-posta veya şifre hatalı!";
+                else msg += "\n" + error.message;
+                alert("❌ " + msg);
+            }
+        };
+
+        // ============ GOOGLE İLE GİRİŞ ============
+        window.googleLogin = async function() {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                currentUid = user.uid;
+                
+                // Kullanıcı Firestore'da var mı?
+                const userSnap = await getDoc(doc(db, "users", currentUid));
+                if (!userSnap.exists()) {
+                    // Yeni kullanıcı → kayıt oluştur
+                    await setDoc(doc(db, "users", currentUid), {
+                        uid: currentUid,
+                        email: user.email,
+                        username: user.displayName || "Google Kullanıcısı",
+                        avatar: "👤",
+                        points: WELCOME_BONUS,
+                        tl: 0,
+                        ads: 0,
+                        multiplier: 1.0,
+                        package: "FREE",
+                        referralCode: 'REF' + Math.floor(Math.random() * 100000),
+                        dailyRewardDay: 1,
+                        lastClaimTime: 0,
+                        dailyTasks: dailyTasks,
+                        banned: false,
+                        isFlagged: false,
+                        createdAt: serverTimestamp(),
+                        lastLogin: serverTimestamp()
+                    });
+                    isNewUser = true;
+                } else {
+                    // Giriş tarihini güncelle
+                    await updateDoc(doc(db, "users", currentUid), { lastLogin: serverTimestamp() });
+                }
+            } catch (error) {
+                console.error("Google giriş hatası:", error);
+                alert("Google ile giriş başarısız: " + error.message);
+            }
+        };
+
+        // ============ ÇIKIŞ ============
+        window.logout = async function() {
+            if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
+                try {
+                    await signOut(auth);
+                    location.reload();
+                } catch (error) {
+                    alert("Çıkış hatası: " + error.message);
+                }
+            }
+        };
+
+        // ============ AUTH DURUMU ============
+        onAuthStateChanged(auth, async (user) => {
+            document.getElementById('loadingScreen').classList.add('hide');
+            
+            if (user) {
+                // Kullanıcı giriş yapmış
+                currentUser = user;
+                currentUid = user.uid;
+                currentEmail = user.email;
+                console.log("✅ Kullanıcı giriş yaptı:", currentUid);
+                
+                // Firestore'dan kullanıcı verisini yükle
+                await loadUserData();
+                
+                // Hoş geldin modalı göster
+                if (isNewUser) {
+                    showWelcomeModal();
+                    isNewUser = false;
+                }
+                
+                showPage('page-home');
+                updateStatsView();
+                renderTasks();
+                renderDailyRewards();
+                renderLeaderboard();
+                checkAdCooldown();
+                updateCountdown();
+                await updatePoolAmount();
+                
+                // Ban kontrolü
+                if (userPoints === -1) {
+                    alert("🚫 Hesabınız askıya alınmış!");
+                    await signOut(auth);
+                }
+            } else {
+                // Kullanıcı çıkış yapmış
+                console.log("❌ Kullanıcı çıkış yaptı");
+                currentUser = null;
+                currentUid = null;
+                showPage('page-login');
+                document.getElementById('bottom-nav').style.display = 'none';
+            }
+        });
+
+        // ============ KULLANICI VERİSİNİ YÜKLE ============
+        async function loadUserData() {
+            try {
+                const userSnap = await getDoc(doc(db, "users", currentUid));
                 if (userSnap.exists()) {
                     const u = userSnap.data();
+                    
+                    // Ban kontrolü
+                    if (u.banned) {
+                        alert("🚫 Hesabınız yönetici tarafından askıya alınmış!");
+                        await signOut(auth);
+                        return;
+                    }
+                    
                     userPoints = u.points || 0;
                     userTL = u.tl || 0;
                     adsWatched = u.ads || 0;
@@ -532,35 +749,29 @@
                     ownedPackage = u.package || "FREE";
                     dailyRewardDay = u.dailyRewardDay || 1;
                     lastClaimTime = u.lastClaimTime || 0;
-                    currentUsername = u.username || currentUsername;
-                    currentAvatar = u.avatar || currentAvatar;
+                    currentUsername = u.username || "Kullanıcı";
+                    currentAvatar = u.avatar || "K";
                     userReferralCode = u.referralCode || "-";
                     
-                    // Görevleri geri yükle
-                    if (u.dailyTasks) {
-                        dailyTasks = u.dailyTasks;
-                    }
+                    if (u.dailyTasks) dailyTasks = u.dailyTasks;
                     
                     document.getElementById('home-username').innerText = currentUsername;
                     document.getElementById('invite-code').innerText = userReferralCode;
                     document.getElementById('profile-refcode').innerText = userReferralCode;
-                    updateStatsView();
-                    renderTasks();
-                    renderDailyRewards();
-                    renderLeaderboard();
-                    checkAdCooldown();
-                    await updatePoolAmount();
+                    
+                    // Son giriş tarihini güncelle
+                    await updateDoc(doc(db, "users", currentUid), { lastLogin: serverTimestamp() });
                 }
             } catch (error) {
                 console.error("Kullanıcı yüklenemedi:", error);
             }
         }
 
-        // ============ FIREBASE: KULLANICI KAYDET ============
+        // ============ KULLANICI KAYDET ============
         async function saveUserToFirebase() {
-            if (currentEmail === "kullanici@email.com") return;
+            if (!currentUid) return;
             try {
-                await updateDoc(doc(db, "users", currentEmail), {
+                await updateDoc(doc(db, "users", currentUid), {
                     points: userPoints,
                     tl: userTL,
                     ads: adsWatched,
@@ -573,11 +784,11 @@
                     dailyTasks: dailyTasks
                 });
             } catch (error) {
-                console.error("Kullanıcı kaydedilemedi:", error);
+                console.error("Kaydetme hatası:", error);
             }
         }
 
-        // ============ FIREBASE: HAVUZ TOPLAMI ============
+        // ============ HAVUZ TOPLAMI ============
         async function updatePoolAmount() {
             try {
                 const usersSnap = await getDocs(collection(db, "users"));
@@ -585,7 +796,7 @@
                 usersSnap.forEach(d => totalPool += (d.data().points || 0));
                 updateDome(totalPool);
             } catch (error) {
-                console.error("Havuz güncellenemedi:", error);
+                console.error("Havuz hatası:", error);
             }
         }
 
@@ -613,27 +824,24 @@
             if (pageId === 'page-leaderboard') renderLeaderboard();
         }
 
-        // ============ 30 GÜN GERİ SAYIM ============
+        // ============ GERİ SAYIM ============
         function updateCountdown() {
             const now = Date.now();
             const diff = competitionEndTime - now;
-            
             if (diff <= 0) {
                 document.getElementById('countdown').innerText = "YARIŞMA BİTTİ!";
                 return;
             }
-            
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
             const minutes = Math.floor((diff / (1000 * 60)) % 60);
             const seconds = Math.floor((diff / 1000) % 60);
-            
             document.getElementById('countdown').innerText = 
                 `${days} GÜN ${String(hours).padStart(2, '0')} SA ${String(minutes).padStart(2, '0')} DK ${String(seconds).padStart(2, '0')} SN`;
         }
         setInterval(updateCountdown, 1000);
 
-        // ============ MODAL İŞLEMLERİ ============
+        // ============ MODAL ============
         window.openAvatarModal = function() {
             const grid = document.getElementById('iconGrid');
             grid.innerHTML = '';
@@ -658,7 +866,7 @@
             document.getElementById('usernameModal').classList.add('show');
         }
 
-        window.saveNewUsername = function() {
+        window.saveNewUsername = async function() {
             const newName = document.getElementById('new-username').value.trim();
             if (!newName) { alert("İsim boş olamaz!"); return; }
             if (newName.length < 3) { alert("İsim en az 3 karakter olmalı!"); return; }
@@ -667,7 +875,7 @@
             document.getElementById('profile-username').innerText = currentUsername;
             closeModal('usernameModal');
             showToast("✅ İsim güncellendi!");
-            saveUserToFirebase();
+            await saveUserToFirebase();
             renderLeaderboard();
         }
 
@@ -678,7 +886,7 @@
             document.getElementById('passwordModal').classList.add('show');
         }
 
-        window.saveNewPassword = function() {
+        window.saveNewPassword = async function() {
             const oldP = document.getElementById('old-password').value;
             const newP = document.getElementById('new-password').value;
             const newP2 = document.getElementById('new-password2').value;
@@ -687,8 +895,17 @@
             if (newP.length < 6) { alert("Şifre en az 6 karakter olmalı!"); return; }
             if (newP !== newP2) { alert("Yeni şifreler uyuşmuyor!"); return; }
             
-            closeModal('passwordModal');
-            showToast("✅ Şifre güncellendi!");
+            try {
+                const credential = EmailAuthProvider.credential(currentUser.email, oldP);
+                await reauthenticateWithCredential(currentUser, credential);
+                await updatePassword(currentUser, newP);
+                closeModal('passwordModal');
+                showToast("✅ Şifre güncellendi!");
+            } catch (error) {
+                console.error("Şifre hatası:", error);
+                if (error.code === 'auth/wrong-password') alert("Mevcut şifre yanlış!");
+                else alert("Şifre değiştirilemedi: " + error.message);
+            }
         }
 
         window.closeModal = function(id) {
@@ -705,122 +922,7 @@
         window.showWelcomeModal = function() { document.getElementById('welcomeModal').classList.add('show'); }
         window.closeWelcomeModal = function() { document.getElementById('welcomeModal').classList.remove('show'); }
 
-        // ============ GİRİŞ/KAYIT ============
-        window.loginUser = async function() {
-            const email = document.getElementById('login-email').value.trim();
-            if (!email) { alert("Lütfen e-posta girin!"); return; }
-            
-            try {
-                const userSnap = await getDoc(doc(db, "users", email));
-                if (userSnap.exists()) {
-                    currentEmail = email;
-                    await loadUserFromFirebase();
-                    showPage('page-home');
-                } else {
-                    alert("Bu e-posta ile kayıtlı kullanıcı bulunamadı!");
-                }
-            } catch (error) {
-                console.error("Giriş hatası:", error);
-                alert("Giriş sırasında hata: " + error.message);
-            }
-        }
-
-        window.googleLogin = async function() {
-            // Demo Google giriş
-            currentEmail = "google@gmail.com";
-            currentUsername = "Google Kullanıcısı";
-            
-            try {
-                const userSnap = await getDoc(doc(db, "users", currentEmail));
-                if (!userSnap.exists()) {
-                    await setDoc(doc(db, "users", currentEmail), {
-                        email: currentEmail,
-                        username: currentUsername,
-                        avatar: "👤",
-                        points: WELCOME_BONUS,
-                        tl: 0,
-                        ads: 0,
-                        multiplier: 1.0,
-                        package: "FREE",
-                        referralCode: 'REF' + Math.floor(Math.random() * 100000),
-                        dailyRewardDay: 1,
-                        lastClaimTime: 0,
-                        createdAt: serverTimestamp()
-                    });
-                    showWelcomeModal();
-                }
-                await loadUserFromFirebase();
-                showPage('page-home');
-            } catch (error) {
-                alert("Hata: " + error.message);
-            }
-        }
-
-        window.registerUser = async function() {
-            const email = document.getElementById('reg-email').value.trim();
-            const username = document.getElementById('reg-username').value.trim();
-            const password = document.getElementById('reg-password').value;
-            const referralCode = document.getElementById('reg-referral').value.trim();
-            
-            if (!email || !username || !password) {
-                alert("Lütfen tüm alanları doldurun!");
-                return;
-            }
-            
-            try {
-                const userRef = doc(db, "users", email);
-                const userSnap = await getDoc(userRef);
-                
-                if (userSnap.exists()) {
-                    alert("Bu e-posta zaten kayıtlı!");
-                    return;
-                }
-                
-                const newUser = {
-                    email: email,
-                    username: username,
-                    avatar: username.charAt(0).toUpperCase(),
-                    points: WELCOME_BONUS,
-                    tl: 0,
-                    ads: 0,
-                    multiplier: 1.0,
-                    package: "FREE",
-                    referralCode: 'REF' + Math.floor(Math.random() * 100000),
-                    referredBy: referralCode || null,
-                    dailyRewardDay: 1,
-                    lastClaimTime: 0,
-                    dailyTasks: dailyTasks,
-                    createdAt: serverTimestamp()
-                };
-                
-                await setDoc(userRef, newUser);
-                
-                // Davet kodu kullanıldıysa
-                if (referralCode) {
-                    const q = query(collection(db, "users"), where("referralCode", "==", referralCode));
-                    const snap = await getDocs(q);
-                    if (!snap.empty) {
-                        const referrerDoc = snap.docs[0];
-                        await updateDoc(doc(db, "users", referrerDoc.id), {
-                            points: (referrerDoc.data().points || 0) + 50
-                        });
-                        await updateDoc(userRef, { points: 110 });
-                        showToast("🎉 Davet kodu kullanıldı! +10 Puan kazandın!");
-                    }
-                }
-                
-                currentEmail = email;
-                await loadUserFromFirebase();
-                showPage('page-home');
-                showWelcomeModal();
-                await updatePoolAmount();
-            } catch (error) {
-                console.error("Kayıt hatası:", error);
-                alert("Kayıt sırasında hata: " + error.message);
-            }
-        }
-
-        // ============ İSTATİSTİK GÜNCELLE ============
+        // ============ İSTATİSTİK ============
         function updateStatsView() {
             document.getElementById('home-points').innerText = userPoints;
             document.getElementById('home-ads').innerText = adsWatched;
@@ -835,7 +937,7 @@
             document.getElementById('wallet-tl').innerText = userTL.toFixed(2);
         }
 
-        // ============ PROFİL GÜNCELLE ============
+        // ============ PROFİL ============
         async function updateProfile() {
             document.getElementById('profile-avatar').innerHTML = currentAvatar + '<div class="edit-icon">✏️</div>';
             document.getElementById('profile-username').innerText = currentUsername;
@@ -852,11 +954,8 @@
                 let found = false;
                 snap.forEach(d => {
                     if (!found) {
-                        if (d.id === currentEmail) {
-                            found = true;
-                        } else {
-                            rank++;
-                        }
+                        if (d.id === currentUid) found = true;
+                        else rank++;
                     }
                 });
                 document.getElementById('profile-rank').innerText = '#' + rank;
@@ -865,26 +964,8 @@
             }
         }
 
-        // ============ ÇIKIŞ ============
-        window.logout = function() {
-            if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
-                currentUsername = "Kullanıcı";
-                currentEmail = "kullanici@email.com";
-                userPoints = 0;
-                userTL = 0;
-                adsWatched = 0;
-                userMultiplier = 1.0;
-                ownedPackage = "FREE";
-                currentAvatar = "K";
-                document.getElementById('home-username').innerText = currentUsername;
-                updateStatsView();
-                showPage('page-login');
-            }
-        }
-
         // ============ CAM FANUS ============
         function updateDome(amount) {
-            poolAmount = amount;
             const fill = document.getElementById('dome-fill');
             const text = document.getElementById('dome-amount');
             let percentage = Math.min((amount / 10000) * 100, 100);
@@ -892,30 +973,28 @@
             text.innerText = amount.toFixed(0) + ' Puan';
         }
 
-        // ============ REKLAM İZLE ============
+        // ============ REKLAM ============
         window.watchAd = async function() {
             const now = Date.now();
-            
             if (lastAdTime !== 0 && (now - lastAdTime) < AD_COOLDOWN) {
                 const remaining = AD_COOLDOWN - (now - lastAdTime);
                 const mins = Math.floor(remaining / 60000);
                 const secs = Math.floor((remaining % 60000) / 1000);
-                alert(`⏱️ Kısa Mola!\n\n3 reklam izledin. ${mins} dk ${secs} sn beklemelisin.`);
+                alert(`⏱️ Kısa Mola! ${mins} dk ${secs} sn beklemelisin.`);
                 return;
             }
             
             const earnedPoints = Math.floor(BASE_AD_POINTS * userMultiplier);
-            
             adsWatched++;
             userPoints += earnedPoints;
             
             if (adsWatched % ADS_BEFORE_COOLDOWN === 0) {
                 lastAdTime = now;
                 checkAdCooldown();
-                alert(`✅ Reklam izlendi!\n\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n\n⏱️ 3 reklam tamamlandı! 3 dakika mola.`);
+                alert(`✅ Reklam izlendi!\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n\n⏱️ 3 reklam tamamlandı! 3 dakika mola.`);
             } else {
                 const remainingAds = ADS_BEFORE_COOLDOWN - (adsWatched % ADS_BEFORE_COOLDOWN);
-                alert(`✅ Reklam izlendi!\n\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n\n📺 ${remainingAds} reklam sonra 3 dk mola.`);
+                alert(`✅ Reklam izlendi!\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n\n📺 ${remainingAds} reklam sonra 3 dk mola.`);
             }
             
             updateStatsView();
@@ -924,7 +1003,7 @@
             renderLeaderboard();
         }
 
-        // ============ ADMOB COOLDOWN ============
+        // ============ COOLDOWN ============
         function checkAdCooldown() {
             const now = Date.now();
             const box = document.getElementById('adCooldownBox');
@@ -945,7 +1024,6 @@
             adCooldownInterval = setInterval(() => {
                 const now = Date.now();
                 const remaining = AD_COOLDOWN - (now - lastAdTime);
-                
                 if (remaining <= 0) {
                     clearInterval(adCooldownInterval);
                     box.classList.remove('active');
@@ -953,7 +1031,6 @@
                     btn.innerText = "📺 REKLAM İZLE & PUAN KAZAN";
                     return;
                 }
-                
                 const mins = Math.floor(remaining / 60000);
                 const secs = Math.floor((remaining % 60000) / 1000);
                 document.getElementById('adCooldownTimer').innerText = 
@@ -997,14 +1074,12 @@
                     if (lastAdTime !== 0 && (now - lastAdTime) < AD_COOLDOWN) {
                         const remaining = AD_COOLDOWN - (now - lastAdTime);
                         const mins = Math.floor(remaining / 60000);
-                        const secs = Math.floor((remaining % 60000) / 1000);
-                        alert(`⏱️ Kısa Mola! ${mins} dk ${secs} sn beklemelisin.`);
+                        alert(`⏱️ Kısa Mola! ${mins} dk beklemelisin.`);
                         return;
                     }
                     
                     alert("📺 Reklam izleniyor... (AdMob)");
                     const earnedPoints = Math.floor(BASE_AD_POINTS * userMultiplier);
-                    
                     adsWatched++;
                     userPoints += earnedPoints + task.reward;
                     
@@ -1014,9 +1089,7 @@
                     }
                     
                     task.progress++;
-                    if (task.progress >= task.target) {
-                        task.done = true;
-                    }
+                    if (task.progress >= task.target) task.done = true;
                     
                     updateStatsView();
                     renderTasks();
@@ -1053,7 +1126,7 @@
                 let rank = 1;
                 snap.forEach(d => {
                     const u = d.data();
-                    const isMe = d.id === currentEmail;
+                    const isMe = d.id === currentUid;
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td><span class="rank-badge">${rank}</span></td>
@@ -1065,7 +1138,7 @@
                     rank++;
                 });
             } catch (error) {
-                console.error("Sıralama yüklenemedi:", error);
+                console.error("Sıralama hatası:", error);
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#ff4444;">Hata: ' + error.message + '</td></tr>';
             }
         }
@@ -1123,7 +1196,7 @@
                 await saveUserToFirebase();
                 await updatePoolAmount();
                 renderLeaderboard();
-                alert(`🎁 ${dailyRewardDay}. Gün ödülü: +${reward} Puan kazandınız!`);
+                alert(`🎁 ${dailyRewardDay}. Gün ödülü: +${reward} Puan!`);
                 dailyRewardDay++;
                 lastClaimTime = now;
                 renderDailyRewards();
@@ -1132,44 +1205,37 @@
             }
         }
 
-        // ============ PUAN <-> TL DÖNÜŞÜM ============
+        // ============ PUAN <-> TL ============
         window.convertPointsToTL = async function() {
             if (userPoints < POINT_TO_TL_RATE) {
-                alert(`❌ En az ${POINT_TO_TL_RATE} puanınız olmalı!\n\nMevcut: ${userPoints} Puan`);
+                alert(`❌ En az ${POINT_TO_TL_RATE} puan olmalı!\nMevcut: ${userPoints}`);
                 return;
             }
-            
             const pointsToConvert = Math.floor(userPoints / POINT_TO_TL_RATE) * POINT_TO_TL_RATE;
             const tlToGet = pointsToConvert / POINT_TO_TL_RATE;
-            
-            if (confirm(`${pointsToConvert} Puan → ${tlToGet} TL\n\nOnaylıyor musunuz?`)) {
+            if (confirm(`${pointsToConvert} Puan → ${tlToGet} TL`)) {
                 userPoints -= pointsToConvert;
                 userTL += tlToGet;
                 updateStatsView();
                 await saveUserToFirebase();
                 await updatePoolAmount();
                 renderLeaderboard();
-                alert(`✅ Dönüşüm başarılı!\n-${pointsToConvert} Puan\n+${tlToGet} TL`);
+                alert(`✅ ${pointsToConvert} Puan → ${tlToGet} TL`);
             }
         }
 
         window.convertTLToPoints = async function() {
-            if (userTL < 1) {
-                alert("❌ En az 1 TL'niz olmalı!");
-                return;
-            }
-            
+            if (userTL < 1) { alert("❌ En az 1 TL gerekli!"); return; }
             const tlToConvert = Math.floor(userTL);
             const pointsToGet = tlToConvert * TL_TO_POINT_RATE;
-            
-            if (confirm(`${tlToConvert} TL → ${pointsToGet} Puan\n\nOnaylıyor musunuz?`)) {
+            if (confirm(`${tlToConvert} TL → ${pointsToGet} Puan`)) {
                 userTL -= tlToConvert;
                 userPoints += pointsToGet;
                 updateStatsView();
                 await saveUserToFirebase();
                 await updatePoolAmount();
                 renderLeaderboard();
-                alert(`✅ Dönüşüm başarılı!\n-${tlToConvert} TL\n+${pointsToGet} Puan`);
+                alert(`✅ ${tlToConvert} TL → ${pointsToGet} Puan`);
             }
         }
 
@@ -1177,19 +1243,17 @@
         window.createWithdrawal = async function() {
             const name = document.getElementById('withdraw-name').value.trim();
             const surname = document.getElementById('withdraw-surname').value.trim();
-            const iban = document.getElementById('withdraw-iban').value.trim();
+            const iban = document.getElementById('withdraw-iban').value.trim().replace(/\s/g, '');
             const amount = parseFloat(document.getElementById('withdraw-amount').value);
             
-            if (!name || !surname || !iban || !amount) {
-                alert("Lütfen tüm alanları doldurun!");
-                return;
-            }
+            if (!name || !surname || !iban || !amount) { alert("Tüm alanları doldurun!"); return; }
             if (amount < 150) { alert("Minimum çekim: 150 TL!"); return; }
             if (amount > userTL) { alert("Yetersiz bakiye!"); return; }
+            if (!iban.match(/^TR[0-9]{24}$/)) { alert("Geçersiz IBAN! TR + 24 rakam olmalı."); return; }
             
             try {
                 await addDoc(collection(db, "withdrawals"), {
-                    uid: currentEmail,
+                    uid: currentUid,
                     username: currentUsername,
                     email: currentEmail,
                     name: name,
@@ -1206,28 +1270,27 @@
                 await saveUserToFirebase();
                 updateStatsView();
                 
-                alert(`✅ Çekim talebiniz alındı!\n\n💵 ${amount} TL\n👤 ${name} ${surname}\n🏦 ${iban}\n\nYönetici onayından sonra hesabınıza yatırılacaktır.`);
+                alert(`✅ Çekim talebiniz alındı!\n💵 ${amount} TL\n👤 ${name} ${surname}\n🏦 ${iban}`);
                 document.getElementById('withdraw-name').value = '';
                 document.getElementById('withdraw-surname').value = '';
                 document.getElementById('withdraw-iban').value = '';
                 document.getElementById('withdraw-amount').value = '';
             } catch (error) {
-                console.error("Çekim hatası:", error);
-                alert("Çekim talebi oluşturulamadı: " + error.message);
+                alert("Hata: " + error.message);
             }
         }
 
         // ============ DAVET ============
         window.copyCode = function() {
             const code = document.getElementById('invite-code').innerText;
-            if (code === '-') { alert("Önce giriş yapmalısınız!"); return; }
+            if (code === '-') { alert("Önce giriş yapın!"); return; }
             navigator.clipboard.writeText(code);
-            showToast("📋 Kod kopyalandı: " + code);
+            showToast("📋 Kod: " + code);
         }
 
         window.shareInvite = function() {
             const code = document.getElementById('invite-code').innerText;
-            if (code === '-') { alert("Önce giriş yapmalısınız!"); return; }
+            if (code === '-') { alert("Önce giriş yapın!"); return; }
             alert(`Davet linkiniz:\nhttps://cashcash2.vercel.app?ref=${code}\n\nSen +50 Puan, arkadaşın +10 Puan kazanacak!`);
         }
 
@@ -1249,13 +1312,9 @@
         window.updateMarketView = updateMarketView;
 
         window.buyPackage = async function(name, price, multiplier) {
-            if (userMultiplier >= multiplier) {
-                alert(`⚠️ Zaten ${userMultiplier.toFixed(1)}x çarpanınız var!`);
-                return;
-            }
-            
+            if (userMultiplier >= multiplier) { alert(`⚠️ Zaten ${userMultiplier.toFixed(1)}x!`); return; }
             if (userPoints >= price) {
-                if (confirm(`${name} paketi: ${price} Puan\n\nYeni Çarpan: ${multiplier}x\nReklam başına: ${Math.floor(BASE_AD_POINTS * multiplier)} Puan\n\nOnaylıyor musunuz?`)) {
+                if (confirm(`${name} paketi: ${price} Puan\nYeni Çarpan: ${multiplier}x`)) {
                     userPoints -= price;
                     userMultiplier = multiplier;
                     ownedPackage = name.toUpperCase();
@@ -1264,14 +1323,29 @@
                     await saveUserToFirebase();
                     await updatePoolAmount();
                     renderLeaderboard();
-                    alert(`✅ ${name} paketi alındı!\n⚡ Yeni Çarpan: ${multiplier}x`);
+                    alert(`✅ ${name} paketi alındı!\n⚡ ${multiplier}x`);
                 }
             } else {
-                alert(`❌ Yetersiz puan!\nGerekli: ${price} Puan\nMevcut: ${userPoints} Puan`);
+                alert(`❌ Yetersiz puan! Gerekli: ${price}, Mevcut: ${userPoints}`);
             }
         }
 
-        // ============ OYUN SONRASI ============
+        // ============ BAŞLANGIÇ ============
+        window.onload = function() {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hide');
+            }, 3000);
+            updateCountdown();
+        };
+
+        // URL'de referans kodu varsa kayıt ekranına taşı
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref');
+        if (refCode) {
+            document.getElementById('reg-referral').value = refCode;
+        }
+
+        // Oyun sonrası mesaj
         window.addEventListener('message', async (event) => {
             if (event.data && event.data.type === 'gameOver') {
                 const earnedPoints = Math.floor(event.data.points * userMultiplier);
@@ -1281,16 +1355,9 @@
                 await saveUserToFirebase();
                 await updatePoolAmount();
                 renderLeaderboard();
-                alert(`🎮 +${earnedPoints} Puan kazandınız!`);
+                alert(`🎮 +${earnedPoints} Puan!`);
             }
         });
-
-        // ============ BAŞLANGIÇ ============
-        window.onload = function() {
-            showPage('page-login');
-            checkAdCooldown();
-            updateCountdown();
-        };
     </script>
 </body>
 </html>
