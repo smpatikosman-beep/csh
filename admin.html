@@ -453,4 +453,23 @@
                 });
                 
                 alert(`✅ Kazananlar hesaplandı!\n\nToplam Havuz: ${pool} Puan`);
-            } catch (error
+            } catch (error) {
+                alert("Hata: " + error.message);
+            }
+        };
+
+        // ==================== TÜM VERİLERİ YÜKLE ====================
+        window.loadAllData = function() {
+            loadStats();
+            loadWithdrawals();
+            loadUsers();
+        };
+
+        // ==================== BAŞLANGIÇ ====================
+        window.onload = function() {
+            loadStats();
+            loadWithdrawals();
+        };
+    </script>
+</body>
+</html>
