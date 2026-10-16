@@ -20,13 +20,12 @@
         .btn-green { background: #00ffcc; color: #0b0b1a; }
         .btn-yellow { background: #ffcc00; color: #0b0b1a; }
         .btn-red { background: #ff4444; color: #fff; }
+        .btn-disabled { background: #2a2a4a !important; color: #6a6a8a !important; cursor: not-allowed; }
         
-        /* Ana Sayfa Büyük Butonlar */
         .main-action-buttons { margin-top: 20px; }
         .btn-big { padding: 20px; font-size: 1.1rem; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4); }
         .btn-big-green { background: linear-gradient(135deg, #00ffcc, #00b894); color: #0b0b1a; box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3); }
         
-        /* Cam Fanus */
         .dome-container { position: relative; width: 220px; height: 260px; margin: 0 auto 20px; border: 3px solid #8a2be2; border-radius: 50% 50% 10px 10px; overflow: hidden; background: rgba(138, 43, 226, 0.1); box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); }
         .dome-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to top, #00ffcc, #8a2be2); transition: height 1s ease-in-out; }
         .dome-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: bold; z-index: 2; text-shadow: 0 0 10px #000; text-align: center; }
@@ -34,59 +33,36 @@
         .countdown-box { text-align: center; margin-bottom: 20px; }
         .countdown-box h2 { color: #ffcc00; font-size: 1.5rem; }
         
-        /* ==== İSTATİSTİK KARTLARI (Puan, Çarpan, TL, Reklam) ==== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .stat-card {
-            background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4a 100%);
-            border-radius: 15px;
-            padding: 15px 10px;
-            text-align: center;
-            border: 1px solid #2a2a4a;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.3);
-        }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .stat-card { background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4a 100%); border-radius: 15px; padding: 15px 10px; text-align: center; border: 1px solid #2a2a4a; position: relative; overflow: hidden; }
         .stat-card.points-card { border-color: #8a2be2; }
         .stat-card.multiplier-card { border-color: #ffcc00; background: linear-gradient(135deg, #2a2a1a 0%, #1a1a2e 100%); }
         .stat-card.tl-card { border-color: #00ffcc; }
-        
         .stat-icon { font-size: 1.4rem; margin-bottom: 5px; }
         .stat-label { font-size: 0.65rem; color: #a0a0a0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
         .stat-value { font-size: 1.4rem; font-weight: bold; }
         .stat-card.points-card .stat-value { color: #8a2be2; }
         .stat-card.multiplier-card .stat-value { color: #ffcc00; }
         .stat-card.tl-card .stat-value { color: #00ffcc; }
+        .multiplier-badge { display: inline-block; background: rgba(255, 204, 0, 0.15); color: #ffcc00; padding: 2px 8px; border-radius: 10px; font-size: 0.65rem; margin-top: 5px; font-weight: bold; }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 5px rgba(255, 204, 0, 0.4); } 50% { box-shadow: 0 0 20px rgba(255, 204, 0, 0.8); } }
+        .multiplier-card.active-glow { animation: glow 2s infinite; }
         
-        .multiplier-badge {
-            display: inline-block;
-            background: rgba(255, 204, 0, 0.15);
-            color: #ffcc00;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.65rem;
-            margin-top: 5px;
-            font-weight: bold;
+        /* REKLAM BEKLEME SÜRESİ */
+        .ad-cooldown-box {
+            background: linear-gradient(135deg, #2a1a1a 0%, #1a1a2e 100%);
+            border: 1px solid #ff4444;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
         }
+        .ad-cooldown-box.active { display: block; }
+        .ad-cooldown-box h4 { color: #ff4444; font-size: 0.9rem; margin-bottom: 8px; }
+        .ad-cooldown-timer { font-size: 2rem; font-weight: bold; color: #ffcc00; }
+        .ad-cooldown-text { font-size: 0.75rem; color: #a0a0a0; margin-top: 5px; }
         
-        /* Çarpan Glow Efekti */
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 5px rgba(255, 204, 0, 0.4); }
-            50% { box-shadow: 0 0 20px rgba(255, 204, 0, 0.8); }
-        }
-        .multiplier-card.active-glow {
-            animation: glow 2s infinite;
-        }
-        
-        /* Sıralama Tablosu */
         .leaderboard { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         .leaderboard th { text-align: left; padding: 8px 5px; color: #a0a0a0; border-bottom: 1px solid #2a2a4a; }
         .leaderboard td { padding: 8px 5px; border-bottom: 1px solid #1a1a2e; }
@@ -94,8 +70,8 @@
         .leaderboard tr:nth-child(2) td { color: #c0c0c0; }
         .leaderboard tr:nth-child(3) td { color: #cd7f32; }
         .rank-badge { display: inline-block; width: 20px; text-align: center; }
+        .empty-message { text-align: center; padding: 40px 20px; color: #a0a0a0; font-size: 0.9rem; }
         
-        /* Günlük Görevler */
         .task-item { display: flex; justify-content: space-between; align-items: center; background: #1a1a2e; padding: 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #2a2a4a; }
         .task-item.done { opacity: 0.5; border-color: #00ffcc; }
         .task-info h4 { font-size: 0.95rem; margin-bottom: 3px; }
@@ -104,7 +80,6 @@
         .task-btn-yellow { background: #ffcc00; color: #0b0b1a; }
         .task-btn-done { background: #00ffcc; color: #0b0b1a; }
 
-        /* 7 Günlük Giriş Ödülü */
         .daily-rewards { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 15px; }
         .day-box { aspect-ratio: 1; background: #1a1a2e; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #2a2a4a; font-size: 0.6rem; padding: 2px; }
         .day-box.active { border-color: #ffcc00; background: #2a2a1a; box-shadow: 0 0 10px rgba(255, 204, 0, 0.3); }
@@ -112,130 +87,76 @@
         .day-box .day-num { font-weight: bold; font-size: 0.75rem; }
         .day-box .day-reward { color: #ffcc00; font-size: 0.6rem; }
 
-        /* Alt Menü */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #0b0b1a; border-top: 1px solid #2a2a4a; display: flex; justify-content: space-around; padding: 8px 0; z-index: 100; }
         .nav-item { text-align: center; color: #a0a0a0; font-size: 0.6rem; cursor: pointer; flex: 1; }
         .nav-item.active { color: #8a2be2; }
         .nav-item i { display: block; font-size: 1.1rem; margin-bottom: 2px; font-style: normal; }
 
-        /* Giriş Ekranı */
         .login-container { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
         .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 0.8rem; color: #a0a0a0; margin-bottom: 5px; }
         .input-group input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #2a2a4a; background: #1a1a2e; color: #fff; font-size: 0.95rem; }
         .input-group input:focus { outline: none; border-color: #8a2be2; }
 
-        /* Market */
         .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .market-card { background: #1a1a2e; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid #2a2a4a; position: relative; }
         .market-card.owned { border-color: #00ffcc; }
         .market-card h3 { font-size: 0.9rem; margin-bottom: 5px; }
         .market-card .price { font-size: 1.1rem; font-weight: bold; color: #ffcc00; margin: 8px 0; }
         .market-card .multiplier { color: #00ffcc; font-size: 0.8rem; }
-        .market-card .owned-badge {
-            position: absolute; top: 5px; right: 5px;
-            background: #00ffcc; color: #0b0b1a;
-            font-size: 0.6rem; padding: 2px 6px;
-            border-radius: 8px; font-weight: bold;
-        }
+        .market-card .owned-badge { position: absolute; top: 5px; right: 5px; background: #00ffcc; color: #0b0b1a; font-size: 0.6rem; padding: 2px 6px; border-radius: 8px; font-weight: bold; }
         
-        /* Davet */
         .invite-code { background: #1a1a2e; padding: 15px; border-radius: 10px; text-align: center; font-size: 1.5rem; font-weight: bold; color: #8a2be2; letter-spacing: 5px; margin: 10px 0; border: 1px dashed #8a2be2; }
 
-        /* ==== HOŞ GELDİN BONUSU MODAL ==== */
-        .welcome-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: none; justify-content: center; align-items: center;
-            z-index: 1000; padding: 20px;
-        }
+        .welcome-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
         .welcome-modal-overlay.show { display: flex; }
-        .welcome-modal {
-            background: linear-gradient(180deg, #1a1a2e 0%, #0b0b1a 100%);
-            border: 2px solid #8a2be2;
-            border-radius: 25px;
-            padding: 30px 20px;
-            max-width: 380px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 0 40px rgba(138, 43, 226, 0.6);
-            position: relative;
-            animation: modalIn 0.5s ease-out;
-        }
-        @keyframes modalIn {
-            from { transform: scale(0.7); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .welcome-modal .top-line {
-            width: 60%; height: 3px;
-            background: linear-gradient(90deg, transparent, #ffcc00, transparent);
-            margin: 0 auto 20px;
-            border-radius: 3px;
-        }
-        .welcome-modal .money-bag {
-            font-size: 4rem;
-            margin: 10px 0 20px;
-            display: block;
-            animation: bounce 1.5s infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        .welcome-modal h2 {
-            color: #ffcc00;
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        .welcome-modal h3 {
-            color: #fff;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-        .welcome-modal p {
-            color: #a0a0a0;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
+        .welcome-modal { background: linear-gradient(180deg, #1a1a2e 0%, #0b0b1a 100%); border: 2px solid #8a2be2; border-radius: 25px; padding: 30px 20px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 0 40px rgba(138, 43, 226, 0.6); animation: modalIn 0.5s ease-out; }
+        @keyframes modalIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .welcome-modal .top-line { width: 60%; height: 3px; background: linear-gradient(90deg, transparent, #ffcc00, transparent); margin: 0 auto 20px; border-radius: 3px; }
+        .welcome-modal .money-bag { font-size: 4rem; margin: 10px 0 20px; display: block; animation: bounce 1.5s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .welcome-modal h2 { color: #ffcc00; font-size: 1.5rem; margin-bottom: 10px; font-weight: bold; }
+        .welcome-modal h3 { color: #fff; font-size: 1.2rem; margin-bottom: 20px; }
+        .welcome-modal p { color: #a0a0a0; font-size: 0.9rem; line-height: 1.6; margin-bottom: 15px; }
         .welcome-modal .divider { height: 1px; background: #2a2a4a; margin: 20px 0; }
-        .welcome-modal .btn-continue {
-            background: linear-gradient(135deg, #8a2be2, #6a1b9a);
-            color: #fff; padding: 15px; border: none; border-radius: 12px;
-            width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer;
-            box-shadow: 0 4px 20px rgba(138, 43, 226, 0.5);
-        }
+        .welcome-modal .btn-continue { background: linear-gradient(135deg, #8a2be2, #6a1b9a); color: #fff; padding: 15px; border: none; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 20px rgba(138, 43, 226, 0.5); }
 
-        /* ==== PROFİL SAYFASI ==== */
+        /* PROFİL */
         .profile-header { text-align: center; margin-bottom: 25px; }
-        .profile-avatar {
-            width: 100px; height: 100px; border-radius: 50%;
-            background: linear-gradient(135deg, #8a2be2, #00ffcc);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 15px; font-size: 3rem; font-weight: bold; color: #fff;
-            box-shadow: 0 0 25px rgba(138, 43, 226, 0.5); border: 3px solid #2a2a4a;
-        }
+        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #8a2be2, #00ffcc); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 3rem; font-weight: bold; color: #fff; box-shadow: 0 0 25px rgba(138, 43, 226, 0.5); border: 3px solid #2a2a4a; cursor: pointer; position: relative; }
+        .profile-avatar .edit-icon { position: absolute; bottom: 0; right: 0; background: #8a2be2; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 2px solid #0b0b1a; }
         .profile-username { font-size: 1.5rem; font-weight: bold; color: #fff; margin-bottom: 5px; }
         .profile-email { font-size: 0.9rem; color: #a0a0a0; }
         .profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .profile-stat { background: #1a1a2e; padding: 15px; border-radius: 12px; border: 1px solid #2a2a4a; text-align: center; }
         .profile-stat .value { font-size: 1.5rem; font-weight: bold; color: #00ffcc; }
         .profile-stat .label { font-size: 0.75rem; color: #a0a0a0; margin-top: 5px; }
-        .profile-menu-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #1a1a2e; padding: 15px; border-radius: 12px;
-            margin-bottom: 8px; border: 1px solid #2a2a4a; cursor: pointer;
-        }
+        .profile-menu-item { display: flex; justify-content: space-between; align-items: center; background: #1a1a2e; padding: 15px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #2a2a4a; cursor: pointer; }
         .profile-menu-item:hover { border-color: #8a2be2; }
         .profile-menu-item .left { display: flex; align-items: center; gap: 12px; }
         .profile-menu-item .icon { font-size: 1.3rem; }
         .profile-menu-item .text { font-size: 0.95rem; }
         .profile-menu-item .arrow { color: #a0a0a0; }
+
+        /* MODAL (Genel) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-overlay.show { display: flex; }
+        .modal-box { background: linear-gradient(180deg, #1a1a2e 0%, #0b0b1a 100%); border: 2px solid #8a2be2; border-radius: 20px; padding: 25px 20px; max-width: 400px; width: 100%; }
+        .modal-box h2 { color: #8a2be2; margin-bottom: 15px; text-align: center; font-size: 1.3rem; }
+        .modal-box .close-btn { background: #ff4444; color: #fff; padding: 10px; border-radius: 10px; border: none; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        /* İKON SEÇİMİ */
+        .icon-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 15px; }
+        .icon-option { aspect-ratio: 1; background: #1a1a2e; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; border: 2px solid #2a2a4a; }
+        .icon-option:hover, .icon-option.selected { border-color: #8a2be2; background: #2a2a4a; }
+
+        .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1a1a2e; color: #fff; padding: 12px 20px; border-radius: 10px; border: 1px solid #8a2be2; z-index: 999; opacity: 0; transition: opacity 0.3s; }
+        .toast.show { opacity: 1; }
     </style>
 </head>
 <body>
 
-    <!-- HOŞ GELDİN BONUSU MODAL -->
+    <!-- HOŞ GELDİN MODAL -->
     <div class="welcome-modal-overlay" id="welcomeModal">
         <div class="welcome-modal">
             <div class="top-line"></div>
@@ -248,6 +169,50 @@
             <button class="btn-continue" onclick="closeWelcomeModal()">DEVAM ET</button>
         </div>
     </div>
+
+    <!-- PROFİL RESMİ SEÇME MODAL -->
+    <div class="modal-overlay" id="avatarModal">
+        <div class="modal-box">
+            <h2>Profil Resmini Seç</h2>
+            <div class="icon-grid" id="iconGrid">
+                <!-- JavaScript ile doldurulacak -->
+            </div>
+            <button class="close-btn" onclick="closeModal('avatarModal')">KAPAT</button>
+        </div>
+    </div>
+
+    <!-- İSİM DEĞİŞTİRME MODAL -->
+    <div class="modal-overlay" id="usernameModal">
+        <div class="modal-box">
+            <h2>İsmini Değiştir</h2>
+            <div class="input-group">
+                <input type="text" id="new-username" placeholder="Yeni Kullanıcı Adınız">
+            </div>
+            <button class="btn btn-purple" onclick="saveNewUsername()">KAYDET</button>
+            <button class="close-btn" onclick="closeModal('usernameModal')">İPTAL</button>
+        </div>
+    </div>
+
+    <!-- ŞİFRE DEĞİŞTİRME MODAL -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal-box">
+            <h2>Şifreni Değiştir</h2>
+            <div class="input-group">
+                <input type="password" id="old-password" placeholder="Mevcut Şifre">
+            </div>
+            <div class="input-group">
+                <input type="password" id="new-password" placeholder="Yeni Şifre">
+            </div>
+            <div class="input-group">
+                <input type="password" id="new-password2" placeholder="Yeni Şifre Tekrar">
+            </div>
+            <button class="btn btn-purple" onclick="saveNewPassword()">KAYDET</button>
+            <button class="close-btn" onclick="closeModal('passwordModal')">İPTAL</button>
+        </div>
+    </div>
+
+    <!-- Toast Bildirim -->
+    <div class="toast" id="toast">Mesaj</div>
 
     <!-- GİRİŞ EKRANI -->
     <div id="page-login" class="page active">
@@ -293,7 +258,6 @@
             <h2 id="countdown">30 GÜN 00 SA 00 DK</h2>
         </div>
 
-        <!-- ==== İSTATİSTİK KARTLARI (Puan, Çarpan, TL, Reklam) ==== -->
         <div class="stats-grid">
             <div class="stat-card points-card">
                 <div class="stat-icon">🏆</div>
@@ -313,7 +277,6 @@
             </div>
         </div>
 
-        <!-- Reklam Sayısı Bilgisi -->
         <div class="card" style="margin-top: 15px; padding: 12px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 0.85rem; color: #a0a0a0;">📺 İzlenen Reklam</span>
@@ -321,34 +284,42 @@
             </div>
         </div>
 
+        <!-- REKLAM BEKLEME SÜRESİ -->
+        <div class="ad-cooldown-box" id="adCooldownBox">
+            <h4>⏱️ Sonraki Reklam İçin Bekle</h4>
+            <div class="ad-cooldown-timer" id="adCooldownTimer">05:00</div>
+            <div class="ad-cooldown-text">AdMob bot koruması aktif. Kısa sürede çok reklam izlemek hesabınızı riske atar.</div>
+        </div>
+
         <div class="main-action-buttons">
-            <button class="btn btn-purple btn-big" onclick="watchAd()">📺 REKLAM İZLE & PUAN KAZAN</button>
+            <button class="btn btn-purple btn-big" id="watchAdBtn" onclick="watchAd()">📺 REKLAM İZLE & PUAN KAZAN</button>
             <button class="btn btn-big btn-big-green" onclick="playGame()">🎮 OYNA & PUAN TOPLA</button>
         </div>
     </div>
 
-    <!-- GÖREVLER SEKMESİ -->
+    <!-- GÖREVLER -->
     <div id="page-tasks" class="page">
         <div class="header"><h1>📋 Görevler</h1></div>
-        
         <div class="card">
             <p class="card-title">🎁 7 GÜNLÜK GİRİŞ ÖDÜLÜ</p>
             <div class="daily-rewards" id="daily-rewards"></div>
             <button class="btn btn-yellow" id="daily-btn" onclick="claimDailyReward()">BUGÜNÜN ÖDÜLÜNÜ AL</button>
             <p style="text-align: center; color: #a0a0a0; font-size: 0.75rem; margin-top: 8px;" id="daily-timer">Ödülünüz hazır!</p>
         </div>
-
         <div class="card">
-            <p class="card-title">📋 GÜNLÜK GÖREVLER (5 Görev)</p>
+            <p class="card-title">📋 GÜNLÜK GÖREVLER</p>
             <div id="task-list"></div>
         </div>
     </div>
 
     <!-- SIRALAMA -->
     <div id="page-leaderboard" class="page">
-        <div class="header"><h1>🏆 Sıralama</h1></div>
+        <div class="header">
+            <h1>🏆 Sıralama</h1>
+            <button class="lang-btn" onclick="renderLeaderboard()">🔄 Yenile</button>
+        </div>
         <div class="card">
-            <p class="card-title">EN ÇOK REKLAM İZLEYENLER</p>
+            <p class="card-title">EN ÇOK PUAN TOPLAYANLAR</p>
             <p style="font-size: 0.8rem; color: #a0a0a0; margin-bottom: 10px;">İlk 10 kişi havuzdaki parayı paylaşacak!</p>
             <table class="leaderboard">
                 <thead>
@@ -356,6 +327,9 @@
                 </thead>
                 <tbody id="leaderboard-body"></tbody>
             </table>
+            <div class="empty-message" id="leaderboard-empty" style="display: none;">
+                Henüz kayıt olan kullanıcı yok.<br>İlk sen ol!
+            </div>
         </div>
     </div>
 
@@ -370,8 +344,8 @@
             <p class="card-title">TOPLAM PUAN</p>
             <p class="card-value" id="wallet-points">0</p>
         </div>
-        <button class="btn btn-purple">TL'DEN KLAD'A DÖNÜŞTÜR</button>
-        <button class="btn btn-green">KLAD'DAN TL'YE DÖNÜŞTÜR</button>
+        <button class="btn btn-purple" onclick="convertPointsToTL()">💱 PUAN'DAN TL'YE DÖNÜŞTÜR</button>
+        <button class="btn btn-green" onclick="convertTLToPoints()">💱 TL'DEN PUAN'A DÖNÜŞTÜR</button>
         
         <div class="card" style="margin-top: 20px;">
             <p class="card-title">💸 ÇEKİM TALEBİ OLUŞTUR</p>
@@ -388,7 +362,10 @@
         <div class="header"><h1>👤 Profil</h1></div>
         
         <div class="profile-header">
-            <div class="profile-avatar" id="profile-avatar">K</div>
+            <div class="profile-avatar" id="profile-avatar" onclick="openAvatarModal()">
+                K
+                <div class="edit-icon">✏️</div>
+            </div>
             <div class="profile-username" id="profile-username">Kullanıcı Adı</div>
             <div class="profile-email" id="profile-email">kullanici@email.com</div>
         </div>
@@ -413,25 +390,32 @@
         </div>
 
         <div class="card">
+            <p class="card-title">HESAP AYARLARI</p>
+            <div class="profile-menu-item" onclick="openUsernameModal()">
+                <div class="left"><span class="icon">✏️</span><span class="text">İsmi Değiştir</span></div>
+                <span class="arrow">›</span>
+            </div>
+            <div class="profile-menu-item" onclick="openPasswordModal()">
+                <div class="left"><span class="icon">🔒</span><span class="text">Şifre Değiştir</span></div>
+                <span class="arrow">›</span>
+            </div>
+            <div class="profile-menu-item" onclick="openAvatarModal()">
+                <div class="left"><span class="icon">🖼️</span><span class="text">Profil Resmi Seç</span></div>
+                <span class="arrow">›</span>
+            </div>
+        </div>
+
+        <div class="card">
             <p class="card-title">HESAP BİLGİLERİ</p>
             <div class="profile-menu-item">
-                <div class="left"><span class="icon">🆔</span><span class="text">Referans Kodu: <strong id="profile-refcode" style="color: #8a2be2;">N6SUCF</strong></span></div>
-                <span class="arrow">›</span>
+                <div class="left"><span class="icon">🆔</span><span class="text">Referans: <strong style="color: #8a2be2;" id="profile-refcode">N6SUCF</strong></span></div>
             </div>
             <div class="profile-menu-item" onclick="showPage('page-referral')">
                 <div class="left"><span class="icon">👥</span><span class="text">Arkadaşlarını Davet Et</span></div>
                 <span class="arrow">›</span>
             </div>
             <div class="profile-menu-item" onclick="showPage('page-market')">
-                <div class="left"><span class="icon">🛒</span><span class="text">Çarpan Paketleri (Market)</span></div>
-                <span class="arrow">›</span>
-            </div>
-            <div class="profile-menu-item" onclick="showPage('page-tasks')">
-                <div class="left"><span class="icon">📋</span><span class="text">Günlük Görevler</span></div>
-                <span class="arrow">›</span>
-            </div>
-            <div class="profile-menu-item">
-                <div class="left"><span class="icon">🔔</span><span class="text">Bildirimler</span></div>
+                <div class="left"><span class="icon">🛒</span><span class="text">Çarpan Paketleri</span></div>
                 <span class="arrow">›</span>
             </div>
         </div>
@@ -472,7 +456,6 @@
                 <button class="btn btn-yellow" style="padding: 8px; font-size: 0.8rem;" onclick="buyPackage('Diamond', 899, 5.0)">SATIN AL</button>
             </div>
         </div>
-        <button class="btn btn-purple" style="margin-top: 15px;" onclick="showPage('page-profile')">← Profile Dön</button>
     </div>
 
     <!-- DAVET -->
@@ -484,11 +467,6 @@
             <div class="invite-code" id="invite-code">N6SUCF</div>
             <button class="btn btn-purple" onclick="copyCode()">KOPYALA</button>
             <button class="btn btn-green" onclick="shareInvite()">ARKADAŞLARINI DAVET ET</button>
-        </div>
-        <div class="card">
-            <p class="card-title">AĞ İSTATİSTİKLERİ</p>
-            <p style="font-size: 0.9rem;">Doğrudan Referanslar: <span style="color: #00ffcc;" id="ref-direct">0 Kullanıcı</span></p>
-            <p style="font-size: 0.9rem;">Kazanç: <span style="color: #00ffcc;" id="ref-earnings">0 TL</span></p>
         </div>
     </div>
 
@@ -502,22 +480,36 @@
     </div>
 
     <script>
-        // --- Değişkenler ---
+        // ============ DEĞİŞKENLER ============
         let userPoints = 0;
         let userTL = 0;
         let poolAmount = 0;
         let adsWatched = 0;
-        let userMultiplier = 1.0; // Kullanıcının çarpanı
-        let ownedPackage = "FREE"; // Kullanıcının sahip olduğu paket
+        let userMultiplier = 1.0;
+        let ownedPackage = "FREE";
         let dailyRewardDay = 1;
         let lastClaimTime = 0;
         let currentUsername = "Kullanıcı";
         let currentEmail = "kullanici@email.com";
+        let currentAvatar = "K";
+        let userPassword = "";
         
-        // Sabit puanlar
-        const BASE_AD_POINTS = 10; // Reklam başına temel puan
+        // ADMOB BEKLEME SÜRESİ (5 DAKİKA)
+        const AD_COOLDOWN = 5 * 60 * 1000; // 5 dakika
+        let lastAdTime = 0;
+        let adCooldownInterval = null;
         
-        // Günlük Görevler
+        const BASE_AD_POINTS = 10;
+        const POINT_TO_TL_RATE = 100; // 100 Puan = 1 TL
+        const TL_TO_POINT_RATE = 100; // 1 TL = 100 Puan
+        
+        // İKON LİSTESİ
+        const avatarIcons = ["😎", "🦁", "🚀", "⭐", "🔥", "💎", "🎯", "👑", "🐉", "🦊", "🐺", "🎮", "⚡", "🌟", "💪", "🧠", "🎨", "🏆"];
+
+        // ============ KAYITLI KULLANICILAR (Sadece gerçek kullanıcılar) ============
+        let registeredUsers = [];
+
+        // ============ GÖREVLER ============
         let dailyTasks = [
             { id: 1, title: "Reklam İzle (1/3)", desc: "3 reklam izle", reward: 1, done: false, type: 'ad' },
             { id: 2, title: "Reklam İzle (2/3)", desc: "3 reklam izle", reward: 1, done: false, type: 'ad' },
@@ -526,21 +518,7 @@
             { id: 5, title: "Para Yakala Oyunu (2/2)", desc: "Düşen paraları yakala", reward: 2, done: false, type: 'game' }
         ];
 
-        // Sıralama Tablosu (Demo Veriler)
-        let leaderboardData = [
-            { name: "Ahmet", ads: 150, points: 1500 },
-            { name: "Mehmet", ads: 120, points: 1200 },
-            { name: "Ayşe", ads: 100, points: 1000 },
-            { name: "Fatma", ads: 80, points: 800 },
-            { name: "Ali", ads: 60, points: 600 },
-            { name: "Veli", ads: 40, points: 400 },
-            { name: "Can", ads: 20, points: 200 },
-            { name: "Cem", ads: 15, points: 150 },
-            { name: "Deniz", ads: 10, points: 100 },
-            { name: "Ece", ads: 5, points: 50 }
-        ];
-
-        // --- Sayfa Geçiş Fonksiyonu ---
+        // ============ SAYFA GEÇİŞ ============
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
@@ -561,30 +539,110 @@
             
             if (pageId === 'page-profile') updateProfile();
             if (pageId === 'page-market') updateMarketView();
+            if (pageId === 'page-leaderboard') renderLeaderboard();
         }
 
-        // --- Hoş Geldin Bonusu Modal ---
-        function showWelcomeModal() {
-            document.getElementById('welcomeModal').classList.add('show');
-        }
-        function closeWelcomeModal() {
-            document.getElementById('welcomeModal').classList.remove('show');
+        // ============ MODAL İŞLEMLERİ ============
+        function openAvatarModal() {
+            const grid = document.getElementById('iconGrid');
+            grid.innerHTML = '';
+            avatarIcons.forEach(icon => {
+                const div = document.createElement('div');
+                div.className = 'icon-option' + (currentAvatar === icon ? ' selected' : '');
+                div.innerText = icon;
+                div.onclick = () => {
+                    currentAvatar = icon;
+                    document.getElementById('profile-avatar').innerHTML = icon + '<div class="edit-icon">✏️</div>';
+                    closeModal('avatarModal');
+                    showToast("✅ Profil resmi güncellendi!");
+                };
+                grid.appendChild(div);
+            });
+            document.getElementById('avatarModal').classList.add('show');
         }
 
-        // --- Giriş/Kayıt ---
+        function openUsernameModal() {
+            document.getElementById('new-username').value = currentUsername;
+            document.getElementById('usernameModal').classList.add('show');
+        }
+
+        function saveNewUsername() {
+            const newName = document.getElementById('new-username').value.trim();
+            if (!newName) { alert("İsim boş olamaz!"); return; }
+            if (newName.length < 3) { alert("İsim en az 3 karakter olmalı!"); return; }
+            currentUsername = newName;
+            document.getElementById('home-username').innerText = currentUsername;
+            document.getElementById('profile-username').innerText = currentUsername;
+            closeModal('usernameModal');
+            showToast("✅ İsim güncellendi!");
+            renderLeaderboard();
+        }
+
+        function openPasswordModal() {
+            document.getElementById('old-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('new-password2').value = '';
+            document.getElementById('passwordModal').classList.add('show');
+        }
+
+        function saveNewPassword() {
+            const oldP = document.getElementById('old-password').value;
+            const newP = document.getElementById('new-password').value;
+            const newP2 = document.getElementById('new-password2').value;
+            
+            if (!oldP || !newP || !newP2) { alert("Tüm alanları doldurun!"); return; }
+            if (newP.length < 6) { alert("Şifre en az 6 karakter olmalı!"); return; }
+            if (newP !== newP2) { alert("Yeni şifreler uyuşmuyor!"); return; }
+            
+            userPassword = newP;
+            closeModal('passwordModal');
+            showToast("✅ Şifre güncellendi!");
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ============ HOŞ GELDİN ============
+        function showWelcomeModal() { document.getElementById('welcomeModal').classList.add('show'); }
+        function closeWelcomeModal() { document.getElementById('welcomeModal').classList.remove('show'); }
+
+        // ============ GİRİŞ/KAYIT ============
         function loginUser() {
             const email = document.getElementById('login-email').value;
-            if (email) {
+            if (!email) { alert("Lütfen e-posta girin!"); return; }
+            
+            // Kayıtlı kullanıcı kontrolü
+            const existingUser = registeredUsers.find(u => u.email === email);
+            if (existingUser) {
+                currentEmail = existingUser.email;
+                currentUsername = existingUser.username;
+                currentAvatar = existingUser.avatar || "K";
+                userPoints = existingUser.points;
+                userTL = existingUser.tl;
+                adsWatched = existingUser.ads;
+                userMultiplier = existingUser.multiplier || 1.0;
+                ownedPackage = existingUser.package || "FREE";
+            } else {
                 currentEmail = email;
                 currentUsername = email.split('@')[0];
-                document.getElementById('home-username').innerText = currentUsername;
-                showPage('page-home');
-                updateDome(0);
-                renderTasks();
-                renderDailyRewards();
-                renderLeaderboard();
-                updateStatsView();
-            } else { alert("Lütfen e-posta girin!"); }
+            }
+            
+            document.getElementById('home-username').innerText = currentUsername;
+            showPage('page-home');
+            updateDome(0);
+            renderTasks();
+            renderDailyRewards();
+            renderLeaderboard();
+            updateStatsView();
+            checkAdCooldown();
         }
 
         function googleLogin() {
@@ -598,67 +656,93 @@
             renderLeaderboard();
             updateStatsView();
             showWelcomeModal();
+            checkAdCooldown();
         }
 
         function registerUser() {
             const email = document.getElementById('reg-email').value;
             const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
             
-            if (!email || !username) {
+            if (!email || !username || !password) {
                 alert("Lütfen tüm alanları doldurun!");
+                return;
+            }
+            
+            if (registeredUsers.find(u => u.email === email)) {
+                alert("Bu e-posta zaten kayıtlı!");
                 return;
             }
             
             currentEmail = email;
             currentUsername = username;
+            userPassword = password;
+            currentAvatar = username.charAt(0).toUpperCase();
+            userTL = 20; // HOŞ GELDİN BONUSU
+            
+            // Kullanıcıyı kayıtlı listeye ekle
+            registeredUsers.push({
+                email: email,
+                username: username,
+                avatar: currentAvatar,
+                points: userPoints,
+                tl: userTL,
+                ads: adsWatched,
+                multiplier: userMultiplier,
+                package: ownedPackage
+            });
+            
             document.getElementById('home-username').innerText = currentUsername;
-            
-            // YENİ KAYIT OLAN KULLANICIYA 20 TL BONUS
-            userTL = 20;
-            
             showPage('page-home');
             updateDome(0);
             renderTasks();
             renderDailyRewards();
             renderLeaderboard();
             updateStatsView();
-            
             showWelcomeModal();
+            checkAdCooldown();
         }
 
-        // --- İstatistikleri Güncelle ---
+        // ============ İSTATİSTİK GÜNCELLE ============
         function updateStatsView() {
             document.getElementById('home-points').innerText = userPoints;
-            document.getElementById('home-tl').innerText = userTL;
+            document.getElementById('home-tl').innerText = userTL.toFixed(2);
             document.getElementById('home-ads').innerText = adsWatched;
             document.getElementById('home-multiplier').innerText = userMultiplier.toFixed(1) + 'x';
             document.getElementById('multiplier-badge').innerText = ownedPackage;
             
-            // Çarpan kartına glow efekti (1.0x'ten büyükse)
             const multCard = document.getElementById('multiplierCard');
-            if (userMultiplier > 1.0) {
-                multCard.classList.add('active-glow');
-            } else {
-                multCard.classList.remove('active-glow');
-            }
+            if (userMultiplier > 1.0) multCard.classList.add('active-glow');
+            else multCard.classList.remove('active-glow');
             
-            // Diğer sayfaları da güncelle
-            document.getElementById('wallet-tl').innerText = userTL;
+            document.getElementById('wallet-tl').innerText = userTL.toFixed(2);
             document.getElementById('wallet-points').innerText = userPoints;
+            
+            // Kayıtlı kullanıcıyı güncelle
+            const user = registeredUsers.find(u => u.email === currentEmail);
+            if (user) {
+                user.points = userPoints;
+                user.tl = userTL;
+                user.ads = adsWatched;
+                user.username = currentUsername;
+                user.avatar = currentAvatar;
+                user.multiplier = userMultiplier;
+                user.package = ownedPackage;
+            }
         }
 
-        // --- Profil Güncelleme ---
+        // ============ PROFİL GÜNCELLE ============
         function updateProfile() {
-            document.getElementById('profile-avatar').innerText = currentUsername.charAt(0).toUpperCase();
+            document.getElementById('profile-avatar').innerHTML = currentAvatar + '<div class="edit-icon">✏️</div>';
             document.getElementById('profile-username').innerText = currentUsername;
             document.getElementById('profile-email').innerText = currentEmail;
             document.getElementById('profile-points').innerText = userPoints;
-            document.getElementById('profile-tl').innerText = userTL + ' TL';
+            document.getElementById('profile-tl').innerText = userTL.toFixed(2) + ' TL';
             document.getElementById('profile-ads').innerText = adsWatched;
             document.getElementById('profile-multiplier').innerText = userMultiplier.toFixed(1) + 'x';
         }
 
-        // --- Çıkış Yap ---
+        // ============ ÇIKIŞ ============
         function logout() {
             if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
                 currentUsername = "Kullanıcı";
@@ -668,13 +752,14 @@
                 adsWatched = 0;
                 userMultiplier = 1.0;
                 ownedPackage = "FREE";
+                currentAvatar = "K";
                 document.getElementById('home-username').innerText = currentUsername;
                 updateStatsView();
                 showPage('page-login');
             }
         }
 
-        // --- Cam Fanus (Havuz) Güncelleme ---
+        // ============ CAM FANUS ============
         function updateDome(amount) {
             poolAmount = amount;
             const fill = document.getElementById('dome-fill');
@@ -684,34 +769,84 @@
             text.innerText = amount.toFixed(2) + ' TL';
         }
 
-        // --- ANA SAYFA REKLAM İZLE BUTONU (ÇARPAN SİSTEMLİ) ---
+        // ============ ADMOB REKLAM (COOLDOWN'LI) ============
         function watchAd() {
-            alert("📺 Reklam izleniyor... (AdMob)");
-            // Kodular köprüsü: window.AppInventor.setWebViewString("SHOW_AD");
+            const now = Date.now();
             
-            // ÇARPANLI PUAN HESABI
+            // Bekleme süresi kontrolü
+            if (lastAdTime !== 0 && (now - lastAdTime) < AD_COOLDOWN) {
+                const remaining = AD_COOLDOWN - (now - lastAdTime);
+                const mins = Math.floor(remaining / 60000);
+                const secs = Math.floor((remaining % 60000) / 1000);
+                alert(`⏱️ Çok hızlı reklam izliyorsunuz!\n\nAdMob bot koruması aktif.\nKalan süre: ${mins} dk ${secs} sn`);
+                return;
+            }
+            
+            // Reklam göster (Kodular köprüsü)
+            // window.AppInventor.setWebViewString("SHOW_AD");
+            
+            // Simülasyon: Reklam izlendi
             const earnedPoints = Math.floor(BASE_AD_POINTS * userMultiplier);
             const earnedTL = 0.5 * userMultiplier;
             
             adsWatched++;
             userPoints += earnedPoints;
             userTL += earnedTL;
-            updateStatsView();
-            updateLeaderboardUser();
+            lastAdTime = now;
             
-            // Kazanılan puanı göster
-            alert(`✅ Reklam izlendi!\n\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n💵 +${earnedTL.toFixed(2)} TL`);
+            updateStatsView();
+            renderLeaderboard();
+            
+            alert(`✅ Reklam izlendi!\n\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n💵 +${earnedTL.toFixed(2)} TL\n\n⏱️ 5 dakika sonra tekrar izleyebilirsiniz.`);
+            
+            checkAdCooldown();
         }
 
-        // --- ANA SAYFA OYUN BUTONU ---
-        function playGame() {
-            alert("📺 Geçiş reklamı izleniyor... (AdMob Interstitial)");
-            setTimeout(() => {
-                window.location.href = 'oyun.html';
+        // ============ ADMOB COOLDOWN GÖSTERİMİ ============
+        function checkAdCooldown() {
+            const now = Date.now();
+            const box = document.getElementById('adCooldownBox');
+            const btn = document.getElementById('watchAdBtn');
+            
+            if (adCooldownInterval) clearInterval(adCooldownInterval);
+            
+            if (lastAdTime === 0 || (now - lastAdTime) >= AD_COOLDOWN) {
+                box.classList.remove('active');
+                btn.classList.remove('btn-disabled');
+                btn.innerText = "📺 REKLAM İZLE & PUAN KAZAN";
+                return;
+            }
+            
+            box.classList.add('active');
+            btn.classList.add('btn-disabled');
+            
+            adCooldownInterval = setInterval(() => {
+                const now = Date.now();
+                const remaining = AD_COOLDOWN - (now - lastAdTime);
+                
+                if (remaining <= 0) {
+                    clearInterval(adCooldownInterval);
+                    box.classList.remove('active');
+                    btn.classList.remove('btn-disabled');
+                    btn.innerText = "📺 REKLAM İZLE & PUAN KAZAN";
+                    return;
+                }
+                
+                const mins = Math.floor(remaining / 60000);
+                const secs = Math.floor((remaining % 60000) / 1000);
+                document.getElementById('adCooldownTimer').innerText = 
+                    String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+                btn.innerText = `⏱️ ${mins}:${String(secs).padStart(2, '0')} SONRA İZLE`;
             }, 1000);
         }
 
-        // --- Günlük Görevleri Listele ---
+        // ============ OYUN ============
+        function playGame() {
+            alert("📺 Geçiş reklamı izleniyor... (AdMob)");
+            setTimeout(() => { window.location.href = 'oyun.html'; }, 1000);
+        }
+
+        // ============ GÖREVLER ============
         function renderTasks() {
             const list = document.getElementById('task-list');
             list.innerHTML = '';
@@ -732,58 +867,83 @@
             });
         }
 
-        // --- Görev Tamamlama ---
         function completeTask(id) {
             const task = dailyTasks.find(t => t.id === id);
             if (task && !task.done) {
                 if (task.type === 'ad') {
-                    alert("📺 Reklam izleniyor... (AdMob)");
+                    const now = Date.now();
+                    if (lastAdTime !== 0 && (now - lastAdTime) < AD_COOLDOWN) {
+                        alert("⏱️ AdMob bot koruması: Lütfen 5 dakika bekleyin!");
+                        return;
+                    }
                     
-                    // ÇARPANLI PUAN HESABI
+                    alert("📺 Reklam izleniyor... (AdMob)");
                     const earnedPoints = Math.floor(BASE_AD_POINTS * userMultiplier);
                     
                     adsWatched++;
                     userPoints += earnedPoints;
                     userTL += task.reward;
-                    updateLeaderboardUser();
+                    lastAdTime = now;
                     
                     task.done = true;
                     updateStatsView();
                     renderTasks();
+                    renderLeaderboard();
+                    checkAdCooldown();
                     alert(`✅ Görev tamamlandı!\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n💵 +${task.reward} TL`);
                 } else if (task.type === 'game') {
                     alert("📺 Geçiş reklamı izleniyor... (AdMob)");
-                    setTimeout(() => {
-                        window.location.href = 'oyun.html';
-                    }, 1000);
+                    setTimeout(() => { window.location.href = 'oyun.html'; }, 1000);
                 }
             }
         }
 
-        // --- Sıralama Tablosunu Güncelle ---
+        // ============ SIRALAMA (Sadece gerçek kullanıcılar) ============
         function renderLeaderboard() {
             const tbody = document.getElementById('leaderboard-body');
+            const emptyMsg = document.getElementById('leaderboard-empty');
             tbody.innerHTML = '';
-            let allUsers = [...leaderboardData, { name: currentUsername, ads: adsWatched, points: userPoints }];
+            
+            // Kayıtlı kullanıcıları kopyala ve puanı büyükten küçüğe sırala
+            let allUsers = [...registeredUsers];
+            
+            // Aktif kullanıcıyı da ekle (henüz eklenmediyse)
+            if (!allUsers.find(u => u.email === currentEmail) && currentEmail !== "kullanici@email.com") {
+                allUsers.push({
+                    email: currentEmail,
+                    username: currentUsername,
+                    avatar: currentAvatar,
+                    points: userPoints,
+                    ads: adsWatched,
+                    tl: userTL
+                });
+            }
+            
+            // Sadece 0'dan büyük puanı olanları göster
+            allUsers = allUsers.filter(u => u.points > 0 || u.ads > 0);
             allUsers.sort((a, b) => b.points - a.points);
+            
+            if (allUsers.length === 0) {
+                emptyMsg.style.display = 'block';
+                return;
+            }
+            
+            emptyMsg.style.display = 'none';
             
             allUsers.slice(0, 10).forEach((user, index) => {
                 const tr = document.createElement('tr');
+                const isMe = user.email === currentEmail;
                 tr.innerHTML = `
                     <td><span class="rank-badge">${index + 1}</span></td>
-                    <td>${user.name}</td>
-                    <td>${user.ads}</td>
-                    <td>${user.points}</td>
+                    <td>${user.avatar || '👤'} ${user.username}${isMe ? ' <span style="color:#00ffcc;font-size:0.7rem;">(SEN)</span>' : ''}</td>
+                    <td>${user.ads || 0}</td>
+                    <td>${user.points || 0}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function updateLeaderboardUser() {
-            renderLeaderboard();
-        }
-
-        // --- 7 Günlük Giriş Ödülü (24 Saatte Bir) ---
+        // ============ 7 GÜNLÜK ÖDÜL ============
         function renderDailyRewards() {
             const container = document.getElementById('daily-rewards');
             container.innerHTML = '';
@@ -823,7 +983,7 @@
             const oneDay = 24 * 60 * 60 * 1000;
             
             if (lastClaimTime !== 0 && (now - lastClaimTime) < oneDay) {
-                alert("Bu ödülü zaten aldınız! 24 saat sonra tekrar deneyin.");
+                alert("Bu ödülü zaten aldınız!");
                 return;
             }
             
@@ -836,11 +996,48 @@
                 lastClaimTime = now;
                 renderDailyRewards();
             } else {
-                alert("7 günlük ödül serisini tamamladınız! Tebrikler!");
+                alert("7 günlük ödül serisini tamamladınız!");
             }
         }
 
-        // --- Çekim Talebi ---
+        // ============ PUAN <-> TL DÖNÜŞÜMÜ ============
+        function convertPointsToTL() {
+            if (userPoints < POINT_TO_TL_RATE) {
+                alert(`❌ En az ${POINT_TO_TL_RATE} puanınız olmalı!\n\nMevcut: ${userPoints} Puan`);
+                return;
+            }
+            
+            const pointsToConvert = Math.floor(userPoints / POINT_TO_TL_RATE) * POINT_TO_TL_RATE;
+            const tlToGet = pointsToConvert / POINT_TO_TL_RATE;
+            
+            if (confirm(`${pointsToConvert} Puan → ${tlToGet} TL\n\nOnaylıyor musunuz?`)) {
+                userPoints -= pointsToConvert;
+                userTL += tlToGet;
+                updateStatsView();
+                renderLeaderboard();
+                alert(`✅ Dönüşüm başarılı!\n\n-${pointsToConvert} Puan\n+${tlToGet} TL`);
+            }
+        }
+
+        function convertTLToPoints() {
+            if (userTL < 1) {
+                alert("❌ En az 1 TL'niz olmalı!");
+                return;
+            }
+            
+            const tlToConvert = Math.floor(userTL);
+            const pointsToGet = tlToConvert * TL_TO_POINT_RATE;
+            
+            if (confirm(`${tlToConvert} TL → ${pointsToGet} Puan\n\nOnaylıyor musunuz?`)) {
+                userTL -= tlToConvert;
+                userPoints += pointsToGet;
+                updateStatsView();
+                renderLeaderboard();
+                alert(`✅ Dönüşüm başarılı!\n\n-${tlToConvert} TL\n+${pointsToGet} Puan`);
+            }
+        }
+
+        // ============ ÇEKİM ============
         function createWithdrawal() {
             const name = document.getElementById('withdraw-name').value;
             const surname = document.getElementById('withdraw-surname').value;
@@ -848,40 +1045,33 @@
             const amount = parseFloat(document.getElementById('withdraw-amount').value);
             
             if (!name || !surname || !iban || !amount) {
-                alert("Lütfen Ad, Soyad, IBAN ve Tutar alanlarını doldurun!");
+                alert("Lütfen tüm alanları doldurun!");
                 return;
             }
-            if (amount < 150) {
-                alert("Minimum çekim tutarı 150 TL'dir!");
-                return;
-            }
-            if (amount > userTL) {
-                alert("Yetersiz bakiye!");
-                return;
-            }
+            if (amount < 150) { alert("Minimum çekim: 150 TL!"); return; }
+            if (amount > userTL) { alert("Yetersiz bakiye!"); return; }
+            
             alert(`✅ Çekim talebiniz alındı!\n\n💵 ${amount} TL\n👤 ${name} ${surname}\n🏦 ${iban}`);
         }
 
-        // --- Davet Sistemi ---
+        // ============ DAVET ============
         function copyCode() {
             const code = document.getElementById('invite-code').innerText;
             navigator.clipboard.writeText(code);
-            alert("Davet kodu kopyalandı: " + code);
+            showToast("📋 Kod kopyalandı: " + code);
         }
 
         function shareInvite() {
             const code = document.getElementById('invite-code').innerText;
-            alert(`Davet linkiniz: https://cashcash2.vercel.app?ref=${code}\n\nArkadaşın kayıt olduğunda sen 5 TL, o 1 TL kazanacak!`);
+            alert(`Davet linkiniz:\nhttps://cashcash2.vercel.app?ref=${code}\n\nSen 5 TL, arkadaşın 1 TL kazanacak!`);
         }
 
-        // --- Market Görünümünü Güncelle ---
+        // ============ MARKET ============
         function updateMarketView() {
             document.getElementById('market-current-multiplier').innerText = userMultiplier.toFixed(1) + 'x';
-            
-            // Sahip olunan paketi işaretle
             document.querySelectorAll('.market-card').forEach(card => card.classList.remove('owned'));
             const ownedCard = document.getElementById('pkg-' + ownedPackage.toLowerCase());
-            if (ownedCard) {
+            if (ownedCard && ownedPackage !== 'FREE') {
                 ownedCard.classList.add('owned');
                 if (!ownedCard.querySelector('.owned-badge')) {
                     const badge = document.createElement('div');
@@ -892,44 +1082,42 @@
             }
         }
 
-        // --- Market Paket Satın Alma (Çarpanlı) ---
         function buyPackage(name, price, multiplier) {
             if (userMultiplier >= multiplier) {
-                alert(`⚠️ Zaten ${userMultiplier.toFixed(1)}x çarpanınız var. Daha yüksek bir paket seçin!`);
+                alert(`⚠️ Zaten ${userMultiplier.toFixed(1)}x çarpanınız var!`);
                 return;
             }
             
             if (userTL >= price) {
-                if (confirm(`${name} paketini ${price} TL'ye satın almak istiyor musunuz?\n\nYeni Çarpan: ${multiplier}x\n\nHer reklamda ${Math.floor(BASE_AD_POINTS * multiplier)} puan kazanacaksınız!`)) {
+                if (confirm(`${name} paketi: ${price} TL\n\nYeni Çarpan: ${multiplier}x\nReklam başına: ${Math.floor(BASE_AD_POINTS * multiplier)} Puan\n\nOnaylıyor musunuz?`)) {
                     userTL -= price;
                     userMultiplier = multiplier;
                     ownedPackage = name.toUpperCase();
                     updateStatsView();
                     updateMarketView();
-                    alert(`✅ ${name} paketi satın alındı!\n\n⚡ Yeni Çarpan: ${multiplier}x\n🏆 Reklam başına: ${Math.floor(BASE_AD_POINTS * multiplier)} Puan`);
+                    alert(`✅ ${name} paketi alındı!\n⚡ Yeni Çarpan: ${multiplier}x`);
                 }
             } else {
-                alert(`❌ Yetersiz bakiye!\n\nGerekli: ${price} TL\nMevcut: ${userTL} TL`);
+                alert(`❌ Yetersiz bakiye!\nGerekli: ${price} TL\nMevcut: ${userTL.toFixed(2)} TL`);
             }
         }
 
-        // --- Oyun Sonrası Puan Aktarımı (Çarpanlı) ---
+        // ============ OYUN SONRASI ============
         window.addEventListener('message', (event) => {
             if (event.data && event.data.type === 'gameOver') {
-                const basePoints = event.data.points;
-                const earnedPoints = Math.floor(basePoints * userMultiplier);
-                
+                const earnedPoints = Math.floor(event.data.points * userMultiplier);
                 userPoints += earnedPoints;
                 adsWatched += 1;
                 updateStatsView();
-                updateLeaderboardUser();
-                alert(`🎮 Oyundan kazandınız!\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan`);
+                renderLeaderboard();
+                alert(`🎮 +${earnedPoints} Puan kazandınız!`);
             }
         });
 
-        // --- Başlangıç ---
+        // ============ BAŞLANGIÇ ============
         window.onload = function() {
             showPage('page-login');
+            checkAdCooldown();
         };
     </script>
 </body>
