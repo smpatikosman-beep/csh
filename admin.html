@@ -934,7 +934,7 @@
             wSnap.forEach(d => backup.withdrawals.push({ id: d.id, ...d.data() }));
             const lSnap = await getDocs(collection(db, "adminLogs"));
             lSnap.forEach(d => backup.logs.push({ id: d.id, ...d.data() }));
-            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });0000000000000
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = `cashcash_backup_${new Date().toISOString().split('T')[0]}.json`;
@@ -957,4 +957,4 @@
     };
 </script>
 </body>
-</html>0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+</html>
