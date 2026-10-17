@@ -415,7 +415,6 @@
             currentAdminUid = user.uid;
             currentAdminEmail = user.email;
             
-            // Config'den admin UID'sini kontrol et
             try {
                 const configSnap = await getDoc(doc(db, "config", "admin"));
                 if (configSnap.exists()) {
@@ -425,14 +424,12 @@
                 console.log("Config okunamadı:", e);
             }
             
-            // İlk admin ise config'e kaydet
             if (!adminUidFromConfig) {
                 await setDoc(doc(db, "config", "admin"), { adminUid: currentAdminUid });
                 adminUidFromConfig = currentAdminUid;
                 showToast("✅ İlk admin kaydedildi!");
             }
             
-            // Admin yetkisi kontrolü
             if (currentAdminUid !== adminUidFromConfig) {
                 alert("🚫 Bu hesap admin değil!");
                 await signOut(auth);
@@ -473,7 +470,8 @@
             tbody.innerHTML = '';
             snap.forEach(d => {
                 const log = d.data();
-                const date = log.timestamp ? new Date(log.timestamp.toDate()).toLocaleString('tr-TR') : '-';
+                let date = '-';
+                try { date = log.timestamp ? new Date(log.timestamp.toDate()).toLocaleString('tr-TR') : '-'; } catch (e) {}
                 tbody.innerHTML += `<tr><td style="font-size: 0.75rem;">${date}</td><td>${log.action}</td><td>${log.detail}</td><td>${log.admin}</td></tr>`;
             });
         } catch (e) { tbody.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
@@ -936,7 +934,7 @@
             wSnap.forEach(d => backup.withdrawals.push({ id: d.id, ...d.data() }));
             const lSnap = await getDocs(collection(db, "adminLogs"));
             lSnap.forEach(d => backup.logs.push({ id: d.id, ...d.data() }));
-            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });0000000000000
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = `cashcash_backup_${new Date().toISOString().split('T')[0]}.json`;
@@ -959,4 +957,4 @@
     };
 </script>
 </body>
-</html>
+</html>0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
