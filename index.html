@@ -366,7 +366,6 @@
             <button class="btn btn-purple" onclick="createWithdrawal()">ÇEKİM TALEBİ OLUŞTUR</button>
         </div>
 
-        <!-- ÇEKİM GEÇMİŞİ (YENİ) -->
         <div class="card" style="margin-top: 20px;">
             <p class="card-title">📜 ÇEKİM GEÇMİŞİM</p>
             <div id="withdrawHistoryList">
@@ -428,8 +427,11 @@
             <div class="profile-menu-item">
                 <div class="left"><span class="icon">🆔</span><span class="text">Referans: <strong style="color: #8a2be2;" id="profile-refcode">-</strong></span></div>
             </div>
+            <div class="profile-menu-item">
+                <div class="left"><span class="icon">👥</span><span class="text">Davet Ettiğin Kişi: <strong style="color: #00ffcc;" id="profile-ref-count">0 Kişi</strong></span></div>
+            </div>
             <div class="profile-menu-item" onclick="showPage('page-referral')">
-                <div class="left"><span class="icon">👥</span><span class="text">Arkadaşlarını Davet Et</span></div>
+                <div class="left"><span class="icon">📤</span><span class="text">Arkadaşlarını Davet Et</span></div>
                 <span class="arrow">›</span>
             </div>
             <div class="profile-menu-item" onclick="showPage('page-market')">
@@ -438,6 +440,7 @@
             </div>
         </div>
 
+        <button class="btn btn-yellow" onclick="openSupportModal()" style="margin-top: 10px;">💬 DESTEK / İLETİŞİM</button>
         <button class="btn btn-red" onclick="logout()">🚪 ÇIKIŞ YAP</button>
     </div>
 
@@ -578,42 +581,9 @@
 
         // ============ DİL ÇEVİRİLERİ ============
         const translations = {
-            tr: {
-                hello: "Merhaba",
-                points: "Puan",
-                ads: "Reklam",
-                multiplier: "Çarpan",
-                watchAd: "📺 REKLAM İZLE & PUAN KAZAN",
-                playGame: "🎮 OYNA & PUAN TOPLA",
-                countdown: "Yarışma Bitişine Kalan Süre",
-                poolTitle: "ÖDÜL HAVUZU",
-                poolDesc: "🎁 Havuz her gün doluyor! 30. günde ilk 10 kişiye dağıtılacak!",
-                home: "Kazan", tasks: "Görevler", leaderboard: "Sıralama", wallet: "Cüzdan", profile: "Profil"
-            },
-            en: {
-                hello: "Hello",
-                points: "Points",
-                ads: "Ads",
-                multiplier: "Multiplier",
-                watchAd: "📺 WATCH AD & EARN POINTS",
-                playGame: "🎮 PLAY & EARN POINTS",
-                countdown: "Time Remaining",
-                poolTitle: "PRIZE POOL",
-                poolDesc: "🎁 Pool fills every day! Distributed to top 10 on day 30!",
-                home: "Earn", tasks: "Tasks", leaderboard: "Ranking", wallet: "Wallet", profile: "Profile"
-            },
-            ru: {
-                hello: "Привет",
-                points: "Очки",
-                ads: "Реклама",
-                multiplier: "Множитель",
-                watchAd: "📺 СМОТРЕТЬ РЕКЛАМУ И ЗАРАБАТЫВАТЬ",
-                playGame: "🎮 ИГРАТЬ И ЗАРАБАТЫВАТЬ",
-                countdown: "Оставшееся время",
-                poolTitle: "ПРИЗОВОЙ ФОНД",
-                poolDesc: "🎁 Фонд пополняется каждый день! Распределяется между топ-10 на 30-й день!",
-                home: "Заработок", tasks: "Задания", leaderboard: "Рейтинг", wallet: "Кошелек", profile: "Профиль"
-            }
+            tr: { hello: "Merhaba", points: "Puan", ads: "Reklam", multiplier: "Çarpan", watchAd: "📺 REKLAM İZLE & PUAN KAZAN", playGame: "🎮 OYNA & PUAN TOPLA", countdown: "Yarışma Bitişine Kalan Süre", poolTitle: "ÖDÜL HAVUZU", poolDesc: "🎁 Havuz her gün doluyor! 30. günde ilk 10 kişiye dağıtılacak!", home: "Kazan", tasks: "Görevler", leaderboard: "Sıralama", wallet: "Cüzdan", profile: "Profil" },
+            en: { hello: "Hello", points: "Points", ads: "Ads", multiplier: "Multiplier", watchAd: "📺 WATCH AD & EARN POINTS", playGame: "🎮 PLAY & EARN POINTS", countdown: "Time Remaining", poolTitle: "PRIZE POOL", poolDesc: "🎁 Pool fills every day! Distributed to top 10 on day 30!", home: "Earn", tasks: "Tasks", leaderboard: "Ranking", wallet: "Wallet", profile: "Profile" },
+            ru: { hello: "Привет", points: "Очки", ads: "Реклама", multiplier: "Множитель", watchAd: "📺 СМОТРЕТЬ РЕКЛАМУ И ЗАРАБАТЫВАТЬ", playGame: "🎮 ИГРАТЬ И ЗАРАБАТЫВАТЬ", countdown: "Оставшееся время", poolTitle: "ПРИЗОВОЙ ФОНД", poolDesc: "🎁 Фонд пополняется каждый день! Распределяется между топ-10 на 30-й день!", home: "Заработок", tasks: "Задания", leaderboard: "Рейтинг", wallet: "Кошелек", profile: "Профиль" }
         };
 
         window.changeLanguage = function(lang) {
@@ -644,7 +614,6 @@
             const adsLabel = document.getElementById('adsLabel');
             if (adsLabel) adsLabel.innerText = t.ads;
             
-            // Alt menü
             const navHome = document.getElementById('navHome');
             if (navHome) navHome.innerHTML = `<i>▶</i> ${t.home}`;
             const navTasks = document.getElementById('navTasks');
@@ -659,7 +628,7 @@
             showToast(`✅ ${lang.toUpperCase()}`);
         };
 
-        // ============ KAYIT ============
+        // ============ KAYIT (Cihaz Kontrollü) ============
         window.registerUser = async function() {
             const email = document.getElementById('reg-email').value.trim();
             const username = document.getElementById('reg-username').value.trim();
@@ -676,6 +645,17 @@
             }
             if (password.length < 6) {
                 alert("Şifre en az 6 karakter olmalı!");
+                return;
+            }
+            
+            // Cihaz kontrolü - aynı cihazdan max 2 hesap
+            const deviceId = localStorage.getItem('deviceId') || 'dev_' + Math.random().toString(36).substring(2, 15);
+            if (!localStorage.getItem('deviceId')) localStorage.setItem('deviceId', deviceId);
+            
+            const deviceUsers = JSON.parse(localStorage.getItem('deviceUsers') || '[]');
+            
+            if (deviceUsers.length >= 2) {
+                alert("❌ Bu cihazdan zaten 2 hesap kayıt olmuş!\n\nHile tespiti nedeniyle aynı cihazdan 2'den fazla hesap açılamaz.");
                 return;
             }
             
@@ -700,11 +680,16 @@
                     dailyTasks: dailyTasks,
                     banned: false,
                     isFlagged: false,
+                    deviceId: deviceId,
                     createdAt: serverTimestamp(),
                     lastLogin: serverTimestamp()
                 };
                 
                 await setDoc(doc(db, "users", currentUid), userData);
+                
+                // Cihaz kullanıcı listesine ekle
+                deviceUsers.push(email);
+                localStorage.setItem('deviceUsers', JSON.stringify(deviceUsers));
                 
                 if (referralCode) {
                     const q = query(collection(db, "users"), where("referralCode", "==", referralCode));
@@ -764,6 +749,9 @@
                 
                 const userSnap = await getDoc(doc(db, "users", currentUid));
                 if (!userSnap.exists()) {
+                    const deviceId = localStorage.getItem('deviceId') || 'dev_' + Math.random().toString(36).substring(2, 15);
+                    if (!localStorage.getItem('deviceId')) localStorage.setItem('deviceId', deviceId);
+                    
                     await setDoc(doc(db, "users", currentUid), {
                         uid: currentUid,
                         email: user.email,
@@ -780,6 +768,7 @@
                         dailyTasks: dailyTasks,
                         banned: false,
                         isFlagged: false,
+                        deviceId: deviceId,
                         createdAt: serverTimestamp(),
                         lastLogin: serverTimestamp()
                     });
@@ -836,6 +825,17 @@
                 startCompetitionListener();
                 
                 await loadUserData();
+                
+                // Paket süresi kontrolü
+                const packageExpiry = Number(localStorage.getItem('packageExpiry_' + currentUid) || 0);
+                if (packageExpiry > 0 && Date.now() > packageExpiry) {
+                    userMultiplier = 1.0;
+                    ownedPackage = "FREE";
+                    localStorage.removeItem('packageExpiry_' + currentUid);
+                    await saveUserToFirebase();
+                    updateStatsView();
+                    showToast("⏰ Çarpan paketinizin süresi doldu!");
+                }
                 
                 if (isNewUser) {
                     showWelcomeModal();
@@ -1095,7 +1095,7 @@
             }
         }
 
-        // ============ HAVUZ GÜNCELLEME (GİZEMLİ) ============
+        // ============ HAVUZ GÜNCELLEME ============
         async function updatePoolAmount() {
             try {
                 let endTime = competitionEndTime;
@@ -1215,6 +1215,31 @@
             } catch (error) {
                 console.error("Çekim geçmişi hatası:", error);
                 document.getElementById('withdrawHistoryList').innerHTML = '<p style="text-align: center; color: #ff4444; font-size: 0.85rem;">Yüklenemedi.</p>';
+            }
+        }
+
+        // ============ DESTEK SİSTEMİ ============
+        window.openSupportModal = function() {
+            const msg = prompt("Sorununuzu veya mesajınızı yazın (max 500 karakter):");
+            if (!msg || msg.length < 5) { return; }
+            if (msg.length > 500) { alert("Mesaj çok uzun!"); return; }
+            
+            sendSupportMessage(msg);
+        };
+        
+        async function sendSupportMessage(message) {
+            try {
+                await addDoc(collection(db, "supportTickets"), {
+                    uid: currentUid,
+                    username: currentUsername,
+                    email: currentEmail,
+                    message: message,
+                    status: "beklemede",
+                    createdAt: serverTimestamp()
+                });
+                alert("✅ Mesajınız alındı! En kısa sürede dönüş yapılacaktır.");
+            } catch (e) {
+                alert("Hata: " + e.message);
             }
         }
 
@@ -1355,11 +1380,44 @@
             } catch (error) {
                 document.getElementById('profile-rank').innerText = '-';
             }
+            
+            // Referans sayısını hesapla
+            try {
+                const refQuery = query(collection(db, "users"), where("referredBy", "==", userReferralCode));
+                const refSnap = await getDocs(refQuery);
+                const refElement = document.getElementById('profile-ref-count');
+                if (refElement) refElement.innerText = refSnap.size + ' Kişi';
+            } catch (e) {
+                console.log("Referans sayısı hatası", e);
+            }
         }
 
-        // ============ REKLAM ============
+        // ============ REKLAM (Bot Korumalı) ============
         window.watchAd = async function() {
             const now = Date.now();
+            
+            // Bot kontrolü: Çok hızlı tıklama
+            const lastClickTime = Number(localStorage.getItem('lastAdClick_' + currentUid) || 0);
+            if (now - lastClickTime < 500) {
+                alert("🤖 Bot tespiti: Çok hızlısınız! Lütfen 1 saniye bekleyin.");
+                return;
+            }
+            localStorage.setItem('lastAdClick_' + currentUid, now);
+            
+            // Günlük limit kontrolü
+            const today = new Date().toDateString();
+            const adLog = JSON.parse(localStorage.getItem('adLog_' + currentUid) || '{}');
+            
+            if (adLog.date !== today) {
+                adLog.date = today;
+                adLog.count = 0;
+            }
+            
+            if (adLog.count >= 50) {
+                alert("⚠️ Günlük reklam limitine ulaştınız! (Max: 50 reklam)\n\nYarın tekrar deneyin.");
+                return;
+            }
+            
             if (lastAdTime !== 0 && (now - lastAdTime) < AD_COOLDOWN) {
                 const remaining = AD_COOLDOWN - (now - lastAdTime);
                 const mins = Math.floor(remaining / 60000);
@@ -1371,6 +1429,8 @@
             const earnedPoints = Math.floor(BASE_AD_POINTS * userMultiplier);
             adsWatched++;
             userPoints += earnedPoints;
+            adLog.count++;
+            localStorage.setItem('adLog_' + currentUid, JSON.stringify(adLog));
             
             if (adsWatched % ADS_BEFORE_COOLDOWN === 0) {
                 lastAdTime = now;
@@ -1428,8 +1488,29 @@
             setTimeout(() => { window.location.href = 'oyun.html'; }, 1000);
         }
 
-        // ============ GÖREVLER ============
+        // ============ GÖREVLER (Günlük Sıfırlama) ============
+        function checkDailyTasksReset() {
+            if (!currentUid) return false;
+            const today = new Date().toDateString();
+            const lastReset = localStorage.getItem('lastTaskReset_' + currentUid);
+            
+            if (lastReset !== today) {
+                dailyTasks.forEach(t => {
+                    t.done = false;
+                    t.progress = 0;
+                });
+                localStorage.setItem('lastTaskReset_' + currentUid, today);
+                saveUserToFirebase();
+                return true;
+            }
+            return false;
+        }
+
         function renderTasks() {
+            if (currentUid && checkDailyTasksReset()) {
+                showToast("🔄 Günlük görevler yenilendi!");
+            }
+            
             const list = document.getElementById('task-list');
             list.innerHTML = '';
             dailyTasks.forEach(task => {
@@ -1525,7 +1606,7 @@
             }
         }
 
-        // ============ 7 GÜNLÜK ÖDÜL (GECE YARISI) ============
+        // ============ 7 GÜNLÜK ÖDÜL (Gece Yarısı) ============
         function renderDailyRewards() {
             const container = document.getElementById('daily-rewards');
             container.innerHTML = '';
@@ -1671,7 +1752,7 @@
             alert(`Davet linkiniz:\nhttps://cashcash2.vercel.app?ref=${code}\n\nSen +50 Puan, arkadaşın +10 Puan kazanacak!`);
         }
 
-        // ============ MARKET ============
+        // ============ MARKET (30 Gün Süre) ============
         function updateMarketView() {
             document.getElementById('market-current-multiplier').innerText = userMultiplier.toFixed(1) + 'x';
             document.querySelectorAll('.market-card').forEach(card => card.classList.remove('owned'));
@@ -1691,15 +1772,19 @@
         window.buyPackage = async function(name, price, multiplier) {
             if (userMultiplier >= multiplier) { alert(`⚠️ Zaten ${userMultiplier.toFixed(1)}x!`); return; }
             if (userPoints >= price) {
-                if (confirm(`${name} paketi: ${price} Puan\nYeni Çarpan: ${multiplier}x`)) {
+                if (confirm(`${name} paketi: ${price} Puan\nYeni Çarpan: ${multiplier}x\nSüre: 30 Gün`)) {
                     userPoints -= price;
                     userMultiplier = multiplier;
                     ownedPackage = name.toUpperCase();
+                    
+                    const expiryDate = Date.now() + (30 * 24 * 60 * 60 * 1000);
+                    localStorage.setItem('packageExpiry_' + currentUid, expiryDate);
+                    
                     updateStatsView();
                     updateMarketView();
                     await saveUserToFirebase();
                     renderLeaderboard();
-                    alert(`✅ ${name} paketi alındı!\n⚡ ${multiplier}x`);
+                    alert(`✅ ${name} paketi alındı!\n⚡ ${multiplier}x\n📅 Geçerlilik: 30 gün`);
                 }
             } else {
                 alert(`❌ Yetersiz puan! Gerekli: ${price}, Mevcut: ${userPoints}`);
