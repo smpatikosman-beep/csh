@@ -11,7 +11,7 @@
         .page.active { display: block; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .header h1 { font-size: 1.4rem; color: #8a2be2; }
-        .lang-btn { background: #1a1a2e; color: #00ffcc; border: 1px solid #00ffcc; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
+        .lang-btn { background: #1a1a2e; color: #00ffcc; border: 1px solid #00ffcc; padding: 5px 8px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
         .card { background: #1a1a2e; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid #2a2a4a; }
         .card-title { font-size: 1rem; margin-bottom: 10px; color: #a0a0a0; }
         .card-value { font-size: 1.8rem; font-weight: bold; color: #8a2be2; }
@@ -27,8 +27,7 @@
         .btn-big-green { background: linear-gradient(135deg, #00ffcc, #00b894); color: #0b0b1a; box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3); }
         
         .dome-container { position: relative; width: 220px; height: 260px; margin: 0 auto 20px; border: 3px solid #8a2be2; border-radius: 50% 50% 10px 10px; overflow: hidden; background: rgba(138, 43, 226, 0.1); box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); }
-        .dome-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to top, #00ffcc, #8a2be2); transition: height 1s ease-in-out; }
-        .dome-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: bold; z-index: 2; text-shadow: 0 0 10px #000; text-align: center; }
+        .dome-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; text-shadow: 0 0 10px #000; text-align: center; width: 100%; }
         
         .countdown-box { text-align: center; margin-bottom: 20px; }
         .countdown-box h2 { color: #ffcc00; font-size: 1.5rem; }
@@ -226,42 +225,56 @@
     <div id="page-home" class="page">
         <div class="header">
             <h1>Merhaba, <span id="home-username">Kullanıcı</span></h1>
-            <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="display: flex; gap: 8px; align-items: center;">
                 <!-- BİLDİRİM ZİLİ -->
                 <div onclick="showPage('page-notifications')" style="position: relative; cursor: pointer; font-size: 1.5rem; background: #1a1a2e; padding: 5px 10px; border-radius: 10px; border: 1px solid #2a2a4a;">
                     🔔
                     <div id="notificationBadge" style="display: none; position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 15px; height: 15px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; font-weight: bold;">!</div>
                 </div>
-                <button class="lang-btn">Dil Değiştir</button>
+                <!-- DİL SEÇİCİ -->
+                <select id="langSelect" class="lang-btn" onchange="changeLanguage(this.value)" style="padding: 5px 8px; font-size: 0.8rem;">
+                    <option value="tr">🇹🇷 TR</option>
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="ru">🇷🇺 RU</option>
+                </select>
             </div>
         </div>
         
+        <!-- HAVUZ -->
         <div class="dome-container">
-            <div class="dome-fill" id="dome-fill"></div>
-            <div class="dome-text" id="dome-text">HAVUZ<br><span id="dome-amount">0 Puan</span></div>
+            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; overflow: hidden; border-radius: 50% 50% 10px 10px;">
+                <div id="moneyFill" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to top, #00ffcc 0%, #00b894 50%, #8a2be2 100%); transition: height 1.5s ease-in-out;">
+                    <div id="moneyEmojis" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden;"></div>
+                </div>
+            </div>
+            <div class="dome-text">
+                <div style="font-size: 0.75rem; color: #a0a0a0;" id="poolTitleText">ÖDÜL HAVUZU</div>
+                <div style="font-size: 2.5rem; color: #ffcc00; font-weight: bold;" id="dome-percent">0%</div>
+                <div style="font-size: 0.75rem; color: #00ffcc;" id="dome-day">1. Gün</div>
+            </div>
         </div>
-        <p style="text-align: center; color: #a0a0a0; font-size: 0.85rem; margin-bottom: 15px;">30 Gün boyunca toplanan puanlar, süre sonunda ilk 10 kişiye dağıtılacak!</p>
+        <p style="text-align: center; color: #a0a0a0; font-size: 0.85rem; margin-bottom: 15px;" id="poolDescText">🎁 Havuz her gün doluyor! 30. günde ilk 10 kişiye dağıtılacak!</p>
 
         <div class="countdown-box">
-            <p style="font-size: 0.85rem; color: #a0a0a0;">Yarışma Bitişine Kalan Süre</p>
+            <p style="font-size: 0.85rem; color: #a0a0a0;" id="countdownLabel">Yarışma Bitişine Kalan Süre</p>
             <h2 id="countdown">30 GÜN 00 SA 00 DK 00 SN</h2>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card points-card">
                 <div class="stat-icon">🏆</div>
-                <div class="stat-label">Puan</div>
+                <div class="stat-label" id="pointsLabel">Puan</div>
                 <div class="stat-value" id="home-points">0</div>
             </div>
             <div class="stat-card multiplier-card" id="multiplierCard">
                 <div class="stat-icon">⚡</div>
-                <div class="stat-label">Çarpan</div>
+                <div class="stat-label" id="multiplierLabel">Çarpan</div>
                 <div class="stat-value" id="home-multiplier">1.0x</div>
                 <div class="multiplier-badge" id="multiplier-badge">FREE</div>
             </div>
             <div class="stat-card tl-card">
                 <div class="stat-icon">📺</div>
-                <div class="stat-label">Reklam</div>
+                <div class="stat-label" id="adsLabel">Reklam</div>
                 <div class="stat-value" id="home-ads">0</div>
             </div>
         </div>
@@ -269,12 +282,12 @@
         <div class="ad-cooldown-box" id="adCooldownBox">
             <h4>⏱️ 3 Reklam İzledin - Kısa Mola!</h4>
             <div class="ad-cooldown-timer" id="adCooldownTimer">03:00</div>
-            <div class="ad-cooldown-text">AdMob bot koruması: 3 dakika sonra tekrar izleyebilirsin.</div>
+            <div class="ad-cooldown-text">AdMob bot koruması: kısa bir mola ver.</div>
         </div>
 
         <div class="main-action-buttons">
             <button class="btn btn-purple btn-big" id="watchAdBtn" onclick="watchAd()">📺 REKLAM İZLE & PUAN KAZAN</button>
-            <button class="btn btn-big btn-big-green" onclick="playGame()">🎮 OYNA & PUAN TOPLA</button>
+            <button class="btn btn-big btn-big-green" id="playGameBtn" onclick="playGame()">🎮 OYNA & PUAN TOPLA</button>
         </div>
     </div>
 
@@ -351,6 +364,14 @@
             <div class="input-group"><input type="text" id="withdraw-iban" placeholder="IBAN (TRxx xxxx ...)"></div>
             <div class="input-group"><input type="number" id="withdraw-amount" placeholder="Tutar (Minimum: 150 TL)"></div>
             <button class="btn btn-purple" onclick="createWithdrawal()">ÇEKİM TALEBİ OLUŞTUR</button>
+        </div>
+
+        <!-- ÇEKİM GEÇMİŞİ (YENİ) -->
+        <div class="card" style="margin-top: 20px;">
+            <p class="card-title">📜 ÇEKİM GEÇMİŞİM</p>
+            <div id="withdrawHistoryList">
+                <p style="text-align: center; color: #a0a0a0; font-size: 0.85rem;">Yükleniyor...</p>
+            </div>
         </div>
     </div>
 
@@ -468,13 +489,15 @@
 
     <!-- ALT MENÜ -->
     <div class="bottom-nav" id="bottom-nav" style="display: none;">
-        <div class="nav-item active" onclick="showPage('page-home')"><i>▶</i> Kazan</div>
-        <div class="nav-item" onclick="showPage('page-tasks')"><i>📋</i> Görevler</div>
-        <div class="nav-item" onclick="showPage('page-leaderboard')"><i>🏆</i> Sıralama</div>
-        <div class="nav-item" onclick="showPage('page-wallet')"><i>💼</i> Cüzdan</div>
-        <div class="nav-item" onclick="showPage('page-profile')"><i>👤</i> Profil</div>
+        <div class="nav-item active" onclick="showPage('page-home')" id="navHome"><i>▶</i> Kazan</div>
+        <div class="nav-item" onclick="showPage('page-tasks')" id="navTasks"><i>📋</i> Görevler</div>
+        <div class="nav-item" onclick="showPage('page-leaderboard')" id="navLeaderboard"><i>🏆</i> Sıralama</div>
+        <div class="nav-item" onclick="showPage('page-wallet')" id="navWallet"><i>💼</i> Cüzdan</div>
+        <div class="nav-item" onclick="showPage('page-profile')" id="navProfile"><i>👤</i> Profil</div>
     </div>
-        <script type="module">
+</body>
+</html>
+    <script type="module">
         // ============ FIREBASE IMPORTS ============
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
@@ -519,6 +542,7 @@
         let isNewUser = false;
         let unsubscribeSnapshot = null;
         let notificationsListener = null;
+        let competitionListener = null;
         let unreadNotifications = false;
         
         let ADS_BEFORE_COOLDOWN = 3; 
@@ -551,6 +575,89 @@
             { id: 4, title: "Oyun Oyna (1/2)", desc: "2 oyun oyna", reward: TASK_GAME_POINTS, done: false, type: 'game', progress: 0, target: 2 },
             { id: 5, title: "Oyun Oyna (2/2)", desc: "2 oyun oyna", reward: TASK_GAME_POINTS, done: false, type: 'game', progress: 0, target: 2 }
         ];
+
+        // ============ DİL ÇEVİRİLERİ ============
+        const translations = {
+            tr: {
+                hello: "Merhaba",
+                points: "Puan",
+                ads: "Reklam",
+                multiplier: "Çarpan",
+                watchAd: "📺 REKLAM İZLE & PUAN KAZAN",
+                playGame: "🎮 OYNA & PUAN TOPLA",
+                countdown: "Yarışma Bitişine Kalan Süre",
+                poolTitle: "ÖDÜL HAVUZU",
+                poolDesc: "🎁 Havuz her gün doluyor! 30. günde ilk 10 kişiye dağıtılacak!",
+                home: "Kazan", tasks: "Görevler", leaderboard: "Sıralama", wallet: "Cüzdan", profile: "Profil"
+            },
+            en: {
+                hello: "Hello",
+                points: "Points",
+                ads: "Ads",
+                multiplier: "Multiplier",
+                watchAd: "📺 WATCH AD & EARN POINTS",
+                playGame: "🎮 PLAY & EARN POINTS",
+                countdown: "Time Remaining",
+                poolTitle: "PRIZE POOL",
+                poolDesc: "🎁 Pool fills every day! Distributed to top 10 on day 30!",
+                home: "Earn", tasks: "Tasks", leaderboard: "Ranking", wallet: "Wallet", profile: "Profile"
+            },
+            ru: {
+                hello: "Привет",
+                points: "Очки",
+                ads: "Реклама",
+                multiplier: "Множитель",
+                watchAd: "📺 СМОТРЕТЬ РЕКЛАМУ И ЗАРАБАТЫВАТЬ",
+                playGame: "🎮 ИГРАТЬ И ЗАРАБАТЫВАТЬ",
+                countdown: "Оставшееся время",
+                poolTitle: "ПРИЗОВОЙ ФОНД",
+                poolDesc: "🎁 Фонд пополняется каждый день! Распределяется между топ-10 на 30-й день!",
+                home: "Заработок", tasks: "Задания", leaderboard: "Рейтинг", wallet: "Кошелек", profile: "Профиль"
+            }
+        };
+
+        window.changeLanguage = function(lang) {
+            localStorage.setItem('selectedLang', lang);
+            const t = translations[lang];
+            
+            const watchAdBtn = document.getElementById('watchAdBtn');
+            if (watchAdBtn && !watchAdBtn.classList.contains('btn-disabled')) watchAdBtn.innerText = t.watchAd;
+            
+            const playBtn = document.getElementById('playGameBtn');
+            if (playBtn) playBtn.innerText = t.playGame;
+            
+            const countdownLabel = document.getElementById('countdownLabel');
+            if (countdownLabel) countdownLabel.innerText = t.countdown;
+            
+            const poolTitle = document.getElementById('poolTitleText');
+            if (poolTitle) poolTitle.innerText = t.poolTitle;
+            
+            const poolDesc = document.getElementById('poolDescText');
+            if (poolDesc) poolDesc.innerText = t.poolDesc;
+            
+            const pointsLabel = document.getElementById('pointsLabel');
+            if (pointsLabel) pointsLabel.innerText = t.points;
+            
+            const multLabel = document.getElementById('multiplierLabel');
+            if (multLabel) multLabel.innerText = t.multiplier;
+            
+            const adsLabel = document.getElementById('adsLabel');
+            if (adsLabel) adsLabel.innerText = t.ads;
+            
+            // Alt menü
+            const navHome = document.getElementById('navHome');
+            if (navHome) navHome.innerHTML = `<i>▶</i> ${t.home}`;
+            const navTasks = document.getElementById('navTasks');
+            if (navTasks) navTasks.innerHTML = `<i>📋</i> ${t.tasks}`;
+            const navLeaderboard = document.getElementById('navLeaderboard');
+            if (navLeaderboard) navLeaderboard.innerHTML = `<i>🏆</i> ${t.leaderboard}`;
+            const navWallet = document.getElementById('navWallet');
+            if (navWallet) navWallet.innerHTML = `<i>💼</i> ${t.wallet}`;
+            const navProfile = document.getElementById('navProfile');
+            if (navProfile) navProfile.innerHTML = `<i>👤</i> ${t.profile}`;
+            
+            showToast(`✅ ${lang.toUpperCase()}`);
+        };
 
         // ============ KAYIT ============
         window.registerUser = async function() {
@@ -612,9 +719,7 @@
                     }
                 }
                 
-                // Kullanıcının kayıt zamanını kaydet (bildirim filtresi için)
                 localStorage.setItem('userJoinTime_' + currentUid, Date.now());
-                
                 isNewUser = true;
             } catch (error) {
                 console.error("Kayıt hatası:", error);
@@ -695,6 +800,7 @@
                 try {
                     if (unsubscribeSnapshot) unsubscribeSnapshot();
                     if (notificationsListener) notificationsListener();
+                    if (competitionListener) competitionListener();
                     await signOut(auth);
                     location.reload();
                 } catch (error) {
@@ -712,12 +818,10 @@
                 currentUid = user.uid;
                 currentEmail = user.email;
                 
-                // Kayıt tarihi yoksa şimdi ata
                 if (!localStorage.getItem('userJoinTime_' + currentUid)) {
                     localStorage.setItem('userJoinTime_' + currentUid, Date.now());
                 }
                 
-                // Ayarları Firebase'den çek
                 try {
                     const settingsSnap = await getDoc(doc(db, "config", "settings"));
                     if (settingsSnap.exists()) {
@@ -725,13 +829,12 @@
                         ADS_BEFORE_COOLDOWN = Number(s.adsBeforeCooldown) || 3;
                         AD_COOLDOWN = (Number(s.cooldown) || 3) * 60 * 1000;
                     }
-                } catch(e) { console.log("Ayar yükleme hatası", e); }
+                } catch(e) { console.log("Ayar hatası", e); }
 
-                // Canlı dinlemeyi başlat
                 startLiveListener();
                 startNotificationListener();
+                startCompetitionListener();
                 
-                // İlk veri yükleme
                 await loadUserData();
                 
                 if (isNewUser) {
@@ -747,9 +850,16 @@
                 checkAdCooldown();
                 updateCountdown();
                 await updatePoolAmount();
+                
+                // Dil tercihini uygula
+                const savedLang = localStorage.getItem('selectedLang') || 'tr';
+                const sel = document.getElementById('langSelect');
+                if (sel) sel.value = savedLang;
+                changeLanguage(savedLang);
             } else {
                 if (unsubscribeSnapshot) unsubscribeSnapshot();
                 if (notificationsListener) notificationsListener();
+                if (competitionListener) competitionListener();
                 currentUser = null;
                 currentUid = null;
                 showPage('page-login');
@@ -757,7 +867,7 @@
             }
         });
 
-        // ============ CANLI DİNLEME (OnSnapshot) ============
+        // ============ CANLI DİNLEME ============
         function startLiveListener() {
             if (unsubscribeSnapshot) unsubscribeSnapshot();
             
@@ -802,10 +912,26 @@
                         showToast(`💰 Admin tarafından +${diff} TL eklendi!`);
                     }
                 },
-                (error) => {
-                    console.error("🔥 CANLI DİNLEME HATASI:", error);
-                }
+                (error) => { console.error("Dinleme hatası:", error); }
             );
+        }
+
+        // ============ YARIŞMA DİNLEYİCİSİ ============
+        function startCompetitionListener() {
+            if (competitionListener) competitionListener();
+            
+            competitionListener = onSnapshot(doc(db, "config", "competition"), (snap) => {
+                if (!snap.exists()) return;
+                const cfg = snap.data();
+                
+                if (cfg.endTime) {
+                    competitionEndTime = cfg.endTime;
+                    localStorage.setItem('competitionEndTime', competitionEndTime);
+                    updateCountdown();
+                    updatePoolAmount();
+                    showToast("🚀 Yarışma süresi güncellendi!");
+                }
+            });
         }
 
         // ============ BİLDİRİM DİNLEYİCİSİ ============
@@ -836,7 +962,6 @@
                     const annId = doc.id;
                     
                     if (deletedNotifs.includes(annId)) return;
-                    
                     if (ann.type === "specific" && ann.targetEmail !== currentEmail) return;
                     if (ann.type === "winner" && ann.targetUid !== currentUid) return;
                     
@@ -880,18 +1005,16 @@
             });
         }
 
-        // Bildirim Sil
         window.deleteNotification = function(annId) {
             const deletedNotifs = JSON.parse(localStorage.getItem('deletedNotifications_' + currentUid) || '[]');
             if (!deletedNotifs.includes(annId)) {
                 deletedNotifs.push(annId);
                 localStorage.setItem('deletedNotifications_' + currentUid, JSON.stringify(deletedNotifs));
             }
-            showToast("🗑️ Bildirim silindi");
+            showToast("🗑️ Silindi");
             startNotificationListener();
         };
 
-        // Tüm Bildirimleri Temizle
         window.clearAllNotifications = function() {
             if (!confirm("Tüm bildirimleri silmek istediğinize emin misiniz?")) return;
             const list = document.querySelectorAll('#notificationsList [onclick^="deleteNotification"]');
@@ -899,13 +1022,11 @@
             
             list.forEach(btn => {
                 const match = btn.getAttribute('onclick').match(/'([^']+)'/);
-                if (match && !deletedNotifs.includes(match[1])) {
-                    deletedNotifs.push(match[1]);
-                }
+                if (match && !deletedNotifs.includes(match[1])) deletedNotifs.push(match[1]);
             });
             
             localStorage.setItem('deletedNotifications_' + currentUid, JSON.stringify(deletedNotifs));
-            showToast("🗑️ Tüm bildirimler temizlendi");
+            showToast("🗑️ Tümü temizlendi");
             startNotificationListener();
         };
 
@@ -913,7 +1034,7 @@
             localStorage.setItem('lastReadNotificationTime_' + currentUid, Date.now());
             document.getElementById('notificationBadge').style.display = 'none';
             unreadNotifications = false;
-            showToast("✅ Bildirimler okundu.");
+            showToast("✅ Okundu");
         };
 
         // ============ KULLANICI VERİSİ YÜKLE ============
@@ -924,7 +1045,7 @@
                     const u = userSnap.data();
                     
                     if (u.banned) {
-                        alert("🚫 Hesabınız yönetici tarafından askıya alınmış!");
+                        alert("🚫 Hesabınız askıya alınmış!");
                         await signOut(auth);
                         return;
                     }
@@ -949,7 +1070,7 @@
                     await updateDoc(doc(db, "users", currentUid), { lastLogin: serverTimestamp() });
                 }
             } catch (error) {
-                console.error("Kullanıcı yüklenemedi:", error);
+                console.error("Yükleme hatası:", error);
             }
         }
 
@@ -974,16 +1095,55 @@
             }
         }
 
-        // ============ HAVUZ TOPLAMI ============
+        // ============ HAVUZ GÜNCELLEME (GİZEMLİ) ============
         async function updatePoolAmount() {
             try {
-                const usersSnap = await getDocs(collection(db, "users"));
-                let totalPool = 0;
-                usersSnap.forEach(d => totalPool += Number(d.data().points || 0));
-                updateDome(totalPool);
+                let endTime = competitionEndTime;
+                let startTime = endTime - (30 * 24 * 60 * 60 * 1000);
+                
+                try {
+                    const configSnap = await getDoc(doc(db, "config", "competition"));
+                    if (configSnap.exists()) {
+                        const cfg = configSnap.data();
+                        if (cfg.endTime) endTime = cfg.endTime;
+                        if (cfg.startedAt) startTime = cfg.startedAt.toMillis();
+                    }
+                } catch(e) {}
+                
+                const now = Date.now();
+                const elapsed = now - startTime;
+                const daysPassed = Math.max(1, Math.min(Math.floor(elapsed / (1000 * 60 * 60 * 24)) + 1, 30));
+                
+                updateDome(daysPassed);
             } catch (error) {
                 console.error("Havuz hatası:", error);
+                updateDome(1);
             }
+        }
+
+        // ============ HAVUZ GÖRSELİ ============
+        function updateDome(dayNumber) {
+            const fill = document.getElementById('moneyFill');
+            const percentText = document.getElementById('dome-percent');
+            const dayText = document.getElementById('dome-day');
+            const emojisContainer = document.getElementById('moneyEmojis');
+            
+            let percentage = Math.min((dayNumber / 30) * 100, 100);
+            
+            fill.style.height = percentage + '%';
+            percentText.innerText = percentage.toFixed(1) + '%';
+            dayText.innerText = dayNumber + '. Gün';
+            
+            const emojiCount = Math.floor(percentage / 5);
+            const emojiList = ['💰', '💵', '💎', '🪙'];
+            let emojiHTML = '';
+            for (let i = 0; i < emojiCount; i++) {
+                const emoji = emojiList[i % emojiList.length];
+                const leftPos = Math.random() * 85 + 5;
+                const bottomPos = Math.random() * (percentage - 5) + 2;
+                emojiHTML += `<span style="position: absolute; left: ${leftPos}%; bottom: ${bottomPos}%; font-size: 1.2rem; opacity: 0.6;">${emoji}</span>`;
+            }
+            emojisContainer.innerHTML = emojiHTML;
         }
 
         // ============ SAYFA GEÇİŞ ============
@@ -1002,12 +1162,60 @@
             if (pageId === 'page-home') navItems[0].classList.add('active');
             if (pageId === 'page-tasks') navItems[1].classList.add('active');
             if (pageId === 'page-leaderboard') navItems[2].classList.add('active');
-            if (pageId === 'page-wallet') navItems[3].classList.add('active');
+            if (pageId === 'page-wallet') { navItems[3].classList.add('active'); loadWithdrawHistory(); }
             if (pageId === 'page-profile') navItems[4].classList.add('active');
             
             if (pageId === 'page-profile') updateProfile();
             if (pageId === 'page-market') updateMarketView();
             if (pageId === 'page-leaderboard') renderLeaderboard();
+        }
+
+        // ============ ÇEKİM GEÇMİŞİ ============
+        async function loadWithdrawHistory() {
+            if (!currentUid) return;
+            
+            try {
+                const q = query(
+                    collection(db, "withdrawals"), 
+                    where("uid", "==", currentUid), 
+                    orderBy("requestedAt", "desc"), 
+                    limit(20)
+                );
+                const snap = await getDocs(q);
+                const container = document.getElementById('withdrawHistoryList');
+                
+                if (snap.empty) {
+                    container.innerHTML = '<p style="text-align: center; color: #a0a0a0; font-size: 0.85rem;">Henüz çekim talebiniz yok.</p>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                snap.forEach(d => {
+                    const w = d.data();
+                    let dateStr = '-';
+                    try { dateStr = w.requestedAt ? new Date(w.requestedAt.toDate()).toLocaleString('tr-TR') : '-'; } catch(e) {}
+                    
+                    let statusColor = '#ffcc00';
+                    let statusIcon = '⏳';
+                    let statusText = 'BEKLEMEDE';
+                    if (w.status === 'onaylandi') { statusColor = '#00ffcc'; statusIcon = '✅'; statusText = 'ONAYLANDI'; }
+                    if (w.status === 'reddedildi') { statusColor = '#ff4444'; statusIcon = '❌'; statusText = 'REDDEDİLDİ'; }
+                    
+                    container.innerHTML += `
+                        <div style="background: #0b0b1a; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid ${statusColor};">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span style="font-size: 0.9rem;">${statusIcon} <strong>${w.amount} TL</strong></span>
+                                <span style="font-size: 0.65rem; padding: 2px 6px; border-radius: 6px; background: ${statusColor}20; color: ${statusColor}; font-weight: bold;">${statusText}</span>
+                            </div>
+                            <p style="font-size: 0.7rem; color: #a0a0a0;">${w.name} ${w.surname} - ${(w.iban || '').substring(0, 15)}...</p>
+                            <p style="font-size: 0.65rem; color: #666; margin-top: 3px;">${dateStr}</p>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("Çekim geçmişi hatası:", error);
+                document.getElementById('withdrawHistoryList').innerHTML = '<p style="text-align: center; color: #ff4444; font-size: 0.85rem;">Yüklenemedi.</p>';
+            }
         }
 
         // ============ GERİ SAYIM ============
@@ -1055,7 +1263,7 @@
         window.saveNewUsername = async function() {
             const newName = document.getElementById('new-username').value.trim();
             if (!newName) { alert("İsim boş olamaz!"); return; }
-            if (newName.length < 3) { alert("İsim en az 3 karakter olmalı!"); return; }
+            if (newName.length < 3) { alert("En az 3 karakter!"); return; }
             currentUsername = newName;
             document.getElementById('home-username').innerText = currentUsername;
             document.getElementById('profile-username').innerText = currentUsername;
@@ -1078,8 +1286,8 @@
             const newP2 = document.getElementById('new-password2').value;
             
             if (!oldP || !newP || !newP2) { alert("Tüm alanları doldurun!"); return; }
-            if (newP.length < 6) { alert("Şifre en az 6 karakter olmalı!"); return; }
-            if (newP !== newP2) { alert("Yeni şifreler uyuşmuyor!"); return; }
+            if (newP.length < 6) { alert("En az 6 karakter!"); return; }
+            if (newP !== newP2) { alert("Şifreler uyuşmuyor!"); return; }
             
             try {
                 const credential = EmailAuthProvider.credential(currentUser.email, oldP);
@@ -1089,7 +1297,7 @@
                 showToast("✅ Şifre güncellendi!");
             } catch (error) {
                 if (error.code === 'auth/wrong-password') alert("Mevcut şifre yanlış!");
-                else alert("Şifre değiştirilemedi: " + error.message);
+                else alert("Hata: " + error.message);
             }
         }
 
@@ -1149,15 +1357,6 @@
             }
         }
 
-        // ============ CAM FANUS ============
-        function updateDome(amount) {
-            const fill = document.getElementById('dome-fill');
-            const text = document.getElementById('dome-amount');
-            let percentage = Math.min((amount / 10000) * 100, 100);
-            fill.style.height = percentage + '%';
-            text.innerText = amount.toFixed(0) + ' Puan';
-        }
-
         // ============ REKLAM ============
         window.watchAd = async function() {
             const now = Date.now();
@@ -1184,7 +1383,6 @@
             
             updateStatsView();
             await saveUserToFirebase();
-            await updatePoolAmount();
             renderLeaderboard();
         }
 
@@ -1279,7 +1477,6 @@
                     updateStatsView();
                     renderTasks();
                     await saveUserToFirebase();
-                    await updatePoolAmount();
                     renderLeaderboard();
                     alert(`✅ Görev tamamlandı!\n🏆 +${earnedPoints + task.reward} Puan`);
                 } else if (task.type === 'game') {
@@ -1328,7 +1525,7 @@
             }
         }
 
-        // ============ 7 GÜNLÜK ÖDÜL ============
+        // ============ 7 GÜNLÜK ÖDÜL (GECE YARISI) ============
         function renderDailyRewards() {
             const container = document.getElementById('daily-rewards');
             container.innerHTML = '';
@@ -1343,12 +1540,12 @@
                 container.appendChild(box);
             }
             
-            const now = Date.now();
-            const oneDay = 24 * 60 * 60 * 1000;
+            const now2 = new Date();
+            const todayStart2 = new Date(now2.getFullYear(), now2.getMonth(), now2.getDate()).getTime();
             const btn = document.getElementById('daily-btn');
             const timerText = document.getElementById('daily-timer');
             
-            if (lastClaimTime === 0 || (now - lastClaimTime) >= oneDay) {
+            if (lastClaimTime < todayStart2) {
                 btn.disabled = false;
                 btn.innerText = "BUGÜNÜN ÖDÜLÜNÜ AL";
                 btn.style.opacity = "1";
@@ -1357,20 +1554,17 @@
                 btn.disabled = true;
                 btn.innerText = "ÖDÜL ALINDI";
                 btn.style.opacity = "0.5";
-                const remaining = oneDay - (now - lastClaimTime);
-                const hours = Math.floor(remaining / (1000 * 60 * 60));
-                const mins = Math.floor((remaining / (1000 * 60)) % 60);
-                timerText.innerText = `Sonraki ödül için: ${hours} sa ${mins} dk`;
+                timerText.innerText = "Sonraki ödül: Gece 00:00";
             }
         }
         window.renderDailyRewards = renderDailyRewards;
 
         window.claimDailyReward = async function() {
-            const now = Date.now();
-            const oneDay = 24 * 60 * 60 * 1000;
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
             
-            if (lastClaimTime !== 0 && (now - lastClaimTime) < oneDay) {
-                alert("Bu ödülü zaten aldınız!");
+            if (lastClaimTime >= todayStart) {
+                alert("Bu ödülü bugün zaten aldınız!\n\nGece 00:00'dan sonra tekrar alabilirsiniz.");
                 return;
             }
             
@@ -1379,11 +1573,10 @@
                 userPoints += reward;
                 updateStatsView();
                 await saveUserToFirebase();
-                await updatePoolAmount();
                 renderLeaderboard();
-                alert(`🎁 ${dailyRewardDay}. Gün ödülü: +${reward} Puan!`);
+                alert(`🎁 ${dailyRewardDay}. Gün ödülü: +${reward} Puan!\n\nYarın 00:00'dan sonra tekrar alabilirsin.`);
                 dailyRewardDay++;
-                lastClaimTime = now;
+                lastClaimTime = now.getTime();
                 renderDailyRewards();
             } else {
                 alert("7 günlük ödül serisini tamamladınız!");
@@ -1403,7 +1596,6 @@
                 userTL += tlToGet;
                 updateStatsView();
                 await saveUserToFirebase();
-                await updatePoolAmount();
                 renderLeaderboard();
                 alert(`✅ ${pointsToConvert} Puan → ${tlToGet} TL`);
             }
@@ -1418,7 +1610,6 @@
                 userPoints += pointsToGet;
                 updateStatsView();
                 await saveUserToFirebase();
-                await updatePoolAmount();
                 renderLeaderboard();
                 alert(`✅ ${tlToConvert} TL → ${pointsToGet} Puan`);
             }
@@ -1454,8 +1645,9 @@
                 userTL -= amount;
                 await saveUserToFirebase();
                 updateStatsView();
+                await loadWithdrawHistory();
                 
-                alert(`✅ Çekim talebiniz alındı!\n💵 ${amount} TL\n👤 ${name} ${surname}\n🏦 ${iban}\n\nYönetici onayından sonra hesabınıza yatırılacaktır.`);
+                alert(`✅ Çekim talebiniz alındı!\n💵 ${amount} TL\n👤 ${name} ${surname}\n🏦 ${iban}`);
                 document.getElementById('withdraw-name').value = '';
                 document.getElementById('withdraw-surname').value = '';
                 document.getElementById('withdraw-iban').value = '';
@@ -1506,7 +1698,6 @@
                     updateStatsView();
                     updateMarketView();
                     await saveUserToFirebase();
-                    await updatePoolAmount();
                     renderLeaderboard();
                     alert(`✅ ${name} paketi alındı!\n⚡ ${multiplier}x`);
                 }
@@ -1537,7 +1728,6 @@
                 adsWatched += 1;
                 updateStatsView();
                 await saveUserToFirebase();
-                await updatePoolAmount();
                 renderLeaderboard();
                 alert(`🎮 +${earnedPoints} Puan!`);
             }
