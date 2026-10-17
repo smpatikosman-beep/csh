@@ -233,8 +233,15 @@
     <!-- KAZANANLAR -->
     <div class="tab-content" id="tab-winners">
         <h2>🏆 Kazanan Yönetimi</h2>
-        <div class="alert alert-warn">⚠️ Bu bölüm 30 günlük yarışma sonunda kullanılır.</div>
-        <button class="refresh-btn" onclick="calculateWinners()">🎯 Kazananları Hesapla</button>
+        <div class="alert alert-warn">⚠️ Bu bölüm 30 günlük yarışma sonunda kullanılır. Aşağıdaki butona bastığınızda en yüksek puana sahip ilk 10 kişi kazanan ilan edilir ve onlara özel bildirim gider.</div>
+        
+        <div style="background: #1a1a2e; padding: 20px; border-radius: 12px; border: 1px solid #2a2a4a; margin-bottom: 20px;">
+            <h3 style="color: #ff4444; margin-bottom: 10px;">🏁 YARIŞMAYI BİTİR</h3>
+            <p style="font-size: 0.85rem; color: #a0a0a0; margin-bottom: 15px;">Bu butona bastığınızda yarışma biter, en çok puan toplayan ilk 10 kişi belirlenir ve kazananlara bildirim gönderilir.</p>
+            <button class="refresh-btn danger-btn" onclick="endCompetitionAndAnnounceWinners()" style="width: 100%; font-size: 1rem;">🏆 YARIŞMAYI BİTİR VE KAZANANLARI İLAN ET</button>
+        </div>
+
+        <button class="refresh-btn" onclick="calculateWinners()">🎯 Önizleme: Kazananları Hesapla</button>
         <button class="refresh-btn success-btn" onclick="saveWinners()">💾 Kaydet</button>
         <button class="refresh-btn secondary-btn" onclick="downloadWinnersCSV()">📥 CSV İndir</button>
         <table>
@@ -358,7 +365,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -867,6 +873,57 @@
             await logAction("Kazanan Hesaplama", `Havuz: ${pool}`);
             showToast(`✅ ${winnersData.length} kazanan`);
         } catch (e) { alert("Hata: " + e.message); }
+    };
+
+    window.endCompetitionAndAnnounceWinners = async function() {
+        if (!confirm("⚠️ DİKKAT!\n\nYarışmayı bitirmek üzeresiniz. En çok puan toplayan ilk 10 kişi kazanan ilan edilecek ve onlara özel bildirim gönderilecek.\n\nDevam etmek istiyor musunuz?")) return;
+        
+        try {
+            const q = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
+            const snap = await getDocs(q);
+            
+            if (snap.empty) {
+                alert("Hiç kullanıcı yok!");
+                return;
+            }
+            
+            const winners = [];
+            let rank = 1;
+            snap.forEach(d => {
+                const u = d.data();
+                winners.push({
+                    uid: d.id,
+                    rank: rank,
+                    username: u.username || "Kullanıcı",
+                    points: Number(u.points || 0)
+                });
+                rank++;
+            });
+            
+            await setDoc(doc(db, "config", "winners"), {
+                winners: winners,
+                announcedAt: serverTimestamp(),
+                isFinal: true
+            });
+            
+            for (const w of winners) {
+                await addDoc(collection(db, "announcements"), {
+                    type: "winner",
+                    targetUid: w.uid,
+                    title: `🏆 TEBRİKLER! ${w.rank}. OLDUN!`,
+                    message: `Yarışmayı ${w.rank}. sırada tamamladın ve ${w.points} puanınla kazananlar arasına girdin! Ödülün yakında hesabına yatırılacak. Tebrikler!`,
+                    createdAt: serverTimestamp(),
+                    admin: currentAdminEmail
+                });
+            }
+            
+            await logAction("Yarışma Bitişi", `${winners.length} kazanan ilan edildi`);
+            alert(`✅ Yarışma bitti!\n\n${winners.length} kazanan ilan edildi ve onlara bildirim gönderildi.\n\nKazananlar:\n` + winners.map(w => `${w.rank}. ${w.username} - ${w.points} Puan`).join('\n'));
+            
+            calculateWinners();
+        } catch (e) {
+            alert("Hata: " + e.message);
+        }
     };
 
     window.removeWinner = function(i) {
