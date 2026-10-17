@@ -69,6 +69,7 @@
         .secondary-btn { background: #2a2a4a; color: #fff; }
         .success-btn { background: #00ffcc; color: #0b0b1a; }
         .danger-btn { background: #ff4444; color: #fff; }
+        .warning-btn { background: #ff8800; color: #fff; }
         
         .empty { text-align: center; padding: 40px; color: #a0a0a0; }
         
@@ -244,12 +245,20 @@
     
     <!-- DUYURULAR -->
     <div class="tab-content" id="tab-announcements">
-        <h2>📣 Duyurular</h2>
+        <h2>📣 Duyurular ve Bildirimler</h2>
+        
+        <div class="announcement-box">
+            <h3 style="color: #ffcc00; margin-bottom: 10px;">🏆 YARIŞMA DUYURUSU GÖNDER</h3>
+            <p style="font-size: 0.8rem; color: #a0a0a0; margin-bottom: 10px;">Bu butona bastığınızda kullanıcılara özel bir yarışma başladı bildirimi gider.</p>
+            <button class="refresh-btn warning-btn" onclick="sendCompetitionAlert()" style="width: 100%;">🚀 YARIŞMA BAŞLAT / DUYUR</button>
+        </div>
+
         <div class="announcement-box">
             <h3 style="color: #8a2be2; margin-bottom: 10px;">📢 Toplu Duyuru</h3>
             <textarea id="broadcastMsg" placeholder="Mesajınızı yazın..."></textarea>
             <button class="refresh-btn success-btn" style="margin-top: 10px;" onclick="sendBroadcast()">📤 Gönder</button>
         </div>
+        
         <div class="announcement-box">
             <h3 style="color: #8a2be2; margin-bottom: 10px;">💬 Kişiye Özel</h3>
             <input type="email" id="userSpecificEmail" placeholder="ornek@email.com" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #2a2a4a; background: #0b0b1a; color: #fff; margin-bottom: 10px;">
@@ -886,10 +895,29 @@
     };
 
     // ============ DUYURULAR ============
+    window.sendCompetitionAlert = async function() {
+        if (!confirm("Tüm kullanıcılara 'Yarışma Başladı' bildirimi gönderilsin mi?")) return;
+        await addDoc(collection(db, "announcements"), { 
+            type: "competition", 
+            title: "🏆 YENİ YARIŞMA BAŞLADI!",
+            message: "Ödül havuzu için reklam izlemeye ve puan toplamaya hemen başla! İlk 10 kişi kazanacak.", 
+            createdAt: serverTimestamp(), 
+            admin: currentAdminEmail 
+        });
+        await logAction("Yarışma Duyurusu", "Gönderildi");
+        showToast("🚀 Yarışma duyurusu gönderildi!");
+    };
+
     window.sendBroadcast = async function() {
         const msg = document.getElementById('broadcastMsg').value.trim();
         if (!msg) { alert("Mesaj boş!"); return; }
-        await addDoc(collection(db, "announcements"), { type: "broadcast", message: msg, createdAt: serverTimestamp(), admin: currentAdminEmail });
+        await addDoc(collection(db, "announcements"), { 
+            type: "broadcast", 
+            title: "📢 Duyuru",
+            message: msg, 
+            createdAt: serverTimestamp(), 
+            admin: currentAdminEmail 
+        });
         await logAction("Toplu Duyuru", msg.substring(0, 50));
         showToast("📤 Gönderildi");
         document.getElementById('broadcastMsg').value = '';
@@ -899,7 +927,14 @@
         const email = document.getElementById('userSpecificEmail').value.trim();
         const msg = document.getElementById('userSpecificMsg').value.trim();
         if (!email || !msg) { alert("E-posta ve mesaj gerekli!"); return; }
-        await addDoc(collection(db, "announcements"), { type: "specific", targetEmail: email, message: msg, createdAt: serverTimestamp(), admin: currentAdminEmail });
+        await addDoc(collection(db, "announcements"), { 
+            type: "specific", 
+            targetEmail: email, 
+            title: "💬 Kişisel Mesaj",
+            message: msg, 
+            createdAt: serverTimestamp(), 
+            admin: currentAdminEmail 
+        });
         await logAction("Kişiye Özel", `${email}: ${msg.substring(0, 30)}`);
         showToast("📤 Gönderildi");
         document.getElementById('userSpecificMsg').value = '';
