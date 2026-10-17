@@ -151,6 +151,7 @@
         <button class="tab-btn" onclick="showTab('users')">👥 Kullanıcılar</button>
         <button class="tab-btn" onclick="showTab('winners')">🏆 Kazananlar</button>
         <button class="tab-btn" onclick="showTab('announcements')">📣 Duyurular</button>
+        <button class="tab-btn" onclick="showTab('support')">💬 Destek</button>
         <button class="tab-btn" onclick="showTab('settings')">⚙️ Ayarlar</button>
         <button class="tab-btn" onclick="showTab('logs')">📋 Loglar</button>
         <button class="tab-btn" onclick="showTab('backup')">📤 Yedek</button>
@@ -274,6 +275,18 @@
         </div>
     </div>
     
+    <!-- DESTEK TALEPLERİ -->
+    <div class="tab-content" id="tab-support">
+        <h2>💬 Destek Talepleri</h2>
+        <button class="refresh-btn" onclick="loadSupportTickets()">🔄 Yenile</button>
+        <table>
+            <thead>
+                <tr><th>Tarih</th><th>Kullanıcı</th><th>E-posta</th><th>Mesaj</th><th>Durum</th><th>İşlem</th></tr>
+            </thead>
+            <tbody id="supportBody"><tr><td colspan="6" class="empty">Yükleniyor...</td></tr></tbody>
+        </table>
+    </div>
+    
     <!-- AYARLAR -->
     <div class="tab-content" id="tab-settings">
         <h2>⚙️ Sistem Ayarları</h2>
@@ -300,6 +313,24 @@
             </div>
             <button class="refresh-btn success-btn" onclick="saveSettings()">💾 Kaydet</button>
         </div>
+        
+        <div class="announcement-box">
+            <h3 style="color: #8a2be2; margin-bottom: 15px;">📊 AYLIK REKLAM GELİRİ</h3>
+            <p style="font-size: 0.85rem; color: #a0a0a0; margin-bottom: 10px;">AdMob panelinizden aldığınız aylık geliri buraya girin. Kazananlara dağıtım yaparken bu bilgi kullanılır.</p>
+            <div class="input-group" style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.85rem; color: #a0a0a0; margin-bottom: 5px;">Bu Ayın Reklam Geliri (TL)</label>
+                <input type="number" id="settingMonthlyRevenue" placeholder="Örn: 1500" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #2a2a4a; background: #0b0b1a; color: #fff;">
+            </div>
+            <div class="input-group" style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.85rem; color: #a0a0a0; margin-bottom: 5px;">Dağıtılacak Toplam Ödül (TL)</label>
+                <input type="number" id="settingPrizePool" placeholder="Örn: 1000" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #2a2a4a; background: #0b0b1a; color: #fff;">
+            </div>
+            <button class="refresh-btn success-btn" onclick="saveMonthlyRevenue()">💾 Kaydet</button>
+            <div style="margin-top: 15px; padding: 15px; background: #0b0b1a; border-radius: 10px;">
+                <p style="font-size: 0.85rem; color: #00ffcc;">💰 Tahmini Kâr: <strong id="profitEstimate">0 TL</strong></p>
+            </div>
+        </div>
+        
         <div class="announcement-box">
             <h3 style="color: #8a2be2; margin-bottom: 15px;">Sistem Kontrolü</h3>
             <div class="alert alert-info">Bakım modu açıkken kullanıcılar giremez.</div>
@@ -464,6 +495,7 @@
             
             await logAction("Admin Girişi", currentAdminEmail);
             await loadAllData();
+            await loadFinanceData();
         } else {
             document.getElementById('loginGate').style.display = 'flex';
             document.getElementById('mainPanel').classList.remove('show');
@@ -512,11 +544,12 @@
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.getElementById('tab-' + tab).classList.add('active');
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        event.target.classList.add('active');
+        if (event && event.target) event.target.classList.add('active');
         if (tab === 'withdrawals') loadWithdrawals();
         if (tab === 'users') loadUsers();
         if (tab === 'logs') loadLogs();
         if (tab === 'dashboard') loadCharts();
+        if (tab === 'support') loadSupportTickets();
     };
 
     window.loadAllData = async function() {
@@ -1004,6 +1037,41 @@
         document.getElementById('userSpecificMsg').value = '';
     };
 
+    // ============ DESTEK TALEPLERİ ============
+    async function loadSupportTickets() {
+        const tbody = document.getElementById('supportBody');
+        tbody.innerHTML = '<tr><td colspan="6" class="empty">Yükleniyor...</td></tr>';
+        try {
+            const q = query(collection(db, "supportTickets"), orderBy("createdAt", "desc"), limit(50));
+            const snap = await getDocs(q);
+            if (snap.empty) { tbody.innerHTML = '<tr><td colspan="6" class="empty">Destek talebi yok.</td></tr>'; return; }
+            tbody.innerHTML = '';
+            snap.forEach(d => {
+                const t = d.data();
+                let date = '-';
+                try { date = t.createdAt ? new Date(t.createdAt.toDate()).toLocaleString('tr-TR') : '-'; } catch(e) {}
+                
+                let statusClass = t.status === 'beklemede' ? 'status-beklemede' : (t.status === 'yanitlandi' ? 'status-onaylandi' : 'status-reddedildi');
+                
+                tbody.innerHTML += `<tr>
+                    <td style="font-size:0.75rem;">${date}</td>
+                    <td><strong>${t.username}</strong></td>
+                    <td style="font-size:0.75rem;">${t.email}</td>
+                    <td style="font-size:0.8rem; max-width:300px;">${t.message}</td>
+                    <td><span class="status ${statusClass}">${t.status}</span></td>
+                    <td>${t.status === 'beklemede' ? `<button class="action-btn approve" onclick="closeSupportTicket('${d.id}')">✅</button>` : '-'}</td>
+                </tr>`;
+            });
+        } catch (e) { tbody.innerHTML = '<tr><td colspan="6" class="empty">Hata: ' + e.message + '</td></tr>'; }
+    }
+
+    window.closeSupportTicket = async function(id) {
+        if (!confirm("Bu talebi kapatmak istiyor musunuz?")) return;
+        await updateDoc(doc(db, "supportTickets", id), { status: "yanitlandi", closedAt: serverTimestamp() });
+        showToast("✅ Talep kapatıldı");
+        loadSupportTickets();
+    };
+
     // ============ AYARLAR ============
     window.saveSettings = async function() {
         await setDoc(doc(db, "config", "settings"), {
@@ -1015,6 +1083,36 @@
         await logAction("Ayarlar", "Güncellendi");
         showToast("💾 Kaydedildi");
     };
+
+    window.saveMonthlyRevenue = async function() {
+        const revenue = Number(document.getElementById('settingMonthlyRevenue').value) || 0;
+        const prizePool = Number(document.getElementById('settingPrizePool').value) || 0;
+        const profit = revenue - prizePool;
+        
+        await setDoc(doc(db, "config", "finance"), {
+            monthlyRevenue: revenue,
+            prizePool: prizePool,
+            profit: profit,
+            updatedAt: serverTimestamp(),
+            month: new Date().toISOString().substring(0, 7)
+        }, { merge: true });
+        
+        document.getElementById('profitEstimate').innerText = profit.toFixed(2) + ' TL';
+        await logAction("Aylık Gelir", `Gelir: ${revenue} TL, Ödül: ${prizePool} TL`);
+        showToast(`💾 Kaydedildi! Kâr: ${profit.toFixed(2)} TL`);
+    };
+
+    async function loadFinanceData() {
+        try {
+            const snap = await getDoc(doc(db, "config", "finance"));
+            if (snap.exists()) {
+                const f = snap.data();
+                document.getElementById('settingMonthlyRevenue').value = f.monthlyRevenue || 0;
+                document.getElementById('settingPrizePool').value = f.prizePool || 0;
+                document.getElementById('profitEstimate').innerText = (Number(f.profit) || 0).toFixed(2) + ' TL';
+            }
+        } catch(e) { console.log("Finance yükleme hatası", e); }
+    }
 
     window.resetCompetition = async function() {
         if (!confirm("⚠️ DİKKAT!\n\n30 günlük yarışma süresi sıfırdan başlayacak. Tüm kullanıcılar için sayaç yenilenecek.\n\nDevam etmek istiyor musunuz?")) return;
