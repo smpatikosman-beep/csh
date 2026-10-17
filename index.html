@@ -775,29 +775,7 @@
                 }
             );
         }
-                
-                const oldPoints = userPoints;
-                const oldTL = userTL;
-                const oldAds = adsWatched;
-                
-                userPoints = Number(u.points) || 0;
-                userTL = Number(u.tl) || 0;
-                adsWatched = Number(u.ads) || 0;
-                userMultiplier = Number(u.multiplier) || 1.0;
-                ownedPackage = u.package || "FREE";
-                dailyRewardDay = Number(u.dailyRewardDay) || 1;
-                lastClaimTime = Number(u.lastClaimTime) || 0;
-                currentUsername = u.username || "Kullanıcı";
-                currentAvatar = u.avatar || "K";
-                userReferralCode = u.referralCode || "-";
-                if (u.dailyTasks) dailyTasks = u.dailyTasks;
-                
-                document.getElementById('home-username').innerText = currentUsername;
-                document.getElementById('invite-code').innerText = userReferralCode;
-                document.getElementById('profile-refcode').innerText = userReferralCode;
-                
-                updateStatsView();
-                
+               
                 // Admin puan eklediyse kullanıcıya bildir
                 if (oldPoints > 0 && userPoints > oldPoints) {
                     const diff = userPoints - oldPoints;
