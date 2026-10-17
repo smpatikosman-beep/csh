@@ -277,6 +277,13 @@
     <!-- AYARLAR -->
     <div class="tab-content" id="tab-settings">
         <h2>⚙️ Sistem Ayarları</h2>
+        
+        <div class="announcement-box" style="border-color: #ff4444;">
+            <h3 style="color: #ff4444; margin-bottom: 15px;">🚀 YARIŞMA KONTROLÜ</h3>
+            <p style="font-size: 0.85rem; color: #a0a0a0; margin-bottom: 15px;">Aşağıdaki butona bastığınızda 30 günlük yarışma süresi <strong>sıfırdan başlar</strong>. Tüm kullanıcılar yeni süreyi görür.</p>
+            <button class="refresh-btn danger-btn" onclick="resetCompetition()" style="width: 100%; font-size: 1rem;">⏱️ YARIŞMAYI BAŞLAT / 30 GÜNÜ SIFIRLA</button>
+        </div>
+        
         <div class="announcement-box">
             <h3 style="color: #8a2be2; margin-bottom: 15px;">Yarışma Ayarları</h3>
             <div class="input-group" style="margin-bottom: 12px;">
@@ -1007,6 +1014,24 @@
         }, { merge: true });
         await logAction("Ayarlar", "Güncellendi");
         showToast("💾 Kaydedildi");
+    };
+
+    window.resetCompetition = async function() {
+        if (!confirm("⚠️ DİKKAT!\n\n30 günlük yarışma süresi sıfırdan başlayacak. Tüm kullanıcılar için sayaç yenilenecek.\n\nDevam etmek istiyor musunuz?")) return;
+        
+        try {
+            const newEndTime = Date.now() + (30 * 24 * 60 * 60 * 1000);
+            
+            await setDoc(doc(db, "config", "competition"), {
+                endTime: newEndTime,
+                startedAt: serverTimestamp()
+            });
+            
+            await logAction("Yarışma Sıfırlama", `Yeni bitiş: ${new Date(newEndTime).toLocaleString('tr-TR')}`);
+            alert(`✅ Yarışma sıfırlandı!\n\nYeni bitiş tarihi: ${new Date(newEndTime).toLocaleString('tr-TR')}`);
+        } catch (e) {
+            alert("Hata: " + e.message);
+        }
     };
 
     window.toggleMaintenance = async function(active) {
