@@ -11,7 +11,7 @@
         .page.active { display: block; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .header h1 { font-size: 1.4rem; color: #8a2be2; }
-        .lang-btn { background: #1a1a2e; color: #00ffcc; border: 1px solid #00ffcc; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; }
+        .lang-btn { background: #1a1a2e; color: #00ffcc; border: 1px solid #00ffcc; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
         .card { background: #1a1a2e; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid #2a2a4a; }
         .card-title { font-size: 1rem; margin-bottom: 10px; color: #a0a0a0; }
         .card-value { font-size: 1.8rem; font-weight: bold; color: #8a2be2; }
@@ -282,7 +282,11 @@
     <div id="page-notifications" class="page">
         <div class="header">
             <h1>🔔 Bildirimler</h1>
-            <button class="lang-btn" onclick="markNotificationsRead()">Okundu İşaretle</button>
+            <div style="display: flex; gap: 5px;">
+                <button class="lang-btn" onclick="markNotificationsRead()" style="font-size: 0.7rem;">Okundu</button>
+                <button class="lang-btn" onclick="clearAllNotifications()" style="font-size: 0.7rem; color: #ff4444; border-color: #ff4444;">Temizle</button>
+                <button class="lang-btn" onclick="showPage('page-home')" style="font-size: 0.7rem;">Kapat</button>
+            </div>
         </div>
         <div class="card" id="notificationsList">
             <p style="text-align: center; color: #a0a0a0;">Yükleniyor...</p>
@@ -470,8 +474,7 @@
         <div class="nav-item" onclick="showPage('page-wallet')"><i>💼</i> Cüzdan</div>
         <div class="nav-item" onclick="showPage('page-profile')"><i>👤</i> Profil</div>
     </div>
-
-    <script type="module">
+        <script type="module">
         // ============ FIREBASE IMPORTS ============
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
@@ -609,6 +612,9 @@
                     }
                 }
                 
+                // Kullanıcının kayıt zamanını kaydet (bildirim filtresi için)
+                localStorage.setItem('userJoinTime_' + currentUid, Date.now());
+                
                 isNewUser = true;
             } catch (error) {
                 console.error("Kayıt hatası:", error);
@@ -672,6 +678,7 @@
                         createdAt: serverTimestamp(),
                         lastLogin: serverTimestamp()
                     });
+                    localStorage.setItem('userJoinTime_' + currentUid, Date.now());
                     isNewUser = true;
                 } else {
                     await updateDoc(doc(db, "users", currentUid), { lastLogin: serverTimestamp() });
@@ -704,6 +711,11 @@
                 currentUser = user;
                 currentUid = user.uid;
                 currentEmail = user.email;
+                
+                // Kayıt tarihi yoksa şimdi ata
+                if (!localStorage.getItem('userJoinTime_' + currentUid)) {
+                    localStorage.setItem('userJoinTime_' + currentUid, Date.now());
+                }
                 
                 // Ayarları Firebase'den çek
                 try {
@@ -800,7 +812,8 @@
         function startNotificationListener() {
             if (notificationsListener) notificationsListener();
             
-            const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(20));
+            const userJoinTime = Number(localStorage.getItem('userJoinTime_' + currentUid) || 0);
+            const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(50));
             
             notificationsListener = onSnapshot(q, (snap) => {
                 const list = document.getElementById('notificationsList');
@@ -813,35 +826,51 @@
                 }
                 
                 let hasNew = false;
-                const lastReadTime = Number(localStorage.getItem('lastReadNotificationTime') || 0);
+                const lastReadTime = Number(localStorage.getItem('lastReadNotificationTime_' + currentUid) || 0);
+                const deletedNotifs = JSON.parse(localStorage.getItem('deletedNotifications_' + currentUid) || '[]');
+                
+                let visibleCount = 0;
                 
                 snap.forEach(doc => {
                     const ann = doc.data();
+                    const annId = doc.id;
                     
-                    // Kişiye özel filtreleme
+                    if (deletedNotifs.includes(annId)) return;
+                    
                     if (ann.type === "specific" && ann.targetEmail !== currentEmail) return;
-
-                    let dateStr = '-';
-                    try { dateStr = ann.createdAt ? new Date(ann.createdAt.toDate()).toLocaleString('tr-TR') : '-'; } catch(e){}
+                    if (ann.type === "winner" && ann.targetUid !== currentUid) return;
                     
                     let annTime = 0;
                     try { annTime = ann.createdAt ? ann.createdAt.toMillis() : Date.now(); } catch(e){ annTime = Date.now(); }
+                    if (annTime < userJoinTime) return;
+                    
+                    visibleCount++;
+                    
+                    let dateStr = '-';
+                    try { dateStr = ann.createdAt ? new Date(ann.createdAt.toDate()).toLocaleString('tr-TR') : '-'; } catch(e){}
+                    
                     if (annTime > lastReadTime) hasNew = true;
                     
                     let icon = "📢";
                     let color = "#8a2be2";
                     if (ann.type === "competition") { icon = "🏆"; color = "#ffcc00"; }
+                    if (ann.type === "winner") { icon = "🥇"; color = "#ffd700"; }
                     
                     list.innerHTML += `
-                        <div style="background: #1a1a2e; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid ${color};">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <div style="background: #1a1a2e; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid ${color}; position: relative;">
+                            <button onclick="deleteNotification('${annId}')" style="position: absolute; top: 10px; right: 10px; background: #ff4444; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 0.8rem;">×</button>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; padding-right: 30px;">
                                 <strong style="color: ${color};">${icon} ${ann.title || 'Duyuru'}</strong>
-                                <span style="font-size: 0.7rem; color: #a0a0a0;">${dateStr}</span>
                             </div>
-                            <p style="font-size: 0.9rem; line-height: 1.5;">${ann.message}</p>
+                            <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 5px;">${ann.message}</p>
+                            <span style="font-size: 0.7rem; color: #a0a0a0;">${dateStr}</span>
                         </div>
                     `;
                 });
+                
+                if (visibleCount === 0) {
+                    list.innerHTML = '<p style="text-align: center; color: #a0a0a0; padding: 20px;">Henüz bildirim yok.</p>';
+                }
                 
                 const badge = document.getElementById('notificationBadge');
                 if (hasNew && !unreadNotifications) {
@@ -851,8 +880,37 @@
             });
         }
 
+        // Bildirim Sil
+        window.deleteNotification = function(annId) {
+            const deletedNotifs = JSON.parse(localStorage.getItem('deletedNotifications_' + currentUid) || '[]');
+            if (!deletedNotifs.includes(annId)) {
+                deletedNotifs.push(annId);
+                localStorage.setItem('deletedNotifications_' + currentUid, JSON.stringify(deletedNotifs));
+            }
+            showToast("🗑️ Bildirim silindi");
+            startNotificationListener();
+        };
+
+        // Tüm Bildirimleri Temizle
+        window.clearAllNotifications = function() {
+            if (!confirm("Tüm bildirimleri silmek istediğinize emin misiniz?")) return;
+            const list = document.querySelectorAll('#notificationsList [onclick^="deleteNotification"]');
+            const deletedNotifs = JSON.parse(localStorage.getItem('deletedNotifications_' + currentUid) || '[]');
+            
+            list.forEach(btn => {
+                const match = btn.getAttribute('onclick').match(/'([^']+)'/);
+                if (match && !deletedNotifs.includes(match[1])) {
+                    deletedNotifs.push(match[1]);
+                }
+            });
+            
+            localStorage.setItem('deletedNotifications_' + currentUid, JSON.stringify(deletedNotifs));
+            showToast("🗑️ Tüm bildirimler temizlendi");
+            startNotificationListener();
+        };
+
         window.markNotificationsRead = function() {
-            localStorage.setItem('lastReadNotificationTime', Date.now());
+            localStorage.setItem('lastReadNotificationTime_' + currentUid, Date.now());
             document.getElementById('notificationBadge').style.display = 'none';
             unreadNotifications = false;
             showToast("✅ Bildirimler okundu.");
