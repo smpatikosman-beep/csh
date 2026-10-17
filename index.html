@@ -467,7 +467,7 @@
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyC22SGApMVhMyIomWJL8s9ckzFCUGGxYfc",
+            apiKey: "AIzaSyC22SGAPMvHMyIomWJL8s9ckzFCUGGxYFc",
             authDomain: "cashcash-70c4f.firebaseapp.com",
             projectId: "cashcash-70c4f",
             storageBucket: "cashcash-70c4f.firebasestorage.app",
@@ -712,32 +712,29 @@
             }
         });
 
-               // ============ CANLI DİNLEME (OnSnapshot) ============
+        // ============ CANLI DİNLEME (OnSnapshot) ============
         function startLiveListener() {
             if (unsubscribeSnapshot) unsubscribeSnapshot();
             
             unsubscribeSnapshot = onSnapshot(doc(db, "users", currentUid), 
                 (snap) => {
-                    // Veri var mı kontrolü
                     if (!snap.exists()) {
                         console.log("❌ Kullanıcı verisi bulunamadı!");
                         return;
                     }
                     const u = snap.data();
-                    console.log("✅ Canlı Veri Geldi:", u); // HATA AYIKLAMA İÇİN EKLENDİ
+                    console.log("✅ Canlı Veri Geldi:", u);
 
-                    // Ban kontrolü
                     if (u.banned) {
                         alert("🚫 Hesabınız yönetici tarafından askıya alınmış!");
                         signOut(auth);
                         return;
                     }
                     
-                    // Eski değerleri kaydet (Bildirim için)
                     const oldPoints = userPoints;
                     const oldTL = userTL;
+                    const oldAds = adsWatched;
                     
-                    // Firebase'den gelen yeni verileri değişkenlere ata
                     userPoints = Number(u.points) || 0;
                     userTL = Number(u.tl) || 0;
                     adsWatched = Number(u.ads) || 0;
@@ -748,17 +745,14 @@
                     currentUsername = u.username || "Kullanıcı";
                     currentAvatar = u.avatar || "K";
                     userReferralCode = u.referralCode || "-";
-                    
                     if (u.dailyTasks) dailyTasks = u.dailyTasks;
                     
-                    // Ekranı güncelle
                     document.getElementById('home-username').innerText = currentUsername;
                     document.getElementById('invite-code').innerText = userReferralCode;
                     document.getElementById('profile-refcode').innerText = userReferralCode;
                     
                     updateStatsView();
                     
-                    // Admin tarafından puan eklendiyse kullanıcıya bildirim göster
                     if (oldPoints > 0 && userPoints > oldPoints) {
                         const diff = userPoints - oldPoints;
                         showToast(`🎉 Admin tarafından +${diff} puan eklendi!`);
@@ -769,23 +763,10 @@
                     }
                 },
                 (error) => {
-                    // Hata olursa konsola yazdır
                     console.error("🔥 CANLI DİNLEME HATASI:", error);
                     showToast("⚠️ Bağlantı hatası! Sayfayı yenileyin.");
                 }
             );
-        }
-               
-                // Admin puan eklediyse kullanıcıya bildir
-                if (oldPoints > 0 && userPoints > oldPoints) {
-                    const diff = userPoints - oldPoints;
-                    showToast(`🎉 Admin tarafından +${diff} puan eklendi!`);
-                }
-                if (oldTL > 0 && userTL > oldTL) {
-                    const diff = (userTL - oldTL).toFixed(2);
-                    showToast(`💰 Admin tarafından +${diff} TL eklendi!`);
-                }
-            });
         }
 
         // ============ KULLANICI VERİSİ YÜKLE ============
