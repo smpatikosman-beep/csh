@@ -712,19 +712,69 @@
             }
         });
 
-        // ============ CANLI DİNLEME (OnSnapshot) ============
+               // ============ CANLI DİNLEME (OnSnapshot) ============
         function startLiveListener() {
             if (unsubscribeSnapshot) unsubscribeSnapshot();
             
-            unsubscribeSnapshot = onSnapshot(doc(db, "users", currentUid), (snap) => {
-                if (!snap.exists()) return;
-                const u = snap.data();
-                
-                if (u.banned) {
-                    alert("🚫 Hesabınız yönetici tarafından askıya alınmış!");
-                    signOut(auth);
-                    return;
+            unsubscribeSnapshot = onSnapshot(doc(db, "users", currentUid), 
+                (snap) => {
+                    // Veri var mı kontrolü
+                    if (!snap.exists()) {
+                        console.log("❌ Kullanıcı verisi bulunamadı!");
+                        return;
+                    }
+                    const u = snap.data();
+                    console.log("✅ Canlı Veri Geldi:", u); // HATA AYIKLAMA İÇİN EKLENDİ
+
+                    // Ban kontrolü
+                    if (u.banned) {
+                        alert("🚫 Hesabınız yönetici tarafından askıya alınmış!");
+                        signOut(auth);
+                        return;
+                    }
+                    
+                    // Eski değerleri kaydet (Bildirim için)
+                    const oldPoints = userPoints;
+                    const oldTL = userTL;
+                    
+                    // Firebase'den gelen yeni verileri değişkenlere ata
+                    userPoints = Number(u.points) || 0;
+                    userTL = Number(u.tl) || 0;
+                    adsWatched = Number(u.ads) || 0;
+                    userMultiplier = Number(u.multiplier) || 1.0;
+                    ownedPackage = u.package || "FREE";
+                    dailyRewardDay = Number(u.dailyRewardDay) || 1;
+                    lastClaimTime = Number(u.lastClaimTime) || 0;
+                    currentUsername = u.username || "Kullanıcı";
+                    currentAvatar = u.avatar || "K";
+                    userReferralCode = u.referralCode || "-";
+                    
+                    if (u.dailyTasks) dailyTasks = u.dailyTasks;
+                    
+                    // Ekranı güncelle
+                    document.getElementById('home-username').innerText = currentUsername;
+                    document.getElementById('invite-code').innerText = userReferralCode;
+                    document.getElementById('profile-refcode').innerText = userReferralCode;
+                    
+                    updateStatsView();
+                    
+                    // Admin tarafından puan eklendiyse kullanıcıya bildirim göster
+                    if (oldPoints > 0 && userPoints > oldPoints) {
+                        const diff = userPoints - oldPoints;
+                        showToast(`🎉 Admin tarafından +${diff} puan eklendi!`);
+                    }
+                    if (oldTL > 0 && userTL > oldTL) {
+                        const diff = (userTL - oldTL).toFixed(2);
+                        showToast(`💰 Admin tarafından +${diff} TL eklendi!`);
+                    }
+                },
+                (error) => {
+                    // Hata olursa konsola yazdır
+                    console.error("🔥 CANLI DİNLEME HATASI:", error);
+                    showToast("⚠️ Bağlantı hatası! Sayfayı yenileyin.");
                 }
+            );
+        }
                 
                 const oldPoints = userPoints;
                 const oldTL = userTL;
