@@ -226,7 +226,14 @@
     <div id="page-home" class="page">
         <div class="header">
             <h1>Merhaba, <span id="home-username">Kullanıcı</span></h1>
-            <button class="lang-btn">Dil Değiştir</button>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- BİLDİRİM ZİLİ -->
+                <div onclick="showPage('page-notifications')" style="position: relative; cursor: pointer; font-size: 1.5rem; background: #1a1a2e; padding: 5px 10px; border-radius: 10px; border: 1px solid #2a2a4a;">
+                    🔔
+                    <div id="notificationBadge" style="display: none; position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 15px; height: 15px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; font-weight: bold;">!</div>
+                </div>
+                <button class="lang-btn">Dil Değiştir</button>
+            </div>
         </div>
         
         <div class="dome-container">
@@ -268,6 +275,17 @@
         <div class="main-action-buttons">
             <button class="btn btn-purple btn-big" id="watchAdBtn" onclick="watchAd()">📺 REKLAM İZLE & PUAN KAZAN</button>
             <button class="btn btn-big btn-big-green" onclick="playGame()">🎮 OYNA & PUAN TOPLA</button>
+        </div>
+    </div>
+
+    <!-- BİLDİRİMLER SAYFASI -->
+    <div id="page-notifications" class="page">
+        <div class="header">
+            <h1>🔔 Bildirimler</h1>
+            <button class="lang-btn" onclick="markNotificationsRead()">Okundu İşaretle</button>
+        </div>
+        <div class="card" id="notificationsList">
+            <p style="text-align: center; color: #a0a0a0;">Yükleniyor...</p>
         </div>
     </div>
 
@@ -467,7 +485,7 @@
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyC22SGApMVhMyIomWJL8s9ckzFCUGGxYfc",
+            apiKey: "AIzaSyC22SGAPMvHMyIomWJL8s9ckzFCUGGxYFc",
             authDomain: "cashcash-70c4f.firebaseapp.com",
             projectId: "cashcash-70c4f",
             storageBucket: "cashcash-70c4f.firebasestorage.app",
@@ -497,9 +515,11 @@
         let userReferralCode = "-";
         let isNewUser = false;
         let unsubscribeSnapshot = null;
+        let notificationsListener = null;
+        let unreadNotifications = false;
         
-        const ADS_BEFORE_COOLDOWN = 3;
-        const AD_COOLDOWN = 3 * 60 * 1000;
+        let ADS_BEFORE_COOLDOWN = 3; 
+        let AD_COOLDOWN = 3 * 60 * 1000; 
         let lastAdTime = 0;
         let adCooldownInterval = null;
         
@@ -667,6 +687,7 @@
             if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
                 try {
                     if (unsubscribeSnapshot) unsubscribeSnapshot();
+                    if (notificationsListener) notificationsListener();
                     await signOut(auth);
                     location.reload();
                 } catch (error) {
@@ -684,8 +705,19 @@
                 currentUid = user.uid;
                 currentEmail = user.email;
                 
+                // Ayarları Firebase'den çek
+                try {
+                    const settingsSnap = await getDoc(doc(db, "config", "settings"));
+                    if (settingsSnap.exists()) {
+                        const s = settingsSnap.data();
+                        ADS_BEFORE_COOLDOWN = Number(s.adsBeforeCooldown) || 3;
+                        AD_COOLDOWN = (Number(s.cooldown) || 3) * 60 * 1000;
+                    }
+                } catch(e) { console.log("Ayar yükleme hatası", e); }
+
                 // Canlı dinlemeyi başlat
                 startLiveListener();
+                startNotificationListener();
                 
                 // İlk veri yükleme
                 await loadUserData();
@@ -705,6 +737,7 @@
                 await updatePoolAmount();
             } else {
                 if (unsubscribeSnapshot) unsubscribeSnapshot();
+                if (notificationsListener) notificationsListener();
                 currentUser = null;
                 currentUid = null;
                 showPage('page-login');
@@ -718,12 +751,8 @@
             
             unsubscribeSnapshot = onSnapshot(doc(db, "users", currentUid), 
                 (snap) => {
-                    if (!snap.exists()) {
-                        console.log("❌ Kullanıcı verisi bulunamadı!");
-                        return;
-                    }
+                    if (!snap.exists()) return;
                     const u = snap.data();
-                    console.log("✅ Canlı Veri Geldi:", u);
 
                     if (u.banned) {
                         alert("🚫 Hesabınız yönetici tarafından askıya alınmış!");
@@ -733,7 +762,6 @@
                     
                     const oldPoints = userPoints;
                     const oldTL = userTL;
-                    const oldAds = adsWatched;
                     
                     userPoints = Number(u.points) || 0;
                     userTL = Number(u.tl) || 0;
@@ -764,10 +792,71 @@
                 },
                 (error) => {
                     console.error("🔥 CANLI DİNLEME HATASI:", error);
-                    showToast("⚠️ Bağlantı hatası! Sayfayı yenileyin.");
                 }
             );
         }
+
+        // ============ BİLDİRİM DİNLEYİCİSİ ============
+        function startNotificationListener() {
+            if (notificationsListener) notificationsListener();
+            
+            const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(20));
+            
+            notificationsListener = onSnapshot(q, (snap) => {
+                const list = document.getElementById('notificationsList');
+                list.innerHTML = '';
+                
+                if (snap.empty) {
+                    list.innerHTML = '<p style="text-align: center; color: #a0a0a0; padding: 20px;">Henüz bildirim yok.</p>';
+                    document.getElementById('notificationBadge').style.display = 'none';
+                    return;
+                }
+                
+                let hasNew = false;
+                const lastReadTime = Number(localStorage.getItem('lastReadNotificationTime') || 0);
+                
+                snap.forEach(doc => {
+                    const ann = doc.data();
+                    
+                    // Kişiye özel filtreleme
+                    if (ann.type === "specific" && ann.targetEmail !== currentEmail) return;
+
+                    let dateStr = '-';
+                    try { dateStr = ann.createdAt ? new Date(ann.createdAt.toDate()).toLocaleString('tr-TR') : '-'; } catch(e){}
+                    
+                    let annTime = 0;
+                    try { annTime = ann.createdAt ? ann.createdAt.toMillis() : Date.now(); } catch(e){ annTime = Date.now(); }
+                    if (annTime > lastReadTime) hasNew = true;
+                    
+                    let icon = "📢";
+                    let color = "#8a2be2";
+                    if (ann.type === "competition") { icon = "🏆"; color = "#ffcc00"; }
+                    
+                    list.innerHTML += `
+                        <div style="background: #1a1a2e; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid ${color};">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <strong style="color: ${color};">${icon} ${ann.title || 'Duyuru'}</strong>
+                                <span style="font-size: 0.7rem; color: #a0a0a0;">${dateStr}</span>
+                            </div>
+                            <p style="font-size: 0.9rem; line-height: 1.5;">${ann.message}</p>
+                        </div>
+                    `;
+                });
+                
+                const badge = document.getElementById('notificationBadge');
+                if (hasNew && !unreadNotifications) {
+                    badge.style.display = 'flex';
+                    unreadNotifications = true;
+                }
+            });
+        }
+
+        window.markNotificationsRead = function() {
+            localStorage.setItem('lastReadNotificationTime', Date.now());
+            document.getElementById('notificationBadge').style.display = 'none';
+            unreadNotifications = false;
+            showToast("✅ Bildirimler okundu.");
+        };
 
         // ============ KULLANICI VERİSİ YÜKLE ============
         async function loadUserData() {
@@ -1029,10 +1118,10 @@
             if (adsWatched % ADS_BEFORE_COOLDOWN === 0) {
                 lastAdTime = now;
                 checkAdCooldown();
-                alert(`✅ Reklam izlendi!\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n\n⏱️ 3 reklam tamamlandı! 3 dakika mola.`);
+                alert(`✅ Reklam izlendi!\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n\n⏱️ ${ADS_BEFORE_COOLDOWN} reklam tamamlandı! ${AD_COOLDOWN/60000} dakika mola.`);
             } else {
                 const remainingAds = ADS_BEFORE_COOLDOWN - (adsWatched % ADS_BEFORE_COOLDOWN);
-                alert(`✅ Reklam izlendi!\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n\n📺 ${remainingAds} reklam sonra 3 dk mola.`);
+                alert(`✅ Reklam izlendi!\n⚡ Çarpan: ${userMultiplier.toFixed(1)}x\n🏆 +${earnedPoints} Puan\n\n📺 ${remainingAds} reklam sonra mola.`);
             }
             
             updateStatsView();
