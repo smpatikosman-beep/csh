@@ -141,7 +141,6 @@
         .loading-screen.hide { display: none; }
         .spinner { width: 50px; height: 50px; border: 4px solid #2a2a4a; border-top-color: #8a2be2; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { color: #8a2be2; margin-top: 15px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -149,7 +148,7 @@
     <!-- LOADING SCREEN -->
     <div class="loading-screen" id="loadingScreen">
         <div class="spinner"></div>
-        <div class="loading-text">Yükleniyor...</div>
+        <div style="color: #8a2be2; margin-top: 15px; font-size: 0.9rem;">Yükleniyor...</div>
     </div>
 
     <!-- HOŞ GELDİN MODAL -->
@@ -464,11 +463,11 @@
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
             getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, addDoc, 
-            query, where, orderBy, limit, serverTimestamp 
+            query, where, orderBy, limit, serverTimestamp, onSnapshot
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyC22SGApMVhMyIomWJL8s9ckzFCUGGxYfc",
+            apiKey: "AIzaSyC22SGAPMvHMyIomWJL8s9ckzFCUGGxYFc",
             authDomain: "cashcash-70c4f.firebaseapp.com",
             projectId: "cashcash-70c4f",
             storageBucket: "cashcash-70c4f.firebasestorage.app",
@@ -497,6 +496,7 @@
         let currentAvatar = "K";
         let userReferralCode = "-";
         let isNewUser = false;
+        let unsubscribeSnapshot = null;
         
         const ADS_BEFORE_COOLDOWN = 3;
         const AD_COOLDOWN = 3 * 60 * 1000;
@@ -550,12 +550,9 @@
             }
             
             try {
-                // 1. Firebase Authentication ile kullanıcı oluştur
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 currentUid = userCredential.user.uid;
-                console.log("✅ Auth kullanıcısı oluşturuldu:", currentUid);
                 
-                // 2. Firestore'a kullanıcı verisini kaydet (UID ile)
                 const userData = {
                     uid: currentUid,
                     email: email,
@@ -579,14 +576,13 @@
                 
                 await setDoc(doc(db, "users", currentUid), userData);
                 
-                // 3. Davet kodu işlemi
                 if (referralCode) {
                     const q = query(collection(db, "users"), where("referralCode", "==", referralCode));
                     const snap = await getDocs(q);
                     if (!snap.empty) {
                         const referrerDoc = snap.docs[0];
                         await updateDoc(doc(db, "users", referrerDoc.id), {
-                            points: (referrerDoc.data().points || 0) + 50
+                            points: Number(referrerDoc.data().points || 0) + 50
                         });
                         await updateDoc(doc(db, "users", currentUid), { points: 110 });
                         showToast("🎉 Davet kodu kullanıldı! +10 Puan");
@@ -594,8 +590,6 @@
                 }
                 
                 isNewUser = true;
-                // onAuthStateChanged otomatik tetiklenecek
-                
             } catch (error) {
                 console.error("Kayıt hatası:", error);
                 let msg = "Kayıt başarısız!";
@@ -619,7 +613,6 @@
             
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                // onAuthStateChanged tetiklenecek
             } catch (error) {
                 console.error("Giriş hatası:", error);
                 let msg = "Giriş başarısız!";
@@ -638,10 +631,8 @@
                 const user = result.user;
                 currentUid = user.uid;
                 
-                // Kullanıcı Firestore'da var mı?
                 const userSnap = await getDoc(doc(db, "users", currentUid));
                 if (!userSnap.exists()) {
-                    // Yeni kullanıcı → kayıt oluştur
                     await setDoc(doc(db, "users", currentUid), {
                         uid: currentUid,
                         email: user.email,
@@ -663,7 +654,6 @@
                     });
                     isNewUser = true;
                 } else {
-                    // Giriş tarihini güncelle
                     await updateDoc(doc(db, "users", currentUid), { lastLogin: serverTimestamp() });
                 }
             } catch (error) {
@@ -676,6 +666,7 @@
         window.logout = async function() {
             if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
                 try {
+                    if (unsubscribeSnapshot) unsubscribeSnapshot();
                     await signOut(auth);
                     location.reload();
                 } catch (error) {
@@ -689,16 +680,16 @@
             document.getElementById('loadingScreen').classList.add('hide');
             
             if (user) {
-                // Kullanıcı giriş yapmış
                 currentUser = user;
                 currentUid = user.uid;
                 currentEmail = user.email;
-                console.log("✅ Kullanıcı giriş yaptı:", currentUid);
                 
-                // Firestore'dan kullanıcı verisini yükle
+                // Canlı dinlemeyi başlat
+                startLiveListener();
+                
+                // İlk veri yükleme
                 await loadUserData();
                 
-                // Hoş geldin modalı göster
                 if (isNewUser) {
                     showWelcomeModal();
                     isNewUser = false;
@@ -712,15 +703,8 @@
                 checkAdCooldown();
                 updateCountdown();
                 await updatePoolAmount();
-                
-                // Ban kontrolü
-                if (userPoints === -1) {
-                    alert("🚫 Hesabınız askıya alınmış!");
-                    await signOut(auth);
-                }
             } else {
-                // Kullanıcı çıkış yapmış
-                console.log("❌ Kullanıcı çıkış yaptı");
+                if (unsubscribeSnapshot) unsubscribeSnapshot();
                 currentUser = null;
                 currentUid = null;
                 showPage('page-login');
@@ -728,27 +712,74 @@
             }
         });
 
-        // ============ KULLANICI VERİSİNİ YÜKLE ============
+        // ============ CANLI DİNLEME (OnSnapshot) ============
+        function startLiveListener() {
+            if (unsubscribeSnapshot) unsubscribeSnapshot();
+            
+            unsubscribeSnapshot = onSnapshot(doc(db, "users", currentUid), (snap) => {
+                if (!snap.exists()) return;
+                const u = snap.data();
+                
+                if (u.banned) {
+                    alert("🚫 Hesabınız yönetici tarafından askıya alınmış!");
+                    signOut(auth);
+                    return;
+                }
+                
+                const oldPoints = userPoints;
+                const oldTL = userTL;
+                const oldAds = adsWatched;
+                
+                userPoints = Number(u.points) || 0;
+                userTL = Number(u.tl) || 0;
+                adsWatched = Number(u.ads) || 0;
+                userMultiplier = Number(u.multiplier) || 1.0;
+                ownedPackage = u.package || "FREE";
+                dailyRewardDay = Number(u.dailyRewardDay) || 1;
+                lastClaimTime = Number(u.lastClaimTime) || 0;
+                currentUsername = u.username || "Kullanıcı";
+                currentAvatar = u.avatar || "K";
+                userReferralCode = u.referralCode || "-";
+                if (u.dailyTasks) dailyTasks = u.dailyTasks;
+                
+                document.getElementById('home-username').innerText = currentUsername;
+                document.getElementById('invite-code').innerText = userReferralCode;
+                document.getElementById('profile-refcode').innerText = userReferralCode;
+                
+                updateStatsView();
+                
+                // Admin puan eklediyse kullanıcıya bildir
+                if (oldPoints > 0 && userPoints > oldPoints) {
+                    const diff = userPoints - oldPoints;
+                    showToast(`🎉 Admin tarafından +${diff} puan eklendi!`);
+                }
+                if (oldTL > 0 && userTL > oldTL) {
+                    const diff = (userTL - oldTL).toFixed(2);
+                    showToast(`💰 Admin tarafından +${diff} TL eklendi!`);
+                }
+            });
+        }
+
+        // ============ KULLANICI VERİSİ YÜKLE ============
         async function loadUserData() {
             try {
                 const userSnap = await getDoc(doc(db, "users", currentUid));
                 if (userSnap.exists()) {
                     const u = userSnap.data();
                     
-                    // Ban kontrolü
                     if (u.banned) {
                         alert("🚫 Hesabınız yönetici tarafından askıya alınmış!");
                         await signOut(auth);
                         return;
                     }
                     
-                    userPoints = u.points || 0;
-                    userTL = u.tl || 0;
-                    adsWatched = u.ads || 0;
-                    userMultiplier = u.multiplier || 1.0;
+                    userPoints = Number(u.points) || 0;
+                    userTL = Number(u.tl) || 0;
+                    adsWatched = Number(u.ads) || 0;
+                    userMultiplier = Number(u.multiplier) || 1.0;
                     ownedPackage = u.package || "FREE";
-                    dailyRewardDay = u.dailyRewardDay || 1;
-                    lastClaimTime = u.lastClaimTime || 0;
+                    dailyRewardDay = Number(u.dailyRewardDay) || 1;
+                    lastClaimTime = Number(u.lastClaimTime) || 0;
                     currentUsername = u.username || "Kullanıcı";
                     currentAvatar = u.avatar || "K";
                     userReferralCode = u.referralCode || "-";
@@ -759,7 +790,6 @@
                     document.getElementById('invite-code').innerText = userReferralCode;
                     document.getElementById('profile-refcode').innerText = userReferralCode;
                     
-                    // Son giriş tarihini güncelle
                     await updateDoc(doc(db, "users", currentUid), { lastLogin: serverTimestamp() });
                 }
             } catch (error) {
@@ -793,7 +823,7 @@
             try {
                 const usersSnap = await getDocs(collection(db, "users"));
                 let totalPool = 0;
-                usersSnap.forEach(d => totalPool += (d.data().points || 0));
+                usersSnap.forEach(d => totalPool += Number(d.data().points || 0));
                 updateDome(totalPool);
             } catch (error) {
                 console.error("Havuz hatası:", error);
@@ -902,7 +932,6 @@
                 closeModal('passwordModal');
                 showToast("✅ Şifre güncellendi!");
             } catch (error) {
-                console.error("Şifre hatası:", error);
                 if (error.code === 'auth/wrong-password') alert("Mevcut şifre yanlış!");
                 else alert("Şifre değiştirilemedi: " + error.message);
             }
@@ -916,7 +945,7 @@
             const toast = document.getElementById('toast');
             toast.innerText = msg;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
         window.showWelcomeModal = function() { document.getElementById('welcomeModal').classList.add('show'); }
@@ -1131,8 +1160,8 @@
                     tr.innerHTML = `
                         <td><span class="rank-badge">${rank}</span></td>
                         <td>${u.avatar || '👤'} ${u.username || '-'}${isMe ? ' <span style="color:#00ffcc;font-size:0.7rem;">(SEN)</span>' : ''}</td>
-                        <td>${u.ads || 0}</td>
-                        <td>${u.points || 0}</td>
+                        <td>${Number(u.ads || 0)}</td>
+                        <td>${Number(u.points || 0)}</td>
                     `;
                     tbody.appendChild(tr);
                     rank++;
@@ -1270,7 +1299,7 @@
                 await saveUserToFirebase();
                 updateStatsView();
                 
-                alert(`✅ Çekim talebiniz alındı!\n💵 ${amount} TL\n👤 ${name} ${surname}\n🏦 ${iban}`);
+                alert(`✅ Çekim talebiniz alındı!\n💵 ${amount} TL\n👤 ${name} ${surname}\n🏦 ${iban}\n\nYönetici onayından sonra hesabınıza yatırılacaktır.`);
                 document.getElementById('withdraw-name').value = '';
                 document.getElementById('withdraw-surname').value = '';
                 document.getElementById('withdraw-iban').value = '';
@@ -1338,7 +1367,6 @@
             updateCountdown();
         };
 
-        // URL'de referans kodu varsa kayıt ekranına taşı
         const urlParams = new URLSearchParams(window.location.search);
         const refCode = urlParams.get('ref');
         if (refCode) {
